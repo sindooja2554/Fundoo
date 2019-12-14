@@ -1,8 +1,35 @@
 var userServices = require('../services/userServices');
 var jsonWebToken = require('../utility/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
+var urlShortner  = require('../utility/urlShortner');
+
 class Controller
 {
+    urlShortnerController(request,shortenerObject,callback)
+    {
+        var res = {};
+        userServices.urlShorteningServices(request,shortenerObject,(error,data)=>{
+            if(error)
+            {
+                res.error = error;
+                // return response.status(500).send(res);
+                return callback(error);
+            }
+            else if(data === null)
+            {
+                res.success = false
+                // return response.status(500).send(res);
+                return callback(null,res)
+            }
+            else{
+                res.success = true;
+                res.data    = data;
+                // return response.status(200).send(res);
+                return callback(null,res)
+            }
+        })
+    }
+
     createController(request , response)
     {
         request.check('firstName','First name must be 3 character long').isLength({min:3})
@@ -13,7 +40,7 @@ class Controller
         request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
         var errors = request.validationErrors();
         var result = {};
-        console.log(errors);
+        // console.log(errors);
         if(errors)
         {
             for(let i=0;i<errors.length;i++)
@@ -25,6 +52,7 @@ class Controller
         }
         else
         {
+            console.log(request.body);
             let userData = {
                 'firstName': request.body.firstName,
                 'lastName': request.body.lastName,
@@ -40,21 +68,43 @@ class Controller
                     result.success = false;
                     return response.status(500).send(result);
                 }
-                else
-                {
+                else if(data.success !== false)
+                {   let self = this;
+                    console.log("data in res from ser",data);
                     console.log("data in response---",data);
                     let payload = {
                         '_id' : data._id
                     }
                     
                     let jwtToken = jsonWebToken.generateToken(payload);
-                    let url = 'http://localhost:3000/verify/' + jwtToken;
-                    mailSender.sendMail(data.email,url)
+                    let longURL = 'http://localhost:3001/verify/' + jwtToken;
+                    
+                    urlShortner.shortURL(data,longURL,(error,data)=>{
+                        if(error)
+                        {
+                            result.error = error;
+                            return response.status(500).send(result);
+                        }
+                        else
+                        {  
+                            console.log("sh--->",data);                                                     
+                        }
+                    })
+
+                    // mailSender.sendMail(data.email,url)
 
                     result.message = "Successfully registered";
                     result.success = true;
                     result.data    = data;                   
                     return response.status(200).send(result);
+                }
+                else
+                {
+                    console.log("data---------->",data)
+                    result.message = data.message;
+                    result.success = data.success;
+                    result.data    = data.data;
+                    return response.status(500).send(result);
                 }
             })
         }
@@ -82,25 +132,34 @@ class Controller
             }
 
             userServices.readService(readData,(error,data)=>{
+                console.log("ctrl==>",data);
                 if(error)
                 {
                     result.error = error;
                     result.success = false;
                     return response.status(500).send(result);
                 }
-                else {
+                else if(data.success !== false)
+                {
                     console.log(data)
                     let payload = {
-                        '_id': data.id
+                        '_id': data.data._id
                     }
 
                     let jwtToken = jsonWebToken.generateToken(payload)
 
                     result.token = jwtToken;
                     result.message = 'Login successful';
-                    result.success = true;
+                    result.success = data.success;
                     result.data = data;
                     return response.status(200).send(result);
+                }
+                else
+                {
+                    result.message = data.message;
+                    result.success = data.success;
+                    result.data    = data.data;
+                    return response.status(500).send(result);
                 }
             })
         }
@@ -126,6 +185,45 @@ class Controller
             }
         })
     }
+
+    forgetPasswordController(request,response)
+    {
+        var result = {};
+        userServices.forgetPassword(request,(error,data)=>{
+            if(error)
+            {
+                result.error = error;
+                result.succes = false;
+                return response.status(500).send(result);
+            }
+            else
+            {
+                let payload ={
+                    '_id':data._id
+                }
+
+                let jwtToken = jsonWebToken.generateToken(payload)
+                let longURL = 'http://localhost:3001/verify/' + jwtToken;
+                    
+                    urlShortner.shortURL(data,longURL,(error,data)=>{
+                        if(error)
+                        {
+                            result.error = error;
+                            return response.status(500).send(result);
+                        }
+                        else
+                        {  
+                            console.log("sh--->",data);                                                     
+                        }
+                })
+
+                result.message = "Mailsent";
+                result.succes  = true;
+                return response.status(200).send(result);
+            }
+        })
+    }
+   
 }
 
 module.exports = new Controller();

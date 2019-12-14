@@ -13,7 +13,7 @@ app.get('/', (req, res) => {
 });
 
 var connection = mongoose.connect();
-console.log(connection);
+// console.log(connection);
 
 app.listen(3001, () => {
     console.log("Server is listening on port 3001");
