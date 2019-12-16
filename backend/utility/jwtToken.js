@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-var model = require('../app/model/model');
-var controller = require('../controller/userController');
+var model = require('../app/model/user');
+var controller = require('../controller/user');
 
 module.exports={
     generateToken(payload)

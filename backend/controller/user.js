@@ -1,4 +1,4 @@
-var userServices = require('../services/userServices');
+var userServices = require('../services/user');
 var jsonWebToken = require('../utility/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
 var urlShortner  = require('../utility/urlShortner');
@@ -83,7 +83,7 @@ class Controller
                         if(error)
                         {
                             result.error = error;
-                            return response.status(500).send(result);
+                            return response.status(501).send(result);
                         }
                         else
                         {  
@@ -188,8 +188,14 @@ class Controller
 
     forgetPasswordController(request,response)
     {
+        request.check('email','Email must be in email format').isEmail();
+
+        console.log("forgot")
         var result = {};
-        userServices.forgetPassword(request,(error,data)=>{
+        let forgotPassword = {
+            "email" : request.body.email
+        }
+        userServices.forgetPassword(forgotPassword,(error,data)=>{
             if(error)
             {
                 result.error = error;
@@ -201,24 +207,52 @@ class Controller
                 let payload ={
                     '_id':data._id
                 }
-
+                console.log("dtttt===",data);
                 let jwtToken = jsonWebToken.generateToken(payload)
-                let longURL = 'http://localhost:3001/verify/' + jwtToken;
-                    
-                    urlShortner.shortURL(data,longURL,(error,data)=>{
-                        if(error)
-                        {
-                            result.error = error;
-                            return response.status(500).send(result);
-                        }
-                        else
-                        {  
-                            console.log("sh--->",data);                                                     
-                        }
-                })
+                let url = 'http://localhost:3001/resetpassword/' + jwtToken;
+                    mailSender.sendMail(data.email,url);
+                    // urlShortner.shortURL(data,longURL,(error,data)=>{
+                    //     if(error)
+                    //     {
+                    //         result.error = error;
+                    //         return response.status(500).send(result);
+                    //     }
+                    //     else
+                    //     {  
+                    //         console.log("sh--->",data);                                                     
+                    //     }
+                // })
 
                 result.message = "Mailsent";
-                result.succes  = true;
+                result.success  = true;
+                return response.status(200).send(result);
+            }
+        })
+    }
+
+    resetPasswordController(request,response)
+    {
+        request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+
+        // console.log("aaaaaaaaaaaaaaaaaaaaa==>",request)
+        var result = {};
+        let resetPassword = {
+            "password" : request.body.password,
+            "id"       : request.body.data._id
+        }
+        userServices.resetPassswordService(resetPassword,(error,data)=>{
+            if(error)
+            {
+                result.error   = error;
+                result.success = false;
+
+                return response.status(500).send(result);
+            }
+            else
+            {
+                result.data = data;
+                result.success = true;
+
                 return response.status(200).send(result);
             }
         })

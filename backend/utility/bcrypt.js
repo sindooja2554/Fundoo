@@ -1,6 +1,7 @@
 const bcrypt   = require('bcrypt');
 module.exports = {
     encryptPassword(request, callback) {
+        console.log("--->",request);
         bcrypt.hash(request, 10, (err, data) => {
             if (err) {
                 console.log(err);

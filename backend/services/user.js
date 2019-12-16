@@ -1,4 +1,4 @@
-var userModel = require('../app/model/model');
+var userModel = require('../app/model/user');
 var bcrypt    = require('../utility/bcrypt');
 class Services
 {
@@ -156,7 +156,8 @@ class Services
 
     forgetPassword(request,callback)
     {
-        userModel.findOne({"_id":request.id},(error,data)=>{
+        console.log("pass")
+        userModel.findOne({"email":request.email},(error,data)=>{
             if(error)
             {
                 return callback(error)
@@ -166,6 +167,46 @@ class Services
             }
             else{
                 return callback(null,data);
+            }
+        })
+    }
+
+    resetPassswordService(request,callback)
+    {
+        userModel.findOne({"_id":request.id},(error,data)=>{
+            if(error)
+            {
+                return callback(error)
+            }
+            else if(data === null){
+                return callback(error);
+            }
+            else
+            {
+                console.log("::::::>",data);
+                bcrypt.encryptPassword(request.password,(error,encryptedData)=>{
+                    if(error)
+                    {
+                        return callback(error)
+                    }
+                    else
+                    {
+                        console.log("(((((>",encryptedData)
+                        let encryptPassword = encryptedData;
+                        userModel.updateOne({"_id":data.id},{"password":encryptPassword},(error,data)=>{
+                            if(error)
+                            {
+                                return callback(error)
+                            }
+                            else
+                            {
+                                return callback(data);
+                            }
+                        })
+                    }
+        
+                })
+        
             }
         })
     }

@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
+// var logger = require('logger').createLogger(); // logs to STDOUT
+var winston = require('./winston');
+
 class Database{
 
     constructor(){
@@ -22,7 +25,7 @@ class Database{
     }
 
     monitor(){
-        mongoose.connection.on('disconnected', function() {
+        this.mongoose.connection.on('disconnected', function() {
             console.log('mongo db connection closed');
             process.exit(0);
         });
