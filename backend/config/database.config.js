@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-// var logger = require('logger').createLogger(); // logs to STDOUT
-var winston = require('./winston');
+var logger =require('./winston') // logs to STDOUT
 
 class Database{
 
@@ -17,7 +16,7 @@ class Database{
             //useMongoClient: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            connectTimeoutMS: 10000
+            connectTimeoutMS: 1000
         });
         this.monitor();
         return this.mongoose;
@@ -26,20 +25,20 @@ class Database{
 
     monitor(){
         this.mongoose.connection.on('disconnected', function() {
-            console.log('mongo db connection closed');
+            logger.info('mongo db connection closed');
             process.exit(0);
         });
         
         mongoose.connection.on('connecting', function(){
-            console.log("trying to establish a connection to mongo");
+            logger.info("trying to establish a connection to mongo");
         });
         
         mongoose.connection.on('connected', function() {
-            console.log("connection established successfully");
+            logger.info("connection established successfully");
         });
         
         mongoose.connection.on('error', function(err) {
-            console.log('connection to mongo failed ' + err);
+            logger.error('connection to mongo failed ' + err);
             process.exit(0);
         });
     }

@@ -85,113 +85,35 @@ class Api
         })
     }
 
-    create(request,callback)
+    create(request) 
     {
         console.log("in model");
-        // User.findOne({ "email": request.email },(error,data)=>
-        // {
-        //     if(error)
-        //     {
-        //         return callback(error)
-        //     }
-        //     else if (data == null) {
-                // encryptPassword(request.password, (error, data) => {
-                //     console.log(request);
-                //     if (error) {
-                //         return callback('Error while encrypting password');
-                //     }
-                //     else {
-                //         var encryptedPassword = data;
-                        let createUser = new User({
-                            "firstName": request.firstName,
-                            "lastName": request.lastName,
-                            "email": request.email,
-                            "password": request.password,
-                        })
 
-                        createUser.save((error, data) => {
-                            if (error) {
-                                return callback('Error occurred while saving the data');
-                            }
-                            else {
-                                return callback(null, data)
-                            }
-                        })
-                //     }
-                // })
-            // }
-        //     else
-        //     {
-        //         return callback('User already registered');
-        //     }
-        // })
+        let createUser = new User({
+            "firstName": request.firstName,
+            "lastName": request.lastName,
+            "email": request.email,
+            "password": request.password,
+        })
+        return new Promise(function (resolve, reject) {
+            createUser.save().then((data) => {
+                resolve(data)
+            })
+            .catch((error) => {
+                reject(error)
+            })
+        })
     }
 
-    // read(request,callback)
-    // {
-    //     console.log("happ",request);
-    //     console.log("datacbdsjbndsjk---",data);
-    //     // User.findOne({"email":request.email},(error,data)=>{
-    //     //     if(error)
-    //     //     {
-    //     //         return callback('Error while finding');
-    //     //     }
-    //     //     else if(data == null){
-    //     //         return callback('Email did not match');
-    //     //     }
-    //     //     else
-    //     //     {
-    //     //         console.log("dtaa",data)
-    //     //         if(data.isVerified === true)
-    //     //         {
-    //                 bcrypt.compare(request.password,data.password,
-    //                     (error,response)=>{
-    //                         if(error)
-    //                         {
-    //                             console.log(error);
-    //                             return callback('Error while comparing password');
-    //                         }
-    //                         else if(response == false)
-    //                         {
-    //                             console.log("error in res");
-    //                             return callback('Password did not match')
-    //                         }
-    //                         else
-    //                         {
-    //                             console.log("====>",data)
-    //                             return callback(null,data);
-    //                         }
-    //                 })
-    //             // }
-    //     //         else
-    //     //         {
-    //     //             return callback("Please check mail, visit url to verify");
-    //     //         }
-    //     //     }
-    //     // })
-    // }
+    findAll(request)
+    {
 
-    // isVerified(request, callback)
-    // {
-    //     console.log("verifyM",request.body.data._id);
-    //     User.findOneAndUpdate({"_id":request.body.data._id},{"isVerified": true},(error,success)=>{
-    //         if(error)
-    //         {
-    //             return callback('error');
-    //         }
-    //         else
-    //         {
-    //             console.log(success)
-    //             return callback(null,success);
-    //         }
-    //     })
-    // }
-
-    // authenticate(request,callback)
-    // {
-    //     longUrl = request.longUrl;
-    //     token   = 
-    // }
+        var data = User.find({});
+        console.log('ttt');
+        
+        return data;
+      
+    }
 }
 
 module.exports = new Api();

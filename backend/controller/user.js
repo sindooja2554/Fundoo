@@ -2,7 +2,7 @@ var userServices = require('../services/user');
 var jsonWebToken = require('../utility/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
 var urlShortner  = require('../utility/urlShortner');
-
+var logger       = require('../config/winston');
 class Controller
 {
     urlShortnerController(request,shortenerObject,callback)
@@ -30,6 +30,86 @@ class Controller
         })
     }
 
+    // createController(request , response)
+    // {
+    //     request.check('firstName','First name must be 3 character long').isLength({min:3})
+    //     request.check('firstName','First Name must be character string only').isAlpha()
+    //     request.check('lastName','Last name must be 3 character long').isLength({min:3})
+    //     request.check('lastName','Last Name must be character string only').isAlpha()
+    //     request.check('email','Email must be in email format').isEmail();
+    //     request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+    //     var errors = request.validationErrors();
+    //     var result = {};
+    //     // console.log(errors);
+    //     if(errors)
+    //     {
+    //         for(let i=0;i<errors.length;i++)
+    //         {
+    //             result.error = errors[i].msg;
+    //         }
+    //         result.success = false;
+    //         return response.status(500).send(result);
+    //     }
+    //     else
+    //     {
+    //         logger.info("this from logger",request.body);
+    //         let userData = {
+    //             'firstName': request.body.firstName,
+    //             'lastName': request.body.lastName,
+    //             'email': request.body.email,
+    //             'password': request.body.password
+    //         }
+    //         console.log("in controller");
+    //         userServices.createService(userData , (error , data)=>{
+    //             if(error)
+    //             {
+    //                 result.error   = error;
+    //                 result.message = "Some error occurred";
+    //                 result.success = false;
+    //                 return response.status(500).send(result);
+    //             }
+    //             else if(data.success !== false)
+    //             {   
+    //                 console.log("data in res from ser",data);
+    //                 console.log("data in response---",data);
+    //                 let payload = {
+    //                     '_id' : data._id
+    //                 }
+                    
+    //                 let jwtToken = jsonWebToken.generateToken(payload);
+    //                 let longURL = 'http://localhost:3001/verify/' + jwtToken;
+                    
+    //                 urlShortner.shortURL(data,longURL,(error,data)=>{
+    //                     if(error)
+    //                     {
+    //                         result.error = error;
+    //                         return response.status(501).send(result);
+    //                     }
+    //                     else
+    //                     {  
+    //                         console.log("sh--->",data);                                                     
+    //                     }
+    //                 })
+
+    //                 // mailSender.sendMail(data.email,url)
+
+    //                 result.message = "Successfully registered";
+    //                 result.success = true;
+    //                 result.data    = data;                   
+    //                 return response.status(200).send(result);
+    //             }
+    //             else
+    //             {
+    //                 console.log("data---------->",data)
+    //                 result.message = data.message;
+    //                 result.success = data.success;
+    //                 result.data    = data.data;
+    //                 return response.status(500).send(result);
+    //             }
+    //         })
+    //     }
+    // }
+
     createController(request , response)
     {
         request.check('firstName','First name must be 3 character long').isLength({min:3})
@@ -52,7 +132,7 @@ class Controller
         }
         else
         {
-            console.log(request.body);
+            logger.info("this from logger",request.body);
             let userData = {
                 'firstName': request.body.firstName,
                 'lastName': request.body.lastName,
@@ -60,55 +140,65 @@ class Controller
                 'password': request.body.password
             }
             console.log("in controller");
-            userServices.createService(userData , (error , data)=>{
-                if(error)
-                {
+            return new Promise(function(resolve,reject){
+                userServices.createService(userData).then((data)=>{
+                    // if(error)
+                    // {
+                    //     result.error   = error;
+                    //     result.message = "Some error occurred";
+                    //     result.success = false;
+                    //     return response.status(500).send(result);
+                    // }
+                    if(data.success !== false)
+                    {   
+                        console.log("data in res from ser",data);
+                        console.log("data in response---",data);
+                        let payload = {
+                            '_id' : data._id
+                        }
+                        
+                        let jwtToken = jsonWebToken.generateToken(payload);
+                        let longURL = 'http://localhost:3001/verify/' + jwtToken;
+                        
+                        urlShortner.shortURL(data,longURL,(error,data)=>{
+                            if(error)
+                            {
+                                result.error = error;
+                                return response.status(501).send(result);
+                            }
+                            else
+                            {  
+                                console.log("sh--->",data);                                                     
+                            }
+                        })
+    
+                        // mailSender.sendMail(data.email,url)
+    
+                        result.message = "Successfully registered";
+                        result.success = true;
+                        result.data    = data;                   
+                        return response.status(200).send(result);
+                    }
+                    else
+                    {
+                        console.log("data---------->",data)
+                        result.message = data.message;
+                        result.success = data.success;
+                        result.data    = data.data;
+                        return response.status(500).send(result);
+                    }
+                }).catch((error)=>{
                     result.error   = error;
                     result.message = "Some error occurred";
                     result.success = false;
                     return response.status(500).send(result);
-                }
-                else if(data.success !== false)
-                {   let self = this;
-                    console.log("data in res from ser",data);
-                    console.log("data in response---",data);
-                    let payload = {
-                        '_id' : data._id
-                    }
-                    
-                    let jwtToken = jsonWebToken.generateToken(payload);
-                    let longURL = 'http://localhost:3001/verify/' + jwtToken;
-                    
-                    urlShortner.shortURL(data,longURL,(error,data)=>{
-                        if(error)
-                        {
-                            result.error = error;
-                            return response.status(501).send(result);
-                        }
-                        else
-                        {  
-                            console.log("sh--->",data);                                                     
-                        }
-                    })
-
-                    // mailSender.sendMail(data.email,url)
-
-                    result.message = "Successfully registered";
-                    result.success = true;
-                    result.data    = data;                   
-                    return response.status(200).send(result);
-                }
-                else
-                {
-                    console.log("data---------->",data)
-                    result.message = data.message;
-                    result.success = data.success;
-                    result.data    = data.data;
-                    return response.status(500).send(result);
-                }
+                    // return response.status(500).send(error)
+                })
             })
+            
         }
     }
+
 
     readController(request,response)
     {
@@ -256,6 +346,26 @@ class Controller
                 return response.status(200).send(result);
             }
         })
+    }
+
+    async getAllUsersController(request,response)
+    {
+        var result={};
+        var data = await userServices.getAllUsers(request)
+
+            if(data)
+            {
+                result.data = data;
+                result.success = true;
+                return response.status(200).send(result)          
+            }
+            else
+            {
+                result.error   = error;
+                result.success = false;
+                return response.status(500).send(result)   
+            }
+        
     }
    
 }

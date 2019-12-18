@@ -2,49 +2,55 @@ var userModel = require('../app/model/user');
 var bcrypt    = require('../utility/bcrypt');
 class Services
 {
-    createService(request , callback)
+    createService(request)
     {
         console.log("inservices");
         var res = {};
-        userModel.findOne({ "email": request.email },(error,data)=>{
-            if(error)
-            {
-                return callback(error);
-            }
-            else if(data == null)
-            {
-                bcrypt.encryptPassword(request.password,(error,encryptedPassword)=>{
-                    if(error)
-                    {
-                        return callback(error)
-                    }
-                    else
-                    {
-                        request.password = encryptedPassword;
-                        console.log("--------->",request);
-                        userModel.create(request , (error,data)=>{
-                            if(error)
-                            {
-                                return callback(error);
-                            }
-                            else
-                            {
-                                return callback(null,data);
-                            }
-                        })
-                    }
-                })
-
-            }
-            else
-            {
-                res.message = 'Already registered';
-                res.success = false;
-                res.data    = data;
-                return callback(null,res);
-            }
+        return new Promise(function(resolve,reject)
+        {
+            userModel.findOne({ "email": request.email },(error,data)=>{
+                if(error)
+                {
+                    reject(error);
+                }
+                else if(data == null)
+                {
+                    bcrypt.encryptPassword(request.password,(error,encryptedPassword)=>{
+                        if(error)
+                        {
+                            reject(error)
+                        }
+                        else
+                        {
+                            request.password = encryptedPassword;
+                            console.log("--------->",request);
+                            userModel.create(request)
+                            .then((data)=>{
+                                // if(error)
+                                // {
+                                //     reject(error);
+                                // }
+                                // else
+                                // {
+                                    resolve(data);
+                                
+                            })
+                            .catch(err=>{
+                                reject(err);
+                            })
+                        }
+                    })
+    
+                }
+                else
+                {
+                    res.message = 'Already registered';
+                    res.success = false;
+                    res.data    = data;
+                    resolve(res);
+                }
+            })
         })
-
     }
 
     readService(request,callback)
@@ -209,6 +215,13 @@ class Services
         
             }
         })
+    }
+
+    async getAllUsers(request)
+    {
+        var data = await userModel.findAll({}) 
+        console.log(data);
+        return data;      
     }
 }
 
