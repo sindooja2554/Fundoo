@@ -69,12 +69,12 @@ class Services
                 res.data    = data;
                 return callback(null,res);
             }
-            else{
-                if(data.isVerified === true)
+            else if(data.isVerified === true)
                 { 
                     console.log("calling utility###>",data);
                     console.log("req",request.password);               
                     bcrypt.comparePassword(request.password,data.password,(error,success)=>{
+                        console.log("success in password comparsion=",success)
                         if(error)
                         {
                             return callback(error);
@@ -101,8 +101,8 @@ class Services
                     res.data    = data;
                     return callback(null,res);
                 }
-            }
-        })
+            })
+        
     }
 
     isVerifiedService(request,callback)
@@ -202,11 +202,12 @@ class Services
                         userModel.updateOne({"_id":data.id},{"password":encryptPassword},(error,data)=>{
                             if(error)
                             {
+                                console.log("inserr",error)
                                 return callback(error)
                             }
                             else
                             {
-                                return callback(data);
+                                return callback(null,data);
                             }
                         })
                     }
@@ -217,12 +218,12 @@ class Services
         })
     }
 
-    async getAllUsers(request)
-    {
-        var data = await userModel.findAll({}) 
-        console.log(data);
-        return data;      
-    }
+    // async findAllService(request)
+    // {
+    //     var data = await userModel.findAll({}) 
+    //     console.log(data);
+    //     return data;      
+    // }
 }
 
 module.exports = new Services();

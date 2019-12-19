@@ -112,8 +112,10 @@ class Controller
 
     createController(request , response)
     {
+        
         request.check('firstName','First name must be 3 character long').isLength({min:3})
         request.check('firstName','First Name must be character string only').isAlpha()
+        // request.check('lastName','Last name cannot be empty').isEmpty()
         request.check('lastName','Last name must be 3 character long').isLength({min:3})
         request.check('lastName','Last Name must be character string only').isAlpha()
         request.check('email','Email must be in email format').isEmail();
@@ -123,12 +125,10 @@ class Controller
         // console.log(errors);
         if(errors)
         {
-            for(let i=0;i<errors.length;i++)
-            {
-                result.error = errors[i].msg;
-            }
+
+            result.error = errors;           
             result.success = false;
-            return response.status(500).send(result);
+            return response.status(400).send(result);
         }
         else
         {
@@ -212,7 +212,7 @@ class Controller
         {
             result.error = errors[0].msg;
             result.success = false;
-            return response.status(500).send(result);
+            return response.status(400).send(result);
         }
         else
         {
@@ -276,31 +276,36 @@ class Controller
         })
     }
 
-    forgetPasswordController(request,response)
-    {
-        request.check('email','Email must be in email format').isEmail();
-
-        console.log("forgot")
+    forgetPasswordController(request, response) {
+        request.check('email', 'Email must be in email format').isEmail();
+        var errors = request.validationErrors();
         var result = {};
-        let forgotPassword = {
-            "email" : request.body.email
+
+        if (errors) {
+            result.error = errors[0].msg;
+            result.success = false;
+            return response.status(400).send(result);
         }
-        userServices.forgetPassword(forgotPassword,(error,data)=>{
-            if(error)
-            {
-                result.error = error;
-                result.succes = false;
-                return response.status(500).send(result);
+        else {
+            console.log("forgot")
+            var result = {};
+            let forgotPassword = {
+                "email": request.body.email
             }
-            else
-            {
-                let payload ={
-                    '_id':data._id
+            userServices.forgetPassword(forgotPassword, (error, data) => {
+                if (error) {
+                    result.error = error;
+                    result.succes = false;
+                    return response.status(500).send(result);
                 }
-                console.log("dtttt===",data);
-                let jwtToken = jsonWebToken.generateToken(payload)
-                let url = 'http://localhost:3001/resetpassword/' + jwtToken;
-                    mailSender.sendMail(data.email,url);
+                else {
+                    let payload = {
+                        '_id': data._id
+                    }
+                    console.log("dtttt===", data);
+                    let jwtToken = jsonWebToken.generateToken(payload)
+                    let url = 'http://localhost:3001/resetpassword/' + jwtToken;
+                    mailSender.sendMail(data.email, url);
                     // urlShortner.shortURL(data,longURL,(error,data)=>{
                     //     if(error)
                     //     {
@@ -311,62 +316,68 @@ class Controller
                     //     {  
                     //         console.log("sh--->",data);                                                     
                     //     }
-                // })
+                    // })
 
-                result.message = "Mailsent";
-                result.success  = true;
-                return response.status(200).send(result);
-            }
-        })
-    }
-
-    resetPasswordController(request,response)
-    {
-        request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
-
-        // console.log("aaaaaaaaaaaaaaaaaaaaa==>",request)
-        var result = {};
-        let resetPassword = {
-            "password" : request.body.password,
-            "id"       : request.body.data._id
+                    result.message = "Mailsent";
+                    result.success = true;
+                    return response.status(200).send(result);
+                }
+            })
         }
-        userServices.resetPassswordService(resetPassword,(error,data)=>{
-            if(error)
-            {
-                result.error   = error;
-                result.success = false;
-
-                return response.status(500).send(result);
-            }
-            else
-            {
-                result.data = data;
-                result.success = true;
-
-                return response.status(200).send(result);
-            }
-        })
     }
 
-    async getAllUsersController(request,response)
-    {
-        var result={};
-        var data = await userServices.getAllUsers(request)
+    resetPasswordController(request, response) {
+        request.check('password', 'Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+        var errors = request.validationErrors();
+        var result = {};
 
-            if(data)
-            {
-                result.data = data;
-                result.success = true;
-                return response.status(200).send(result)          
+        if (errors) {
+            result.error = errors[0].msg;
+            result.success = false;
+            return response.status(400).send(result);
+        }
+        else {
+            // console.log("aaaaaaaaaaaaaaaaaaaaa==>",request)
+            var result = {};
+            let resetPassword = {
+                "password": request.body.password,
+                "id": request.body.data._id
             }
-            else
-            {
-                result.error   = error;
-                result.success = false;
-                return response.status(500).send(result)   
-            }
-        
+            userServices.resetPassswordService(resetPassword, (error, data) => {
+                if (error) {
+                    console.log("errrrrr", error)
+                    result.error = error;
+                    result.message = error;
+                    result.success = false;
+
+                    return response.status(500).send(result);
+                }
+                else {
+                    console.log("aaa", data)
+                    result.data = data;
+                    result.success = true;
+
+                    return response.status(200).send(result);
+                }
+            })
+        }
     }
+    // async findAllController(request, response) 
+    // {
+    //     var result = {};
+    //     var data = await userServices.findAllService(request)
+
+    //     if (data) {
+    //         result.data = data;
+    //         result.success = true;
+    //         return response.status(200).send(result)
+    //     }
+    //     else {
+    //         result.error = error;
+    //         result.success = false;
+    //         return response.status(500).send(result)
+    //     } 
+    // }
    
 }
 

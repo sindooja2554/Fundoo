@@ -71,11 +71,11 @@ class Api
     updateOne(request,dataToUpdate,callback)
     {
         console.log("in updateone");
-        User.findOneAndUpdate(request,dataToUpdate,(error,data)=>{
+         User.findOneAndUpdate(request,dataToUpdate,(error,data)=>{
             if(error)
             {
-                console.log(error);
-                return callback('error while updating');
+                console.log("model",error);
+                return callback(error);
             }
             else
             {
@@ -105,15 +105,12 @@ class Api
         })
     }
 
-    findAll(request)
-    {
-
-        var data = User.find({});
-        console.log('ttt');
-        
-        return data;
-      
-    }
+    // findAll(request)
+    // {
+    //     var data = User.find({});
+    //     console.log('ttt');
+    //     return data;
+    // }
 }
 
 module.exports = new Api();

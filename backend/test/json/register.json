@@ -1,0 +1,105 @@
+{
+    "register":[
+    {
+        "firstName": "Sandy123",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sa",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy@",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Ga12",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "G",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam@",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandy@",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandygma.vm",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs123456"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "G1234567"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "12345678"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : ""
+    },
+    {
+        "firstName": "",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "sandy@gmail.com",
+        "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "Aandy@gmail.com",
+        "password" : "Gs@12345"
+    }]
+}

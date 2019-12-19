@@ -6,9 +6,9 @@ class Database{
 
     constructor(){
         this.mongoose = mongoose;
-        this.host     = process.env.host;
-        this.port     = process.env.port;
-        this.url      = process.env.url;
+        this.host     = process.env.HOST;
+        this.port     = process.env.DB_PORT;
+        this.url      = process.env.URL;
     }
 
     connect(){

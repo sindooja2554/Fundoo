@@ -3,16 +3,19 @@ require('dotenv').config();
 module.exports={
     sendMail(email,url)
     {
+        console.log(process.env.EMAIL);
+        console.log(process.env.PASSWORD);
+        
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                   user: process.env.email,
-                   pass: process.env.password
+                   user: process.env.EMAIL,
+                   pass: process.env.PASSWORD
                }
         });
         
         const mailOptions = {
-            from: process.env.email,  // sender address
+            from: process.env.EMAIL,  // sender address
             to: email,  // list of receivers
             subject: 'link sent from nodemailer',  // Subject line
             text: 'click on the link '+url   
@@ -20,9 +23,14 @@ module.exports={
         
         transporter.sendMail(mailOptions, function (err, info) {
             if(err)
-              console.log(err)
-            else
-              console.log(info);
+            {
+                console.log(err);
+                return err
+            }
+            else{
+                console.log(info);
+                return info
+            }
          });
     }
 

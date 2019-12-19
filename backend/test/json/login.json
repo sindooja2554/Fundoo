@@ -1,0 +1,44 @@
+{
+    "login":[
+        {
+            "email"    : "sandy@",
+            "password" : "Gs@12345"
+        },
+        {
+            "email"    : "",
+            "password" : "Gs@12345"
+        },
+        {
+            "email"    : "sandy.gmail.com",
+            "password" : "Gs@12345"
+        },
+        {
+            "email"    : "sandy@gmail.",
+            "password" : "Gs@12345"
+        },
+        {
+            "email"    : "sandy@gmail.com",
+            "password" : "Gs123457"
+        },
+        {
+            "email"    : "sandy@gmail.com",
+            "password" : "12345678"
+        },
+        {
+            "email"    : "sandy@gmail.com",
+            "password" : "G@345678"
+        },
+        {
+            "email"    : "sandy@gmail.com",
+            "password" : "Gs@12345"
+        },
+        {
+            "email"    : "sandy@gmail.com",
+            "password" : "Gs@123456788"
+        },
+        {
+            "email"    : "chitra@gmail.com",
+            "password" : "Gs@12345"
+        }
+    ]
+}

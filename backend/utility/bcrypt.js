@@ -22,6 +22,8 @@ module.exports = {
             }
             else
             {
+                var result = {};
+                result.success = false;
                 console.log("from utility",data)
                 return callback(null,data);
             }

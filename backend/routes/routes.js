@@ -13,6 +13,6 @@ routes.post('/forgotpassword',userController.forgetPasswordController);
 
 routes.post('/resetpassword',jwt.forgotToken,userController.resetPasswordController);
 
-routes.get('/getAllUsers',userController.getAllUsersController);
+// routes.get('/findAll',userController.findAllController);
 
 module.exports = routes;
