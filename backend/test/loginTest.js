@@ -6,7 +6,7 @@ let server      = require('../server');
 let should      = chai.should();
 var assert      = require('chai').assert;
 var loginObject = require('./json/login');
-console.log(loginObject);
+// console.log(loginObject);
 chai.use(chaiHttp);
 
 describe('/POST login', () => {
@@ -18,6 +18,7 @@ describe('/POST login', () => {
           .end((err, res) => {
                 res.should.have.status(400);
                 res.body.should.be.a('Object');
+                res.body.should.have.property('success').eql(false)
             done();
           });
     });
@@ -118,15 +119,31 @@ describe('/POST login', () => {
             });
     });
 
-    // it('Successful Login', (done) => {
-    //     chai.request(server)
-    //         .post('/login')
-    //         .send(loginObject.login[9])
-    //         .end((err, res) => {
-    //               console.log("res.body: ", res.body.message);
-    //                   let result = res.body.message;
-    //                   assert.equal(result,'Password did not match');
-    //           done();
-    //         });
-    // });
+    it('Successful Login', (done) => {
+        chai.request(server)
+            .post('/login')
+            .send(loginObject.login[9])
+            .end((err, res) => {
+                  console.log("res.body: ", res.body);
+                      let result = res.body.message;
+                      assert.equal(result,'Login successful');
+                      res.body.should.have.property('token');
+                      res.body.data.data.should.have.property('email');
+                      res.body.data.data.should.have.property('password');
+                      res.body.should.have.property('success').eql(true)
+              done();
+            });
+    });
+
+    it('it should not POST(login) a user without details', (done) => {
+       
+        chai.request(server)
+            .post('/login')
+            .send(loginObject.login[9])
+            .end((err, res) => {
+                  res.should.have.status(200);
+                  res.body.should.be.a('Object');
+              done();
+            });
+      });
 })

@@ -1,7 +1,7 @@
+
 const urlShortner = require('shortid');
 var mailSender = require('./nodeMailer');
-// var model      = require('../app/model/model');
-var service = require('../services/user');
+var controller = require('../controller/user');
 module.exports = {
     shortURL(data,longURL,callback)
     {
@@ -16,7 +16,7 @@ module.exports = {
                 'urlCode' : urlCode
             }
             mailSender.sendMail(data.email,shortUrl);
-            service.urlShorteningServices(data,urlShortenerObject,callback)
+            controller.urlShortnerController(data,urlShortenerObject,callback)
     
         }
         catch(error)

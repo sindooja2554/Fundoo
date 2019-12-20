@@ -1,6 +1,13 @@
+/**
+ * @description To establish mongodb connection
+ * @file        database.config.js
+ * @author      Sindooja Gajam
+ * @version 
+ * @since       12 December 2019     
+ */
 const mongoose = require('mongoose');
 require('dotenv').config();
-var logger =require('./winston') // logs to STDOUT
+var logger =require('./winston')
 
 class Database{
 

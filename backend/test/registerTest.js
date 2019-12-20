@@ -6,7 +6,7 @@ let server   = require('../server');
 let should   = chai.should();
 var assert = require('chai').assert;
 var registrationObject = require('./json/register');
-console.log(registrationObject.register[1])
+// console.log(registrationObject.register[1])
 chai.use(chaiHttp);
 
 /*
@@ -231,17 +231,17 @@ describe('/POST registration', () => {
     //         });
     // });
 
-    // it('Registration successfull', (done) => {
-    //     chai.request(server)
-    //         .post('/register')
-    //         .send(registrationObject.register[16])
-    //         .end((err, res) => {
-    //             console.log("json==",registrationObject.register[16]);
+    it('Registration successfull', (done) => {
+        chai.request(server)
+            .post('/register')
+            .send(registrationObject.register[17])
+            .end((err, res) => {
+                console.log("json==",registrationObject.register[16]);
                 
-    //               console.log("res.body: ", res.body.message);
-    //                   let result = res.body.message;
-    //                   assert.equal(result,'Successfully registered');
-    //           done();
-    //         });
-    // });
+                  console.log("res.body: ", res.body.message);
+                      let result = res.body.message;
+                      assert.equal(result,'Successfully registered');
+              done();
+            });
+    });
 });

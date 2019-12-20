@@ -101,5 +101,11 @@
         "lastName" : "Gajam",
         "email"    : "Aandy@gmail.com",
         "password" : "Gs@12345"
+    },
+    {
+        "firstName": "Sandy",
+        "lastName" : "Gajam",
+        "email"    : "maaandy@gmail.com",
+        "password" : "Gs@12345"
     }]
 }
