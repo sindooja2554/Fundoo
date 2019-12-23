@@ -29,15 +29,15 @@ routes.post('/resetpassword',jwt.verifyToken,userController.resetPasswordControl
 // routes.get('/findAll',userController.findAllController);
 
 routes.get('/verify/:url',(request,response)=>{
-    console.log("routes",request.params.url);
+    // console.log("routes",request.params.url);
     user.findOne({"urlCode":request.params.url},(error,data)=>{
         if(error)
         {
             return response.status(404).send('Url not found');
         }
-        else 
+        else
         {
-            console.log("data from routes",data.longUrl);
+            console.log("data from routes",data);
             response.redirect(data.longUrl);
         }
     })

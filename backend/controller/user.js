@@ -95,7 +95,7 @@ class Controller
                         }
                         
                         let jwtToken = jsonWebToken.generateToken(payload);
-                        let longURL = 'http://localhost:3001/verify/' + jwtToken;
+                        let longURL = 'http://localhost:3001/verifyUser/' + jwtToken;
                         
                         urlShortner.shortURL(data,longURL,(error,data)=>{
                             if(error)
@@ -254,7 +254,7 @@ class Controller
                 }
                 else {
                     let payload = {
-                        '_id': data._id
+                        '_id': data.id
                     }
                     console.log("dtttt===", data);
                     let jwtToken = jsonWebToken.generateToken(payload)

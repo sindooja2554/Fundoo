@@ -74,11 +74,11 @@ class Api
                 console.log(error)
                 return callback('Error while finding user');
             }
-            else if(data === null)
-            {
-                console.log(data);
-                return callback(null,data);
-            }
+            // else if(data === null)
+            // {
+            //     console.log(data);
+            //     return callback(null,data);
+            // }
             else
             {
                 console.log("***>",data);
