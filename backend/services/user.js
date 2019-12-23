@@ -1,7 +1,20 @@
+/**
+ * @description This file contains service class.
+ * @file        services.user.js
+ * @overview    The service class gives call to API class according to the request.
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0 
+ * @since       16 December 2019            
+ */
 var userModel = require('../app/model/user');
 var bcrypt    = require('../utility/bcrypt');
 class Services
 {
+    /**
+     * @description This function is called to register the user.
+     * @function    createService
+     * @param {}    request 
+     */
     createService(request)
     {
         console.log("inservices");
@@ -26,12 +39,6 @@ class Services
                             console.log("--------->",request);
                             userModel.create(request)
                             .then((data)=>{
-                                // if(error)
-                                // {
-                                //     reject(error);
-                                // }
-                                // else
-                                // {
                                     resolve(data);
                                 
                             })
@@ -40,7 +47,6 @@ class Services
                             })
                         }
                     })
-    
                 }
                 else
                 {
@@ -53,6 +59,12 @@ class Services
         })
     }
 
+    /**
+     * @description This function is called when the user want to login.\
+     * @function    readService
+     * @param {*}   request 
+     * @param {*}   callback 
+     */ 
     readService(request,callback)
     {
         console.log("req in login",request);
@@ -105,6 +117,12 @@ class Services
         
     }
 
+    /**
+     * @description This function is called when the user click on to the link sent to the email.
+     * @function    isVerifiedService
+     * @param {*}   request 
+     * @param {*}   callback 
+     */
     isVerifiedService(request,callback)
     {
         console.log("verifyS");
@@ -118,18 +136,16 @@ class Services
                 return callback(null,success);
             }
         })
-        // userModel.isVerified(request,(error,data)=>{
-        //     if(error)
-        //     {
-        //         return callback(error);
-        //     }
-        //     else
-        //     {
-        //         return callback(null,data)
-        //     }
-        // })
     }
 
+    /**
+     * @description This function is called to update the long url short url and urlcode fields 
+     *              in the user's database.
+     * @function    urlShorteningServices
+     * @param {*}   request 
+     * @param {*}   shortnerObject 
+     * @param {*}   callback 
+     */
     urlShorteningServices(request,shortnerObject,callback)
     {
         console.log("request",request);
@@ -160,6 +176,12 @@ class Services
         })   
     }
 
+    /**
+     * @description This function is called when the user forget's the password.
+     * @function    forgetPassword
+     * @param {*}   request 
+     * @param {*}   callback 
+     */
     forgetPassword(request,callback)
     {
         console.log("pass")
@@ -177,6 +199,12 @@ class Services
         })
     }
 
+    /**
+     * @description This function is called when user want to reset the password.
+     * @function    resetPassswordService
+     * @param {*}   request 
+     * @param {*}   callback 
+     */
     resetPassswordService(request,callback)
     {
         userModel.findOne({"_id":request.id},(error,data)=>{

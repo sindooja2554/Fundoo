@@ -1,6 +1,23 @@
+/**
+ * @description This file contains function to send mail to the registered user's email id.
+ * @file        utility.nodeMailer.js
+ * @since       18 December 2019
+ * @author      Sindooja Gajam
+ */
+
+/**
+ * @const       nodemailer Nodemailer constant having the `nodemailer` module
+ */
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+
 module.exports={
+    /**
+     * @description This function sends the mail to the user's email id.
+     * @function    sendMail
+     * @param {*}   email 
+     * @param {*}   url 
+     */
     sendMail(email,url)
     {
         console.log(process.env.EMAIL);

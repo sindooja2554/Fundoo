@@ -1,3 +1,12 @@
+/**
+ * @description API controller Class 
+ * @file        controller.user.js
+ * @overview    API controller class controls all the API's gives call to 
+ *              service functions of the API's
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0 
+ * @since       16 December 2019     
+ */
 var userServices = require('../services/user');
 var jsonWebToken = require('../utility/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
@@ -5,6 +14,14 @@ var urlShortner  = require('../utility/urlShortner');
 var logger       = require('../config/winston');
 class Controller
 {
+    /**
+     * @description This controller gives call to the service function to
+     *              save the object to the database.
+     * @function    urlShortnerController
+     * @param {*}   request 
+     * @param {*}   shortenerObject 
+     * @param {*}   callback 
+     */
     urlShortnerController(request,shortenerObject,callback)
     {
         var res = {};
@@ -30,86 +47,13 @@ class Controller
         })
     }
 
-    // createController(request , response)
-    // {
-    //     request.check('firstName','First name must be 3 character long').isLength({min:3})
-    //     request.check('firstName','First Name must be character string only').isAlpha()
-    //     request.check('lastName','Last name must be 3 character long').isLength({min:3})
-    //     request.check('lastName','Last Name must be character string only').isAlpha()
-    //     request.check('email','Email must be in email format').isEmail();
-    //     request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
-    //     var errors = request.validationErrors();
-    //     var result = {};
-    //     // console.log(errors);
-    //     if(errors)
-    //     {
-    //         for(let i=0;i<errors.length;i++)
-    //         {
-    //             result.error = errors[i].msg;
-    //         }
-    //         result.success = false;
-    //         return response.status(500).send(result);
-    //     }
-    //     else
-    //     {
-    //         logger.info("this from logger",request.body);
-    //         let userData = {
-    //             'firstName': request.body.firstName,
-    //             'lastName': request.body.lastName,
-    //             'email': request.body.email,
-    //             'password': request.body.password
-    //         }
-    //         console.log("in controller");
-    //         userServices.createService(userData , (error , data)=>{
-    //             if(error)
-    //             {
-    //                 result.error   = error;
-    //                 result.message = "Some error occurred";
-    //                 result.success = false;
-    //                 return response.status(500).send(result);
-    //             }
-    //             else if(data.success !== false)
-    //             {   
-    //                 console.log("data in res from ser",data);
-    //                 console.log("data in response---",data);
-    //                 let payload = {
-    //                     '_id' : data._id
-    //                 }
-                    
-    //                 let jwtToken = jsonWebToken.generateToken(payload);
-    //                 let longURL = 'http://localhost:3001/verify/' + jwtToken;
-                    
-    //                 urlShortner.shortURL(data,longURL,(error,data)=>{
-    //                     if(error)
-    //                     {
-    //                         result.error = error;
-    //                         return response.status(501).send(result);
-    //                     }
-    //                     else
-    //                     {  
-    //                         console.log("sh--->",data);                                                     
-    //                     }
-    //                 })
-
-    //                 // mailSender.sendMail(data.email,url)
-
-    //                 result.message = "Successfully registered";
-    //                 result.success = true;
-    //                 result.data    = data;                   
-    //                 return response.status(200).send(result);
-    //             }
-    //             else
-    //             {
-    //                 console.log("data---------->",data)
-    //                 result.message = data.message;
-    //                 result.success = data.success;
-    //                 result.data    = data.data;
-    //                 return response.status(500).send(result);
-    //             }
-    //         })
-    //     }
-    // }
-
+    /**
+     * @description This function is called to register the user (i.e. to save the user
+     *              info to the database) by calling the service function
+     * @function    createController
+     * @param {*}   request 
+     * @param {*}   response 
+     */
     createController(request , response)
     {
         
@@ -142,13 +86,6 @@ class Controller
             console.log("in controller");
             return new Promise(function(resolve,reject){
                 userServices.createService(userData).then((data)=>{
-                    // if(error)
-                    // {
-                    //     result.error   = error;
-                    //     result.message = "Some error occurred";
-                    //     result.success = false;
-                    //     return response.status(500).send(result);
-                    // }
                     if(data.success !== false)
                     {   
                         console.log("data in res from ser",data);
@@ -172,8 +109,6 @@ class Controller
                             }
                         })
     
-                        // mailSender.sendMail(data.email,url)
-    
                         result.message = "Successfully registered";
                         result.success = true;
                         result.data    = data;                   
@@ -192,14 +127,19 @@ class Controller
                     result.message = "Some error occurred";
                     result.success = false;
                     return response.status(500).send(result);
-                    // return response.status(500).send(error)
                 })
             })
             
         }
     }
 
-
+    /**
+     * @description This function is called when user wants to login, this function further 
+     *              gives the call to service function
+     * @function    readController
+     * @param {*}   request 
+     * @param {*}   response 
+     */
     readController(request,response)
     {
         request.check('email','Email must be in email format').isEmail();
@@ -255,6 +195,14 @@ class Controller
         }
     }
 
+    /**
+     * @description This controller function is called when the registered user click on to 
+     *              the link sent to email, then the further call is given to the service 
+     *              function.
+     * @function    isVerifiedController
+     * @param {*}   request 
+     * @param {*}   response 
+     */
     isVerifiedController(request,response)
     {
         console.log("verifyC");
@@ -275,7 +223,13 @@ class Controller
             }
         })
     }
-
+    
+    /**
+     * @description This controller is called when the user click on to the forget password.      
+     * @function    forgetPasswordController
+     * @param {*}   request 
+     * @param {*}   response 
+     */
     forgetPasswordController(request, response) {
         request.check('email', 'Email must be in email format').isEmail();
         var errors = request.validationErrors();
@@ -306,17 +260,6 @@ class Controller
                     let jwtToken = jsonWebToken.generateToken(payload)
                     let url = 'http://localhost:3001/resetpassword/' + jwtToken;
                     mailSender.sendMail(data.email, url);
-                    // urlShortner.shortURL(data,longURL,(error,data)=>{
-                    //     if(error)
-                    //     {
-                    //         result.error = error;
-                    //         return response.status(500).send(result);
-                    //     }
-                    //     else
-                    //     {  
-                    //         console.log("sh--->",data);                                                     
-                    //     }
-                    // })
 
                     result.message = "Mailsent";
                     result.success = true;
@@ -326,6 +269,12 @@ class Controller
         }
     }
 
+    /**
+     * @description This function is called when the user wants to reset the password.
+     * @function    resetPasswordController
+     * @param {*}   request 
+     * @param {*}   response 
+     */
     resetPasswordController(request, response) {
         request.check('password', 'Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
         var errors = request.validationErrors();
@@ -337,7 +286,6 @@ class Controller
             return response.status(400).send(result);
         }
         else {
-            // console.log("aaaaaaaaaaaaaaaaaaaaa==>",request)
             var result = {};
             let resetPassword = {
                 "password": request.body.password,

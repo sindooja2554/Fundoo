@@ -1,14 +1,26 @@
+/**
+ * @description This file specific the controller function for the routes
+ * @file        routes.routes.js
+ * @overview    According to the http methods the routes/express-router specific 
+ *              the controller function or the next destination for the specified 
+ *              route.
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0 
+ * @since       17 December 2019     
+ */
+
+/**
+ * @const      routes Routes constant having the `express.Router` module
+ */
 var userController =  require('../controller/user');
 var express = require('express');
-var routes = express.Router();
+const routes = express.Router();
 var jwt = require('../utility/jwtToken');
 var user = require('../app/model/user')
 
 routes.post('/register', userController.createController);
 
 routes.post('/login',userController.readController);
-
-// routes.post('/verify/:url',jwt.verifyToken,userController.isVerifiedController);
 
 routes.post('/forgotpassword',userController.forgetPasswordController);
 

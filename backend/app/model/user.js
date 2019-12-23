@@ -1,5 +1,18 @@
-const mongoose = require('mongoose');
+/**
+ * @description This file contains API class.
+ * @file        app.model.user.js
+ * @overview    The API function take in request and perform the operation and sends back
+ *              response to the service file
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0 
+ * @since       16 December 2019            
+ */
 
+/**
+ * @const       mongoose Mongoose constant having the `mongoose` module
+ */
+
+const mongoose = require('mongoose');
 const UserSchema = mongoose.Schema({
     firstName: {
         type: String,
@@ -42,9 +55,15 @@ const UserSchema = mongoose.Schema({
 
 var User = mongoose.model('User', UserSchema);
 
-
 class Api
 {
+    /**
+     * @description This function takes in request and using mongoose query sends back
+     *              the response.
+     * @function    findOne
+     * @param {*}   request 
+     * @param {*}   callback 
+     */
     findOne(request,callback)
     {
         console.log("sdbhsbin find one");
@@ -68,6 +87,13 @@ class Api
         })
     }
 
+    /**
+     * @description This function takes in request and using mongoose query update the
+     *              fields in the database
+     * @param {*}   request 
+     * @param {*}   dataToUpdate 
+     * @param {*}   callback 
+     */
     updateOne(request,dataToUpdate,callback)
     {
         console.log("in updateone");
@@ -85,6 +111,11 @@ class Api
         })
     }
 
+    /**
+     * @description This function takes in request as a parameter and save the object 
+     *              in the database.
+     * @param {*} request 
+     */
     create(request) 
     {
         console.log("in model");

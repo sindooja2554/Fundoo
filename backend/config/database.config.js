@@ -1,9 +1,13 @@
 /**
  * @description To establish mongodb connection
  * @file        database.config.js
+ * @overview    Establishing connection with mongoose  
  * @author      Sindooja Gajam
- * @version 
+ * @version     mongoose "^5.8.1" 
  * @since       12 December 2019     
+ */
+/**
+ * @const       mongoose Mongoose constant having the `mongoose` module
  */
 const mongoose = require('mongoose');
 require('dotenv').config();
