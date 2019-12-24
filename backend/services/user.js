@@ -60,12 +60,12 @@ class Services
     }
 
     /**
-     * @description This function is called when the user want to login.\
-     * @function    readService
+     * @description This function is called whenrequest the user want to login.\
+     * @function    readServicerequest
      * @param {*}   request 
      * @param {*}   callback 
      */ 
-    readService(request,callback)
+    loginService(request,callback)
     {
         console.log("req in login",request);
         var res={};

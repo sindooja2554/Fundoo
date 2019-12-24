@@ -20,7 +20,7 @@ var user = require('../app/model/user')
 
 routes.post('/register', userController.createController);
 
-routes.post('/login',userController.readController);
+routes.post('/login',userController.loginController);
 
 routes.post('/forgotpassword',userController.forgetPasswordController);
 

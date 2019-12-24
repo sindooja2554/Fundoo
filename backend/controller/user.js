@@ -140,7 +140,7 @@ class Controller
      * @param {*}   request 
      * @param {*}   response 
      */
-    readController(request,response)
+    loginController(request,response)
     {
         request.check('email','Email must be in email format').isEmail();
         request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
@@ -161,7 +161,7 @@ class Controller
                 'password': request.body.password
             }
 
-            userServices.readService(readData,(error,data)=>{
+            userServices.loginService(readData,(error,data)=>{
                 console.log("ctrl==>",data);
                 if(error)
                 {

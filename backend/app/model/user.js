@@ -74,11 +74,11 @@ class Api
                 console.log(error)
                 return callback('Error while finding user');
             }
-            // else if(data === null)
-            // {
-            //     console.log(data);
-            //     return callback(null,data);
-            // }
+            else if(data === null)
+            {
+                console.log(data);
+                return callback(null,data);
+            }
             else
             {
                 console.log("***>",data);
@@ -97,7 +97,7 @@ class Api
     updateOne(request,dataToUpdate,callback)
     {
         console.log("in updateone");
-         User.findOneAndUpdate(request,dataToUpdate,(error,data)=>{
+         User.findOneAndUpdate(request,dataToUpdate,{"new":true},(error,data)=>{
             if(error)
             {
                 console.log("model",error);

@@ -26,12 +26,13 @@ app.get('/', (req, res) => {
     res.json({"message": "Welcome to EasyNotes application."});
 });
 
-mongoose.connect();
+
 
 // console.log(connection);
 var port = process.env.PORT;
 
-app.listen(3001, () => {
+app.listen(port || 3000, () => {
+    mongoose.connect();
     console.log(`Server is listening on port ${port}`);
 });
 
