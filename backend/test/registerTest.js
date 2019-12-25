@@ -244,4 +244,18 @@ describe('/POST registration', () => {
               done();
             });
     });
+
+    it('Null request', (done) => {
+        chai.request(server)
+            .post('/register')
+            .send(registrationObject.register[18])
+            .end((err, res) => {
+                console.log("json==",registrationObject.register[18]);
+                
+                  console.log("res.body: ", res.body.error);
+                      let result = res.body.error;
+                      assert.equal(result,'Request body cannot be null');
+              done();
+            });
+    });
 });

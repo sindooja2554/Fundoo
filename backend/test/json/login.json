@@ -38,7 +38,11 @@
         },
         {
             "email"    : "sindoojagajam@gmail.com",
-            "password" : "Sindhu@123"
+            "password" : "Gs@12345"
+        },
+        {
+            "email"    : null,
+            "password" : null
         }
     ]
 }

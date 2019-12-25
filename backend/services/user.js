@@ -126,15 +126,13 @@ class Services
     isVerifiedService(request,callback)
     {
         console.log("verifyS");
-        userModel.updateOne({"_id":request.body.data._id},{"isVerified": true},(error,success)=>{
-            if(error)
-            {
-                return callback(error);
-            }
-            else
-            {
-                return callback(null,success);
-            }
+        return new Promise(function(resolve,reject){
+            userModel.updateOne({"_id":request.body.data._id},{"isVerified": true}).then(data=>{
+                resolve(data)
+            })
+            .catch(error=>{
+                reject(error)
+            })
         })
     }
 
@@ -146,35 +144,33 @@ class Services
      * @param {*}   shortnerObject 
      * @param {*}   callback 
      */
-    urlShorteningServices(request,shortnerObject,callback)
-    {
-        console.log("request",request);
-        console.log("short",shortnerObject);
+    urlShorteningServices(request, shortnerObject) {
+        console.log("request", request);
+        console.log("short", shortnerObject);
         console.log("in url shortener");
-        userModel.findOne({"email":request.email},(error,data)=>{
-            if(error)
-            {
-                return callback(error)
-            }
-            else if(data == null)
-            {
-                return callback(error)
-            }
-            else
-            {
-                userModel.updateOne({"_id":request.id},{"longUrl":shortnerObject.longUrl,"shortUrl":shortnerObject.shortUrl,"urlCode":shortnerObject.urlCode},(error,data)=>{
-                    if(error)
-                    {
-                        return callback(error);
-                    }
-                    else
-                    {
-                        return callback(null,data);
-                    }
-                })
-            }
-        })   
+        return new Promise(function (resolve, reject) {
+            userModel.findOne({ "email": request.email }, (error, data) => {
+                if (error) {
+                    reject(error)
+                }
+                else if (data == null) {
+                    reject(error)
+                }
+                else {
+
+                    userModel.updateOne({ "_id": request.id }, { "longUrl": shortnerObject.longUrl, "shortUrl": shortnerObject.shortUrl, "urlCode": shortnerObject.urlCode }).then(data => {
+                        console.log("in ser", data)
+                        resolve(data)
+                    })
+                        .catch(error => {
+                            reject(error)
+                        })
+                }
+            })
+        })
     }
+      
+    
 
     /**
      * @description This function is called when the user forget's the password.
@@ -207,43 +203,54 @@ class Services
      */
     resetPassswordService(request,callback)
     {
-        userModel.findOne({"_id":request.id},(error,data)=>{
-            if(error)
-            {
-                return callback(error)
-            }
-            else if(data === null){
-                return callback(error);
-            }
-            else
-            {
-                console.log("::::::>",data);
-                bcrypt.encryptPassword(request.password,(error,encryptedData)=>{
-                    if(error)
-                    {
-                        return callback(error)
-                    }
-                    else
-                    {
-                        console.log("(((((>",encryptedData)
-                        let encryptPassword = encryptedData;
-                        userModel.updateOne({"_id":data.id},{"password":encryptPassword},(error,data)=>{
-                            if(error)
-                            {
+        return new Promise(function(resolve,reject){
+            userModel.findOne({"_id":request.id},(error,data)=>{
+                if(error)
+                {
+                    reject(error)
+                }
+                else if(data === null){
+                    reject(error);
+                }
+                else
+                {
+                    console.log("::::::>",data);
+                    bcrypt.encryptPassword(request.password,(error,encryptedData)=>{
+                        if(error)
+                        {
+                            reject(error)
+                        }
+                        else
+                        {
+                            console.log("(((((>",encryptedData)
+                            let encryptPassword = encryptedData;
+                            userModel.updateOne({"_id":data.id},{"password":encryptPassword}).then(data=>{
+                                console.log("inserr",data)
+                                resolve(data);
+                            })
+                            .catch(error=>{
                                 console.log("inserr",error)
-                                return callback(error)
-                            }
-                            else
-                            {
-                                return callback(null,data);
-                            }
-                        })
-                    }
-        
-                })
-        
-            }
+                                reject(error)
+                            })
+
+                            // ,(error,data)=>{
+                            //     if(error)
+                            //     {
+                               
+                            //     }
+                            //     else
+                            //     {
+                                    
+                            //     }
+                            // })
+                        }
+            
+                    })
+            
+                }
+            })
         })
+       
     }
 
     // async findAllService(request)

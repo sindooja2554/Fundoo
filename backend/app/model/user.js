@@ -94,21 +94,31 @@ class Api
      * @param {*}   dataToUpdate 
      * @param {*}   callback 
      */
-    updateOne(request,dataToUpdate,callback)
+    updateOne(request,dataToUpdate)
     {
-        console.log("in updateone");
-         User.findOneAndUpdate(request,dataToUpdate,{"new":true},(error,data)=>{
-            if(error)
-            {
-                console.log("model",error);
-                return callback(error);
-            }
-            else
-            {
-                console.log(data);
-                return callback(null,data);
-            }
+        console.log("in updateone",request);
+        return new Promise(function(resolve,reject){
+            User.findOneAndUpdate(request,dataToUpdate,{"new":true}).then(data=>{
+                console.log("in updateone",data);
+                resolve(data)
+            })
+            .catch(error=>{
+                reject(error)
+            })
         })
+      
+        //  ,(error,data)=>{
+        //     if(error)
+        //     {
+        //         console.log("model",error);
+        //         return callback(error);
+        //     }
+        //     else
+        //     {
+        //         console.log(data);
+        //         return callback(null,data);
+        //     }
+        // })
     }
 
     /**

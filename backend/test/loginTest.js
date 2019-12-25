@@ -146,4 +146,18 @@ describe('/POST login', () => {
               done();
             });
       });
+
+    //   it('Null request', (done) => {
+    //     chai.request(server)
+    //         .post('/login')
+    //         .send(loginObject.login[10])
+    //         .end((err, res) => {
+    //             console.log("json==",loginObject.login[10]);
+                
+    //               console.log("res.body: ", res.body.error);
+    //                   let result = res.body.error;
+    //                   assert.equal(result,'Request body cannot be null');
+    //           done();
+    //         });
+    // });
 })

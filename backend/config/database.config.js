@@ -23,6 +23,7 @@ class Database{
     }
 
     connect(){
+        console.log(this.url)
         this.mongoose.connect(this.url, {
             //useMongoClient: true,
             useNewUrlParser: true,

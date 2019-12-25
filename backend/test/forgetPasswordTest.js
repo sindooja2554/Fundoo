@@ -83,4 +83,18 @@ describe('/POST forgotPassword', () => {
               done();
             });
       });
+
+    //   it('Null request', (done) => {
+    //     chai.request(server)
+    //         .post('/forgotpassword')
+    //         .send(forgotPasswordObject.forgotPassword[5])
+    //         .end((err, res) => {
+    //             console.log("json==",forgotPasswordObject.forgotPassword[5]);
+                
+    //               console.log("res.body: ", res.body.error);
+    //                   let result = res.body.error;
+    //                   assert.equal(result,'Request body cannot be null');
+    //           done();
+    //         });
+    //     });
 })

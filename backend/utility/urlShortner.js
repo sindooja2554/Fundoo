@@ -19,7 +19,7 @@ module.exports = {
      * @param {*}   longURL 
      * @param {*}   callback 
      */
-    shortURL(data,longURL,callback)
+    shortURL(data,longURL)
     {
         try
         {
@@ -32,7 +32,28 @@ module.exports = {
                 'urlCode' : urlCode
             }
             mailSender.sendMail(data.email,shortUrl);
-            service.urlShorteningServices(data,urlShortenerObject,callback)
+            return new Promise(function(resolve,reject){
+                service.urlShorteningServices(data,urlShortenerObject).then(data=>{
+                    console.log("utility",data)
+                    resolve(data) 
+                }).catch(error=>{
+                    console.log("utility",error)
+                    reject(error)
+                })
+            })
+            
+            // ,(error,data)=>{
+            //     if(error)
+            //     {
+            //         return callback(error)
+            //     }
+            //     else
+            //     {
+            //         console.log("url-->",data);
+                    
+            //         return callback(data)
+            //     }
+            // })
     
         }
         catch(error)

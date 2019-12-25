@@ -12,40 +12,9 @@ var jsonWebToken = require('../utility/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
 var urlShortner  = require('../utility/urlShortner');
 var logger       = require('../config/winston');
+require('dotenv').config();
 class Controller
 {
-    /**
-     * @description This controller gives call to the service function to
-     *              save the object to the database.
-     * @function    urlShortnerController
-     * @param {*}   request 
-     * @param {*}   shortenerObject 
-     * @param {*}   callback 
-     */
-    urlShortnerController(request,shortenerObject,callback)
-    {
-        var res = {};
-        userServices.urlShorteningServices(request,shortenerObject,(error,data)=>{
-            if(error)
-            {
-                res.error = error;
-                // return response.status(500).send(res);
-                return callback(error);
-            }
-            else if(data === null)
-            {
-                res.success = false
-                // return response.status(500).send(res);
-                return callback(null,res)
-            }
-            else{
-                res.success = true;
-                res.data    = data;
-                // return response.status(200).send(res);
-                return callback(null,res)
-            }
-        })
-    }
 
     /**
      * @description This function is called to register the user (i.e. to save the user
@@ -54,82 +23,87 @@ class Controller
      * @param {*}   request 
      * @param {*}   response 
      */
-    createController(request , response)
-    {
-        
-        request.check('firstName','First name must be 3 character long').isLength({min:3})
-        request.check('firstName','First Name must be character string only').isAlpha()
-        // request.check('lastName','Last name cannot be empty').isEmpty()
-        request.check('lastName','Last name must be 3 character long').isLength({min:3})
-        request.check('lastName','Last Name must be character string only').isAlpha()
-        request.check('email','Email must be in email format').isEmail();
-        request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
-        var errors = request.validationErrors();
-        var result = {};
-        // console.log(errors);
-        if(errors)
-        {
+    createController(request, response) {
+        try {
+            console.log("error handling",request.body);
+            if(request.body.firstName === null || request.body.lastName === null || request.body.email === null || request.body.password === null)      throw("Request body cannot be null");
+            // if(request.body.firstName === undefined || request.body.lastName === undefined || request.body.email === undefined || request.body.password === undefined)      throw("Request body cannot be undefined");
+            // if(request.body.firstName === "" || request.body.lastName === "" || request.body.email === "" || request.body.password === "")      throw "Request body cannot be empty string"
 
-            result.error = errors;           
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else
-        {
-            logger.info("this from logger",request.body);
-            let userData = {
-                'firstName': request.body.firstName,
-                'lastName': request.body.lastName,
-                'email': request.body.email,
-                'password': request.body.password
+            request.check('firstName', 'First name must be 3 character long').isLength({ min: 3 })
+            request.check('firstName', 'First Name must be character string only').isAlpha()
+            // request.check('lastName','Last name cannot be empty').isEmpty()
+            request.check('lastName', 'Last name must be 3 character long').isLength({ min: 3 })
+            request.check('lastName', 'Last Name must be character string only').isAlpha()
+            request.check('email', 'Email must be in email format').isEmail();
+            request.check('password', 'Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
+            var errors = request.validationErrors();
+            var result = {};
+            // console.log(errors);
+            if (errors) {
+
+                result.error = errors;
+                result.success = false;
+                return response.status(400).send(result);
             }
-            console.log("in controller");
-            return new Promise(function(resolve,reject){
-                userServices.createService(userData).then((data)=>{
-                    if(data.success !== false)
-                    {   
-                        console.log("data in res from ser",data);
-                        console.log("data in response---",data);
-                        let payload = {
-                            '_id' : data._id
-                        }
-                        
-                        let jwtToken = jsonWebToken.generateToken(payload);
-                        let longURL = 'http://localhost:3001/verifyUser/' + jwtToken;
-                        
-                        urlShortner.shortURL(data,longURL,(error,data)=>{
-                            if(error)
-                            {
+            else {
+                logger.info("this from logger", request.body);
+                let userData = {
+                    'firstName': request.body.firstName,
+                    'lastName': request.body.lastName,
+                    'email': request.body.email,
+                    'password': request.body.password
+                }
+                console.log("in controller");
+                return new Promise(function (resolve, reject) {
+                    userServices.createService(userData).then((data) => {
+                        if (data.success !== false) {
+                            console.log("data in res from ser", data);
+                            console.log("data in response---", data);
+                            let payload = {
+                                '_id': data._id
+                            }
+
+                            let jwtToken = jsonWebToken.generateToken(payload);
+                            let longURL = process.env.EMAIL_FRONTEND_URL + jwtToken;
+
+                            urlShortner.shortURL(data, longURL).then((data)=>{
+                                console.log("sh--->", data);
+                                result.message = "Successfully registered";
+                                result.success = true;
+                                result.data = data;
+                                return response.status(200).send(result);
+                            }).catch(error=>{
                                 result.error = error;
+                                result.message = 'Error while saving the url data'
                                 return response.status(501).send(result);
-                            }
-                            else
-                            {  
-                                console.log("sh--->",data);                                                     
-                            }
-                        })
-    
-                        result.message = "Successfully registered";
-                        result.success = true;
-                        result.data    = data;                   
-                        return response.status(200).send(result);
-                    }
-                    else
-                    {
-                        console.log("data---------->",data)
-                        result.message = data.message;
-                        result.success = data.success;
-                        result.data    = data.data;
+                            })  
+                        }
+                        else {
+                            console.log("data---------->", data)
+                            result.message = data.message;
+                            result.success = data.success;
+                            result.data = data.data;
+                            return response.status(500).send(result);
+                        }
+                    }).catch((error) => {
+                        result.error = error;
+                        result.message = "Some error occurred";
+                        result.success = false;
                         return response.status(500).send(result);
-                    }
-                }).catch((error)=>{
-                    result.error   = error;
-                    result.message = "Some error occurred";
-                    result.success = false;
-                    return response.status(500).send(result);
+                    })
                 })
-            })
-            
+
+            }
+        }
+        catch (error) {
+            var result = {};
+            console.log("error in try",error);
+            result.error = error;
+            console.log(result.error);
+            result.status = false;
+            console.log("obj",result)
+            return response.status(400).send(result)
         }
     }
 
@@ -140,58 +114,64 @@ class Controller
      * @param {*}   request 
      * @param {*}   response 
      */
-    loginController(request,response)
-    {
-        request.check('email','Email must be in email format').isEmail();
-        request.check('password','Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
-        
-        var errors = request.validationErrors();
-        var result ={};
+    loginController(request, response) {
+        try {
+            // if (request.body.email === null || request.body.password === null) throw ("Request body cannot be null");
+            request.check('email', 'Email must be in email format').isEmail();
+            request.check('password', 'Password must include one lowercase character, one uppercase character, a number, a special character and atleast 8 character long').matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/, "i")
 
-        if(errors)
-        {
-            result.error = errors[0].msg;
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else
-        {
-            let readData = {
-                'email': request.body.email,
-                'password': request.body.password
+            var errors = request.validationErrors();
+            var result = {};
+
+            if (errors) {
+                result.error = errors[0].msg;
+                result.success = false;
+                return response.status(400).send(result);
             }
-
-            userServices.loginService(readData,(error,data)=>{
-                console.log("ctrl==>",data);
-                if(error)
-                {
-                    result.error = error;
-                    result.success = false;
-                    return response.status(500).send(result);
+            else {
+                let readData = {
+                    'email': request.body.email,
+                    'password': request.body.password
                 }
-                else if(data.success !== false)
-                {
-                    console.log(data)
-                    let payload = {
-                        '_id': data.data._id
+
+                userServices.loginService(readData, (error, data) => {
+                    console.log("ctrl==>", data);
+                    if (error) {
+                        result.error = error;
+                        result.success = false;
+                        return response.status(500).send(result);
                     }
+                    else if (data.success !== false) {
+                        console.log(data)
+                        let payload = {
+                            '_id': data.data._id
+                        }
 
-                    let jwtToken = jsonWebToken.generateToken(payload)
+                        let jwtToken = jsonWebToken.generateToken(payload)
 
-                    result.token = jwtToken;
-                    result.message = 'Login successful';
-                    result.success = data.success;
-                    result.data = data;
-                    return response.status(200).send(result);
-                }
-                else
-                {
-                    result.message = data.message;
-                    result.success = data.success;
-                    result.data    = data.data;
-                    return response.status(500).send(result);
-                }
-            })
+                        result.token = jwtToken;
+                        result.message = 'Login successful';
+                        result.success = data.success;
+                        result.data = data;
+                        return response.status(200).send(result);
+                    }
+                    else {
+                        result.message = data.message;
+                        result.success = data.success;
+                        result.data = data.data;
+                        return response.status(500).send(result);
+                    }
+                })
+            }
+        }
+        catch (error) {
+            var result = {};
+            console.log("error in try", error);
+            result.error = error;
+            console.log(result.error);
+            result.status = false;
+            console.log("obj", result)
+            return response.status(400).send(result)
         }
     }
 
@@ -205,22 +185,18 @@ class Controller
      */
     isVerifiedController(request,response)
     {
+        var result={};
         console.log("verifyC");
-        userServices.isVerifiedService(request,(error,data)=>{
-            var result={};
-            if(error)
-            {
-                result.error = error;
-                result.success = false;
-                return response.status(500).send(result);
-            }
-            else
-            {
-                result.data = data;
-                result.success = true;
-                result.verified = true;
-                return response.status(200).send(result);
-            }
+        userServices.isVerifiedService(request).then(data=>{
+            result.data = data;
+            result.success = true;
+            result.verified = true;
+            return response.status(200).send(result);
+        })
+        .catch(error=>{
+            result.error = error;
+            result.success = false;
+            return response.status(500).send(result);
         })
     }
     
@@ -231,42 +207,58 @@ class Controller
      * @param {*}   response 
      */
     forgetPasswordController(request, response) {
-        request.check('email', 'Email must be in email format').isEmail();
-        var errors = request.validationErrors();
-        var result = {};
+        try {
+            // if (request.body.email === null)  throw "Request body cannot be null";
 
-        if (errors) {
-            result.error = errors[0].msg;
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else {
-            console.log("forgot")
+            request.check('email', 'Email must be in email format').isEmail();
+            var errors = request.validationErrors();
             var result = {};
-            let forgotPassword = {
-                "email": request.body.email
-            }
-            userServices.forgetPassword(forgotPassword, (error, data) => {
-                if (error) {
-                    result.error = error;
-                    result.succes = false;
-                    return response.status(500).send(result);
-                }
-                else {
-                    let payload = {
-                        '_id': data.id
-                    }
-                    console.log("dtttt===", data);
-                    let jwtToken = jsonWebToken.generateToken(payload)
-                    let url = 'http://localhost:3001/resetpassword/' + jwtToken;
-                    mailSender.sendMail(data.email, url);
 
-                    result.message = "Mailsent";
-                    result.success = true;
-                    return response.status(200).send(result);
+            if (errors) {
+                result.error = errors[0].msg;
+                result.success = false;
+                return response.status(400).send(result);
+            }
+            else {
+                console.log("forgot")
+                var result = {};
+                let forgotPassword = {
+                    "email": request.body.email
                 }
-            })
+                userServices.forgetPassword(forgotPassword, (error, data) => {
+                    if (error) {
+                        result.error = error;
+                        result.succes = false;
+                        return response.status(500).send(result);
+                    }
+                    else {
+                        let payload = {
+                            '_id': data.id
+                        }
+                        console.log("dtttt===", data);
+                        let jwtToken = jsonWebToken.generateToken(payload)
+                        console.log("url for sending mail", process.env.EMAIL_LONG_URL);
+
+                        let url = process.env.EMAIL_LONG_URL + jwtToken;
+                        mailSender.sendMail(data.email, url);
+
+                        result.message = "Mailsent";
+                        result.success = true;
+                        return response.status(200).send(result);
+                    }
+                })
+            }
         }
+        catch(error){
+            var result = {};
+            console.log("error in try", error);
+            result.error = error;
+            console.log(result.error);
+            result.status = false;
+            console.log("obj", result)
+            return response.status(400).send(result)
+        }  
+
     }
 
     /**
@@ -291,25 +283,24 @@ class Controller
                 "password": request.body.password,
                 "id": request.body.data._id
             }
-            userServices.resetPassswordService(resetPassword, (error, data) => {
-                if (error) {
-                    console.log("errrrrr", error)
-                    result.error = error;
-                    result.message = error;
-                    result.success = false;
+            userServices.resetPassswordService(resetPassword).then(data=>{
+                console.log("aaa", data)
+                result.data = data;
+                result.success = true;
 
-                    return response.status(500).send(result);
-                }
-                else {
-                    console.log("aaa", data)
-                    result.data = data;
-                    result.success = true;
+                return response.status(200).send(result);
+            })
+            .catch(error=>{
+                console.log("errrrrr", error)
+                result.error = error;
+                result.message = error;
+                result.success = false;
 
-                    return response.status(200).send(result);
-                }
+                return response.status(500).send(result);
             })
         }
     }
+
     // async findAllController(request, response) 
     // {
     //     var result = {};
