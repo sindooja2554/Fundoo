@@ -9,7 +9,8 @@
  * @constant    jwt JWT constant having the `jsonwebtoken` module
  */
 const jwt = require('jsonwebtoken');
-
+var redis = require("redis"),
+    client = redis.createClient();
 module.exports={
     /**
      * @description This function generates token using payload.
@@ -33,8 +34,7 @@ module.exports={
      */
     verifyToken(req,res,next)
     {
-             console.log(req.params.token);
-                
+        console.log(req.params.token);       
         let token = req.headers['token'] || req.params.token;
         console.log(" token after vread",token);
         
@@ -49,12 +49,34 @@ module.exports={
                     return res.status(400).send(err+"Token has expired")
                 }
                 else{
+                    const forgetToken = req.url.split('/').includes('resetpassword')
+                    const registrationToken = req.url.split('/').includes('verify')
+                    var redisData;
+                    if (forgetToken == true) {
+                        redisData = "forgetToken";
+                    } else if (registrationToken == true) {
+                        redisData = "registrationToken";
+                    }
                     console.log("token",JSON.stringify(decoded));
                     // console.log("\nJWT verification result: " + JSON.stringify(data));
                     req.body['data'] = decoded;
-               console.log(req.body);
-               req.token = decoded;
-               next();
+                    console.log("abc",req.body);
+                    req.token = decoded;
+                    // redisKey = 'registerId';
+               client.get(redisData+req.body.data._id,(error,reply)=>{
+                   if(error)
+                   {
+                       return res.status(500).send(err+"Some Error");
+                   }else if(reply === token)
+                    {
+                       console.log("data from redis==>",reply);
+                       next();
+                    }
+                    else{
+                        return res.status(400).send(err+"Token did not matched");
+                    }
+
+                   })
                 }
             })
             // return req.decoded;

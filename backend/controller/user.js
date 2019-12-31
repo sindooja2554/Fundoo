@@ -12,6 +12,8 @@ var jsonWebToken = require('../utility/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
 var urlShortner  = require('../utility/urlShortner');
 var logger       = require('../config/winston');
+var redis = require("redis"),
+    client = redis.createClient();
 require('dotenv').config();
 class Controller
 {
@@ -65,8 +67,10 @@ class Controller
                             }
 
                             let jwtToken = jsonWebToken.generateToken(payload);
-                            let longURL = process.env.EMAIL_FRONTEND_URL + jwtToken;
-
+                            let longURL = process.env.LONG_URL + jwtToken;
+                            console.log("long url",longURL)
+                            client.set('registerId'+data._id,jwtToken)
+                            console.log("registerId from **REDIS===>",client.get('registerId'+data._id) );
                             urlShortner.shortURL(data, longURL).then((data)=>{
                                 console.log("sh--->", data);
                                 result.message = "Successfully registered";
@@ -237,9 +241,9 @@ class Controller
                         }
                         console.log("dtttt===", data);
                         let jwtToken = jsonWebToken.generateToken(payload)
-                        console.log("url for sending mail", process.env.EMAIL_LONG_URL);
+                        console.log("url for sending mail", process.env.EMAIL_FRONTEND_URL);
 
-                        let url = process.env.EMAIL_LONG_URL + jwtToken;
+                        let url = process.env.EMAIL_FRONTEND_URL + jwtToken;
                         mailSender.sendMail(data.email, url);
 
                         result.message = "Mailsent";

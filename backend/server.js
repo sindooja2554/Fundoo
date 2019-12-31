@@ -16,8 +16,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('./config/database.config');
 const app = express();
+var cors = require('cors')
 const validator = require('express-validator');
-var route = require('./routes/routes')
+var route = require('./routes/routes');
+app.use(cors());
 require('dotenv/').config();
 app.use(bodyParser.json());
 app.use(validator());

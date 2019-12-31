@@ -11,6 +11,7 @@
 const urlShortner = require('shortid');
 var mailSender = require('./nodeMailer');
 var service = require('../services/user');
+require('dotenv/').config();
 module.exports = {
     /**
      * @description This function generates the short code using the module shortId.
@@ -24,7 +25,7 @@ module.exports = {
         try
         {
             var urlCode  = urlShortner.generate(longURL);
-            let shortUrl = 'http://localhost:3001/verify/' + urlCode;
+            let shortUrl = process.env.EMAIL_LONG_URL + urlCode;
             
             let urlShortenerObject = {
                 'longUrl' : longURL,

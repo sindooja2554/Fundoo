@@ -29,7 +29,7 @@ routes.post('/resetpassword',jwt.verifyToken,userController.resetPasswordControl
 // routes.get('/findAll',userController.findAllController);
 
 routes.get('/verify/:url',(request,response)=>{
-    // console.log("routes",request.params.url);
+    console.log("routes",request.params.url);
     user.findOne({"urlCode":request.params.url},(error,data)=>{
         if(error)
         {
