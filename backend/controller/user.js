@@ -29,8 +29,8 @@ class Controller
         try {
             console.log("error handling",request.body);
             if(request.body.firstName === null || request.body.lastName === null || request.body.email === null || request.body.password === null)      throw("Request body cannot be null");
-            // if(request.body.firstName === undefined || request.body.lastName === undefined || request.body.email === undefined || request.body.password === undefined)      throw("Request body cannot be undefined");
-            // if(request.body.firstName === "" || request.body.lastName === "" || request.body.email === "" || request.body.password === "")      throw "Request body cannot be empty string"
+            if(request.body.firstName === undefined || request.body.lastName === undefined || request.body.email === undefined || request.body.password === undefined)      throw("Request body cannot be undefined");
+            if(request.body.firstName === "" || request.body.lastName === "" || request.body.email === "" || request.body.password === "")      throw "Request body cannot be empty string"
 
             request.check('firstName', 'First name must be 3 character long').isLength({ min: 3 })
             request.check('firstName', 'First Name must be character string only').isAlpha()
@@ -69,8 +69,8 @@ class Controller
                             let jwtToken = jsonWebToken.generateToken(payload);
                             let longURL = process.env.LONG_URL + jwtToken;
                             console.log("long url",longURL)
-                            client.set('registerId'+data._id,jwtToken)
-                            console.log("registerId from **REDIS===>",client.get('registerId'+data._id) );
+                            client.set('registrationToken'+data._id,jwtToken)
+                            console.log("registerId from **REDIS===>",client.get('registrationToken'+data._id) );
                             urlShortner.shortURL(data, longURL).then((data)=>{
                                 console.log("sh--->", data);
                                 result.message = "Successfully registered";
@@ -240,8 +240,9 @@ class Controller
                             '_id': data.id
                         }
                         console.log("dtttt===", data);
-                        let jwtToken = jsonWebToken.generateToken(payload)
-                        console.log("url for sending mail", process.env.EMAIL_FRONTEND_URL);
+                        let jwtToken = jsonWebToken.generateToken(payload);
+                        client.set('forgetToken'+data._id,jwtToken)
+                        console.log("forgetToken from **REDIS===>",client.get('forgetToken'+data._id) );
 
                         let url = process.env.EMAIL_FRONTEND_URL + jwtToken;
                         mailSender.sendMail(data.email, url);

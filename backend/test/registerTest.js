@@ -258,4 +258,32 @@ describe('/POST registration', () => {
               done();
             });
     });
+
+    it('Undefined request', (done) => {
+        chai.request(server)
+            .post('/register')
+            .send(registrationObject.register[19])
+            .end((err, res) => {
+                console.log("json==",registrationObject.register[19]);
+                
+                  console.log("res.body: ", res.body.error);
+                      let result = res.body.error;
+                      assert.equal(result,'Request body cannot be undefined');
+              done();
+            });
+    });
+
+    // it('Empty string request request', (done) => {
+    //     chai.request(server)
+    //         .post('/register')
+    //         .send(registrationObject.register[20])
+    //         .end((err, res) => {
+    //             console.log("json==",registrationObject.register[10]);
+                
+    //               console.log("res.body: ", res.body.error);
+    //                   let result = res.body.error;
+    //                   assert.equal(result,'Request body cannot be empty string');
+    //           done();
+    //         });
+    // });
 });

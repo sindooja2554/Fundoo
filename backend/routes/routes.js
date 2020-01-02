@@ -43,5 +43,5 @@ routes.get('/verify/:url',(request,response)=>{
     })
 })
 
-routes.post('/verifyUser/:token',jwt.verifyToken,userController.isVerifiedController);  
+routes.post('/verifyuser/:token',jwt.verifyToken,userController.isVerifiedController);  
 module.exports = routes;

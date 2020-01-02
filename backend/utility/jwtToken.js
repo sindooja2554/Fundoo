@@ -49,14 +49,18 @@ module.exports={
                     return res.status(400).send(err+"Token has expired")
                 }
                 else{
+                    console.log("req.url",req.url);
+                    console.log("req.params",req.params);
                     const forgetToken = req.url.split('/').includes('resetpassword')
-                    const registrationToken = req.url.split('/').includes('verify')
+                    const registrationToken = req.url.split('/').includes('verifyuser')
+                    console.log("register",registrationToken);
                     var redisData;
-                    if (forgetToken == true) {
+                    if (forgetToken === true) {
                         redisData = "forgetToken";
-                    } else if (registrationToken == true) {
+                    } else if (registrationToken === true) {
                         redisData = "registrationToken";
                     }
+                    console.log("data",redisData);
                     console.log("token",JSON.stringify(decoded));
                     // console.log("\nJWT verification result: " + JSON.stringify(data));
                     req.body['data'] = decoded;
