@@ -33,8 +33,7 @@ module.exports={
      * @param {*}   next 
      */
     verifyToken(req,res,next)
-    {
-        console.log(req.params.token);       
+    {    
         let token = req.headers['token'] || req.params.token;
         console.log(" token after vread",token);
         
@@ -43,7 +42,6 @@ module.exports={
             jwt.verify(token,'private_key',function (err,decoded){
                 console.log(" token in ",token);
                 
-                // console.log("tkg",data);
                 if(err)
                 {
                     return res.status(400).send(err+"Token has expired")
@@ -51,14 +49,13 @@ module.exports={
                 else{
                     console.log("req.url",req.url);
                     console.log("req.params",req.params);
-                    const forgetToken = req.url.split('/').includes('resetpassword')
-                    const registrationToken = req.url.split('/').includes('verifyuser')
-                    console.log("register",registrationToken);
                     var redisData;
-                    if (forgetToken === true) {
+                    if (req.url.split('/').includes('resetpassword') === true) {
                         redisData = "forgetToken";
-                    } else if (registrationToken === true) {
+                    } else if (req.url.split('/').includes('verifyuser') === true) {
                         redisData = "registrationToken";
+                    } else if(req.url.split('/').includes('imageupload')===true){
+                        redisData = "uploadImageToken";
                     }
                     console.log("data",redisData);
                     console.log("token",JSON.stringify(decoded));
@@ -79,7 +76,6 @@ module.exports={
                     else{
                         return res.status(400).send(err+"Token did not matched");
                     }
-
                    })
                 }
             })

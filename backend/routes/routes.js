@@ -17,6 +17,9 @@ var express = require('express');
 const routes = express.Router();
 var jwt = require('../utility/jwtToken');
 var user = require('../app/model/user')
+var upload = require('../services/s3');
+var singleUpload = upload.single('image');
+var logger = require('../config/winston');
 
 routes.post('/register', userController.createController);
 
@@ -44,4 +47,47 @@ routes.get('/verify/:url',(request,response)=>{
 })
 
 routes.post('/verifyuser/:token',jwt.verifyToken,userController.isVerifiedController);  
+
+routes.post('/imageupload',jwt.verifyToken, function(request,response){
+    console.log("req",request.body);
+    var imageSaveObject = {};
+    imageSaveObject.id = request.body.data._id;
+    
+    singleUpload(request,response,function(error){
+        var res={};
+        if(error)
+        {
+            console.log("err",error);
+            // logger.info("err",error);
+            res.message = error;
+            res.success = false;
+            return response.status(500).send(res);
+        }else{
+            console.log("data",request.body);
+            // logger.info("data",request.body);
+            console.log("file",request.file.location)
+            // logger.info("file",request.file.location);
+            
+            imageSaveObject.imageUrl = request.file.location;
+            console.log(imageSaveObject);
+            // logger.info(imageSaveObject);
+            userController.uploadImageController(imageSaveObject,response)
+            {
+                if(error)
+                {
+                    res.error = error;
+                    res.success = false;
+                    return response.status(500).send(res);
+                }
+                else
+                {
+                    res.message = "Successfully saved";
+                    res.success = true;
+                    return response.status(200).send(res);
+                }
+            }
+        }
+    })
+}); 
+
 module.exports = routes;

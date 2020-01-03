@@ -8,6 +8,10 @@
  */
 var userModel = require('../app/model/user');
 var bcrypt    = require('../utility/bcrypt');
+
+require('dotenv/').config();
+
+
 class Services
 {
     /**
@@ -232,33 +236,40 @@ class Services
                                 console.log("inserr",error)
                                 reject(error)
                             })
-
-                            // ,(error,data)=>{
-                            //     if(error)
-                            //     {
-                               
-                            //     }
-                            //     else
-                            //     {
-                                    
-                            //     }
-                            // })
                         }
             
                     })
             
                 }
             })
-        })
-       
+        }) 
     }
 
-    // async findAllService(request)
-    // {
-    //     var data = await userModel.findAll({}) 
-    //     console.log(data);
-    //     return data;      
-    // }
+    imageUploadService(request)
+    {
+        return new Promise(function(resolve,reject){
+            userModel.findOne({"_id":request.id},(error,data)=>{
+                if(error)
+                {
+                    reject(error)
+                }
+                else if(data === null){
+                    reject(error);
+                }
+                else
+                {
+                    userModel.updateOne({"_id":data.id},{"imageUrl":request.imageUrl}).then(data=>{
+                        console.log("insert",data)
+                        resolve(data);
+                    })
+                    .catch(error=>{
+                        console.log("insert",error)
+                        reject(error)
+                    })
+                }
+           })
+        })
+    }
 }
 
 module.exports = new Services();

@@ -46,6 +46,10 @@ const UserSchema = mongoose.Schema({
     urlCode:{
         type: String,
         default: null
+    },
+    imageUrl:{
+        type: String,
+        default:''
     }
 
 },
@@ -146,12 +150,6 @@ class Api
         })
     }
 
-    // findAll(request)
-    // {
-    //     var data = User.find({});
-    //     console.log('ttt');
-    //     return data;
-    // }
 }
 
 module.exports = new Api();

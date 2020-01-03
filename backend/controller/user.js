@@ -15,6 +15,7 @@ var logger       = require('../config/winston');
 var redis = require("redis"),
     client = redis.createClient();
 require('dotenv').config();
+
 class Controller
 {
 
@@ -152,7 +153,9 @@ class Controller
                         }
 
                         let jwtToken = jsonWebToken.generateToken(payload)
-
+                        client.set('uploadImageToken'+data.data._id,jwtToken)
+                        console.log("loginId from **REDIS===>",
+                        client.get('uploadImageToken'+data.data._id) );
                         result.token = jwtToken;
                         result.message = 'Login successful';
                         result.success = data.success;
@@ -306,23 +309,21 @@ class Controller
         }
     }
 
-    // async findAllController(request, response) 
-    // {
-    //     var result = {};
-    //     var data = await userServices.findAllService(request)
-
-    //     if (data) {
-    //         result.data = data;
-    //         result.success = true;
-    //         return response.status(200).send(result)
-    //     }
-    //     else {
-    //         result.error = error;
-    //         result.success = false;
-    //         return response.status(500).send(result)
-    //     } 
-    // }
-   
+    uploadImageController(request,response)
+    {
+        console.log("abcdef",request);
+        userServices.imageUploadService(request,response)
+        {
+            return new Promise(function(resolve,reject){
+                userServices.imageUploadService(request).then((data=>{
+                    resolve(data);
+                }))
+                .catch(error=>{
+                    reject(error);
+                })
+            })
+        }
+    }
 }
 
 module.exports = new Controller();
