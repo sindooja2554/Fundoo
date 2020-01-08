@@ -8,7 +8,7 @@
  */
 var userModel = require('../app/model/user');
 var bcrypt    = require('../utility/bcrypt');
-
+var logger       = require('../config/winston');
 require('dotenv/').config();
 
 
@@ -194,6 +194,7 @@ class Services
                 return callback(error)
             }
             else{
+                logger.info("response in service",data);
                 return callback(null,data);
             }
         })

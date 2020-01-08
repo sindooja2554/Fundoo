@@ -10,7 +10,7 @@
  */
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-
+var logger =  require('../config/winston')
 module.exports={
     /**
      * @description This function sends the mail to the user's email id.
@@ -22,7 +22,8 @@ module.exports={
     {
         console.log(process.env.EMAIL);
         console.log(process.env.PASSWORD);
-        
+        logger.info("email "+email);
+        logger.info("url " +url);
         var transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {

@@ -13,6 +13,7 @@
  */
 
 const mongoose = require('mongoose');
+var logger       = require('../../config/winston');
 const UserSchema = mongoose.Schema({
     firstName: {
         type: String,
@@ -80,8 +81,8 @@ class Api
             }
             else if(data === null)
             {
-                console.log(data);
-                return callback(null,data);
+                logger.info("model find one",data);
+                return callback(error,null);
             }
             else
             {

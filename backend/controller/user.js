@@ -153,9 +153,9 @@ class Controller
                         }
 
                         let jwtToken = jsonWebToken.generateToken(payload)
-                        client.set('uploadImageToken'+data.data._id,jwtToken)
+                        client.set('loginToken'+data.data._id,jwtToken)
                         console.log("loginId from **REDIS===>",
-                        client.get('uploadImageToken'+data.data._id) );
+                        client.get('loginToken'+data.data._id) );
                         result.token = jwtToken;
                         result.message = 'Login successful';
                         result.success = data.success;
@@ -239,11 +239,13 @@ class Controller
                         return response.status(500).send(result);
                     }
                     else {
+                        logger.info("response data in controller",data)
                         let payload = {
-                            '_id': data.id
+                            '_id': data._id
                         }
                         console.log("dtttt===", data);
                         let jwtToken = jsonWebToken.generateToken(payload);
+                        logger.info("token"+jwtToken);
                         client.set('forgetToken'+data._id,jwtToken)
                         console.log("forgetToken from **REDIS===>",client.get('forgetToken'+data._id) );
 

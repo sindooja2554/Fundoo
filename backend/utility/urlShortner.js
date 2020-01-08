@@ -11,6 +11,7 @@
 const urlShortner = require('shortid');
 var mailSender = require('./nodeMailer');
 var service = require('../services/user');
+var logger =  require('../config/winston')
 require('dotenv/').config();
 module.exports = {
     /**

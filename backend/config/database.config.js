@@ -11,7 +11,7 @@
  */
 const mongoose = require('mongoose');
 require('dotenv').config();
-var logger =require('./winston')
+var logger = require('./winston')
 
 class Database{
 
@@ -25,7 +25,7 @@ class Database{
     connect(){
         console.log(this.url)
         this.mongoose.connect(this.url, {
-            //useMongoClient: true,
+            // useMongoClient: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
             connectTimeoutMS: 1000
@@ -36,6 +36,7 @@ class Database{
     }
 
     monitor(){
+
         this.mongoose.connection.on('disconnected', function() {
             logger.info('mongo db connection closed');
             process.exit(0);

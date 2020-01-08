@@ -20,6 +20,7 @@ var user = require('../app/model/user')
 var upload = require('../services/s3');
 var singleUpload = upload.single('image');
 var logger = require('../config/winston');
+var noteController = require('../controller/note');
 
 routes.post('/register', userController.createController);
 
@@ -89,5 +90,10 @@ routes.post('/imageupload',jwt.verifyToken, function(request,response){
         }
     })
 }); 
+
+//Routes for note
+routes.post('/note',jwt.verifyToken,noteController.createNote);
+routes.get('/getnote',jwt.verifyToken,noteController.getAllNotes);
+routes.delete('deletenote/:noteId',jwt.verifyToken,noteController.deleteNote);
 
 module.exports = routes;
