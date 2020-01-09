@@ -62,9 +62,10 @@ module.exports={
                         redisData = "registrationToken";
                     } else if(req.url.split('/').includes('imageupload')===true){
                         redisData = "loginToken";
-                    } else if(req.url.split('/').includes('note') ||
-                     req.url.split('/').includes('getnote') ===true){
+                    } else if(req.url.split('/').includes('note') ===true){
                         redisData = "loginToken"
+                    } else if(req.url.split('/').includes('label') ===true){
+                       redisData = "loginToken"
                     }
                     console.log("data",redisData);
                     console.log("token",JSON.stringify(decoded));

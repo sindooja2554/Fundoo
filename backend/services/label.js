@@ -1,14 +1,14 @@
-var noteModel =  require('../app/model/note');
+var labelModel =  require('../app/model/label');
 // var userModel = require('../app/model/user');
 var logger = require('../config/winston');
 class Service
 {
-    createNote(request)
+    createLabel(request)
     {
         logger.info("request in service " + request);
         console.log("request in service ", request);
         return new Promise(function (resolve, reject) {
-            noteModel.create(request).then((data) => {
+            labelModel.create(request).then((data) => {
                 if (data !== null) {
                     return resolve(data);
                 }
@@ -29,46 +29,48 @@ class Service
             })
     }
 
-    async getAllNotes(request,response)
+    async getAllLabels(request)
     {
-    
-    //    var data = await noteModel.read({"userId":request.userId});
-    //    logger.info("data "+JSON.stringify(data))
-    //    return data;
-       logger.info("request in service " +JSON.stringify(request))
+        //    var data = await noteModel.read({"userId":request.userId});
+        //    logger.info("data "+JSON.stringify(data))
+        //    return data;
+        logger.info("request in service " +JSON.stringify(request))
         return new Promise(function(resolve,reject){
-            noteModel.read({"userId":request.userId})
+            labelModel.read({"userId":request.userId})
             .then((data)=>{
                 logger.info("response data in service " + JSON.stringify(data))
-                if(data !== null)
+                logger.info("length "+data.length);
+                if(data.length === 0)
+                {
+                    return reject("no label found");
+                }
+                else if(data !== null)
                 {
                     return resolve(data);
                 }
-                else 
-                {
-                    return reject("no note found");
-                }
             })
             .catch(error=>{
+                logger.info("error "+error)
                 return reject(error);
             })
         })
     }
 
-    deleteNote(request)
+    deleteLabel(request)
     {
         logger.info("request in service " +JSON.stringify(request))
         return new Promise(function(resolve,reject){
-            noteModel.delete({"_id":request.noteId,"userId" : request.userId})
-            .then((data)=>{
-                logger.info("response data in service "+data)
+            labelModel.delete({"_id":request.labelId})
+            .then((data)=>{               
                 if(data !== null)
                 {
+                    logger.info("response data in service "+data)
                     return resolve(data);
                 }
                 else 
                 {
-                    return reject("no note found");
+                    logger.info("In service "+data)
+                    return reject("no label found");
                 }
             })
             .catch(error=>{
@@ -77,7 +79,7 @@ class Service
         })
     }
 
-    editNote(idObject,editObject)
+    editLabel(idObject,editObject)
     {
         logger.info("id obj "+JSON.stringify(idObject))
         logger.info("edit obj "+JSON.stringify(editObject));

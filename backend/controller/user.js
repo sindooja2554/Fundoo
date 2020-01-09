@@ -28,7 +28,7 @@ class Controller
      */
     createController(request, response) {
         try {
-            console.log("error handling",request.body);
+            // console.log("error handling",request.body);
             if(request.body.firstName === null || request.body.lastName === null || request.body.email === null || request.body.password === null)      throw("Request body cannot be null");
             if(request.body.firstName === undefined || request.body.lastName === undefined || request.body.email === undefined || request.body.password === undefined)      throw("Request body cannot be undefined");
             if(request.body.firstName === "" || request.body.lastName === "" || request.body.email === "" || request.body.password === "")      throw "Request body cannot be empty string"
@@ -57,23 +57,23 @@ class Controller
                     'email': request.body.email,
                     'password': request.body.password
                 }
-                console.log("in controller");
+                // console.log("in controller");
                 return new Promise(function (resolve, reject) {
                     userServices.createService(userData).then((data) => {
                         if (data.success !== false) {
-                            console.log("data in res from ser", data);
-                            console.log("data in response---", data);
+                            // console.log("data in res from ser", data);
+                            // console.log("data in response---", data);
                             let payload = {
                                 '_id': data._id
                             }
 
                             let jwtToken = jsonWebToken.generateToken(payload);
                             let longURL = process.env.LONG_URL + jwtToken;
-                            console.log("long url",longURL)
+                            // console.log("long url",longURL)
                             client.set('registrationToken'+data._id,jwtToken)
-                            console.log("registerId from **REDIS===>",client.get('registrationToken'+data._id) );
+                            // console.log("registerId from **REDIS===>",client.get('registrationToken'+data._id) );
                             urlShortner.shortURL(data, longURL).then((data)=>{
-                                console.log("sh--->", data);
+                                // console.log("sh--->", data);
                                 result.message = "Successfully registered";
                                 result.success = true;
                                 result.data = data;
@@ -85,7 +85,7 @@ class Controller
                             })  
                         }
                         else {
-                            console.log("data---------->", data)
+                            // console.log("data---------->", data)
                             result.message = data.message;
                             result.success = data.success;
                             result.data = data.data;
@@ -103,11 +103,11 @@ class Controller
         }
         catch (error) {
             var result = {};
-            console.log("error in try",error);
+            // console.log("error in try",error);
             result.error = error;
-            console.log(result.error);
+            // console.log(result.error);
             result.status = false;
-            console.log("obj",result)
+            // console.log("obj",result)
             return response.status(400).send(result)
         }
     }
@@ -140,22 +140,22 @@ class Controller
                 }
 
                 userServices.loginService(readData, (error, data) => {
-                    console.log("ctrl==>", data);
+                    // console.log("ctrl==>", data);
                     if (error) {
                         result.error = error;
                         result.success = false;
                         return response.status(500).send(result);
                     }
                     else if (data.success !== false) {
-                        console.log(data)
+                        // console.log(data)
                         let payload = {
                             '_id': data.data._id
                         }
 
                         let jwtToken = jsonWebToken.generateToken(payload)
                         client.set('loginToken'+data.data._id,jwtToken)
-                        console.log("loginId from **REDIS===>",
-                        client.get('loginToken'+data.data._id) );
+                        // console.log("loginId from **REDIS===>",
+                        // client.get('loginToken'+data.data._id) );
                         result.token = jwtToken;
                         result.message = 'Login successful';
                         result.success = data.success;
@@ -193,7 +193,7 @@ class Controller
     isVerifiedController(request,response)
     {
         var result={};
-        console.log("verifyC");
+        // console.log("verifyC");
         userServices.isVerifiedService(request).then(data=>{
             result.data = data;
             result.success = true;
@@ -227,7 +227,7 @@ class Controller
                 return response.status(400).send(result);
             }
             else {
-                console.log("forgot")
+                // console.log("forgot")
                 var result = {};
                 let forgotPassword = {
                     "email": request.body.email
@@ -243,11 +243,11 @@ class Controller
                         let payload = {
                             '_id': data._id
                         }
-                        console.log("dtttt===", data);
+                        // console.log("dtttt===", data);
                         let jwtToken = jsonWebToken.generateToken(payload);
                         logger.info("token"+jwtToken);
                         client.set('forgetToken'+data._id,jwtToken)
-                        console.log("forgetToken from **REDIS===>",client.get('forgetToken'+data._id) );
+                        // console.log("forgetToken from **REDIS===>",client.get('forgetToken'+data._id) );
 
                         let url = process.env.EMAIL_FRONTEND_URL + jwtToken;
                         mailSender.sendMail(data.email, url);
@@ -261,11 +261,11 @@ class Controller
         }
         catch(error){
             var result = {};
-            console.log("error in try", error);
+            // console.log("error in try", error);
             result.error = error;
-            console.log(result.error);
+            // console.log(result.error);
             result.status = false;
-            console.log("obj", result)
+            // console.log("obj", result)
             return response.status(400).send(result)
         }  
 
@@ -294,14 +294,14 @@ class Controller
                 "id": request.body.data._id
             }
             userServices.resetPassswordService(resetPassword).then(data=>{
-                console.log("aaa", data)
+                // console.log("aaa", data)
                 result.data = data;
                 result.success = true;
 
                 return response.status(200).send(result);
             })
             .catch(error=>{
-                console.log("errrrrr", error)
+                // console.log("errrrrr", error)
                 result.error = error;
                 result.message = error;
                 result.success = false;
@@ -313,7 +313,7 @@ class Controller
 
     uploadImageController(request,response)
     {
-        console.log("abcdef",request);
+        // console.log("abcdef",request);
         userServices.imageUploadService(request,response)
         {
             return new Promise(function(resolve,reject){

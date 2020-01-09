@@ -21,6 +21,7 @@ var upload = require('../services/s3');
 var singleUpload = upload.single('image');
 var logger = require('../config/winston');
 var noteController = require('../controller/note');
+var labelController = require('../controller/label');
 
 routes.post('/register', userController.createController);
 
@@ -93,7 +94,14 @@ routes.post('/imageupload',jwt.verifyToken, function(request,response){
 
 //Routes for note
 routes.post('/note',jwt.verifyToken,noteController.createNote);
-routes.get('/getnote',jwt.verifyToken,noteController.getAllNotes);
-routes.delete('deletenote/:noteId',jwt.verifyToken,noteController.deleteNote);
+routes.get('/note',jwt.verifyToken,noteController.getAllNotes);
+routes.put('/note/:noteId',jwt.verifyToken,noteController.editNote);
+routes.delete('/note/:noteId',jwt.verifyToken,noteController.deleteNote);
+
+//Routes for label
+routes.post('/label/:noteId',jwt.verifyToken,labelController.createLabel);
+routes.get('/label/:noteId',jwt.verifyToken,labelController.getAllLabels);
+routes.put('/label/:noteId',jwt.verifyToken,labelController.editLabel);
+routes.delete('/label/:labelId',jwt.verifyToken,labelController.deleteLabel);
 
 module.exports = routes;

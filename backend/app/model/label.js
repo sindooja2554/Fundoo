@@ -13,63 +13,44 @@
  */
 
 const mongoose = require('mongoose');
-var logger       = require('../../config/winston');
-const NoteSchema = mongoose.Schema({
-    title: {
-        type: String,
-        required: [true, 'firstName is required']
-    },
-    description: {
-        type: String,
-        required: [true, 'lastName is required']
-    },
+var logger     = require('../../config/winston');
+
+const LabelSchema = mongoose.Schema({
     userId: {
         type: String,
         required: true
     },
-    remainder: {
+    noteId: {
         type: String,
-        default: null
+        required: true
     },
-    isPinned: {
-        type: Boolean,
-        default: false
-    },
-    isArchive: {
-        type: Boolean,
-        default: false
-    },
-    addImage: {
+    label: {
         type: String,
-        default: null
-    },
-    isTrash: {
-        type: Boolean,
-        default: false
+        required: true
     }
 },
     {
         timestamps: true
 });
 
-var Note = mongoose.model('Note', NoteSchema);
+var label = mongoose.model('label', LabelSchema);
 
-class NoteApi
+class Api
 {
     create(request)
     {
-        let createNote = new Note({
-            "title": request.title,
-            "description": request.description,
+        let createLabel = new label({
+            "noteId": request.noteId,
+            "label": request.label,
             "userId" : request.userId
         })
         return new Promise(function(resolve, reject) {
-            createNote.save().then((data) => {
+            createLabel.save().then((data) => {
                 logger.info("data from model " + data);
                 resolve(data)
             })
             .catch((error) => {
-                console.log("data from model ", error)
+                logger.info("data from model "+ error)
                 reject(error)
             })
         })
@@ -77,14 +58,14 @@ class NoteApi
 
     async read(request)
     {
-       var data = await Note.find(request)
+       var data = await label.find(request)
        return data;
     }
 
     async delete(request)
     {
         logger.info("request in model "+request)
-        var data = await Note.findByIdAndRemove(request);
+        var data = await label.findByIdAndRemove(request);
         logger.info("response data " +JSON.stringify(data))
         return data;
     }
@@ -107,4 +88,5 @@ class NoteApi
     }
 }
 
-module.exports = new NoteApi();
+
+module.exports = new Api();
