@@ -12,11 +12,11 @@
 /**
  * @const      routes Routes constant having the `express.Router` module
  */
-var userController =  require('../controller/user');
+var userController = require('../controller/user');
 var express = require('express');
 const routes = express.Router();
-var jwt = require('../utility/jwtToken');
-var user = require('../app/model/user')
+var jwt = require('../auth/jwtToken');
+var user = require('../app/model/user');
 var upload = require('../services/s3');
 var singleUpload = upload.single('image');
 var logger = require('../config/winston');
@@ -25,64 +25,57 @@ var labelController = require('../controller/label');
 
 routes.post('/register', userController.createController);
 
-routes.post('/login',userController.loginController);
+routes.post('/login', userController.loginController);
 
-routes.post('/forgotpassword',userController.forgetPasswordController);
+routes.post('/forgotpassword', userController.forgetPasswordController);
 
-routes.post('/resetpassword',jwt.verifyToken,userController.resetPasswordController);
+routes.post('/resetpassword', jwt.verifyToken, userController.resetPasswordController);
 
-// routes.get('/findAll',userController.findAllController);
-
-routes.get('/verify/:url',(request,response)=>{
-    console.log("routes",request.params.url);
-    user.findOne({"urlCode":request.params.url},(error,data)=>{
-        if(error)
-        {
+routes.get('/verify/:url', (request, response) => {
+    console.log("routes", request.params.url);
+    user.findOne({ "urlCode": request.params.url }, (error, data) => {
+        if (error) {
             return response.status(404).send('Url not found');
         }
-        else
-        {
-            console.log("data from routes",data);
+        else {
+            console.log("data from routes", data);
             response.redirect(data.longUrl);
         }
     })
 })
 
-routes.post('/verifyuser/:token',jwt.verifyToken,userController.isVerifiedController);  
+routes.post('/verifyuser/:token', jwt.verifyToken, userController.isVerifiedController);
 
-routes.post('/imageupload',jwt.verifyToken, function(request,response){
-    console.log("req",request.body);
+routes.post('/imageupload', jwt.verifyToken, function (request, response) {
+    console.log("req", request.body);
     var imageSaveObject = {};
     imageSaveObject.id = request.body.data._id;
-    
-    singleUpload(request,response,function(error){
-        var res={};
-        if(error)
-        {
-            console.log("err",error);
+
+    singleUpload(request, response, function (error) {
+        var res = {};
+        if (error) {
+            console.log("err", error);
             // logger.info("err",error);
             res.message = error;
             res.success = false;
             return response.status(500).send(res);
-        }else{
-            console.log("data",request.body);
+        } else {
+            console.log("data", request.body);
             // logger.info("data",request.body);
-            console.log("file",request.file.location)
+            console.log("file", request.file.location)
             // logger.info("file",request.file.location);
-            
+
             imageSaveObject.imageUrl = request.file.location;
             console.log(imageSaveObject);
             // logger.info(imageSaveObject);
-            userController.uploadImageController(imageSaveObject,response)
+            userController.uploadImageController(imageSaveObject, response)
             {
-                if(error)
-                {
+                if (error) {
                     res.error = error;
                     res.success = false;
                     return response.status(500).send(res);
                 }
-                else
-                {
+                else {
                     res.message = "Successfully saved";
                     res.success = true;
                     return response.status(200).send(res);
@@ -90,18 +83,26 @@ routes.post('/imageupload',jwt.verifyToken, function(request,response){
             }
         }
     })
-}); 
+});
 
 //Routes for note
-routes.post('/note',jwt.verifyToken,noteController.createNote);
-routes.get('/note',jwt.verifyToken,noteController.getAllNotes);
-routes.put('/note/:noteId',jwt.verifyToken,noteController.editNote);
-routes.delete('/note/:noteId',jwt.verifyToken,noteController.deleteNote);
+routes.post('/note', jwt.verifyToken, noteController.createNote);
+
+routes.get('/note', jwt.verifyToken, noteController.getAllNotes);
+
+routes.put('/note/:noteId', jwt.verifyToken, noteController.editNote);
+
+routes.delete('/note/:noteId', jwt.verifyToken, noteController.deleteNote);
+
+routes.put('/remainder/:noteId', jwt.verifyToken, noteController.addRemainder);
 
 //Routes for label
-routes.post('/label/:noteId',jwt.verifyToken,labelController.createLabel);
-routes.get('/label/:noteId',jwt.verifyToken,labelController.getAllLabels);
-routes.put('/label/:noteId',jwt.verifyToken,labelController.editLabel);
-routes.delete('/label/:labelId',jwt.verifyToken,labelController.deleteLabel);
+routes.post('/label/:noteId', jwt.verifyToken, labelController.createLabel);
+
+routes.get('/label/:noteId', jwt.verifyToken, labelController.getAllLabels);
+
+routes.put('/label/:labelId', jwt.verifyToken, labelController.editLabel);
+
+routes.delete('/label/:labelId', jwt.verifyToken, labelController.deleteLabel);
 
 module.exports = routes;

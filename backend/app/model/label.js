@@ -13,7 +13,7 @@
  */
 
 const mongoose = require('mongoose');
-var logger     = require('../../config/winston');
+var logger = require('../../config/winston');
 
 const LabelSchema = mongoose.Schema({
     userId: {
@@ -31,59 +31,54 @@ const LabelSchema = mongoose.Schema({
 },
     {
         timestamps: true
-});
+    });
 
 var label = mongoose.model('label', LabelSchema);
 
-class Api
-{
-    create(request)
-    {
+class Api {
+    create(request) {
         let createLabel = new label({
             "noteId": request.noteId,
             "label": request.label,
-            "userId" : request.userId
+            "userId": request.userId
         })
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             createLabel.save().then((data) => {
                 logger.info("data from model " + data);
                 resolve(data)
             })
-            .catch((error) => {
-                logger.info("data from model "+ error)
-                reject(error)
-            })
+                .catch((error) => {
+                    logger.info("data from model " + error)
+                    reject(error)
+                })
         })
     }
 
-    async read(request)
-    {
-       var data = await label.find(request)
-       return data;
-    }
-
-    async delete(request)
-    {
-        logger.info("request in model "+request)
-        var data = await label.findByIdAndRemove(request);
-        logger.info("response data " +JSON.stringify(data))
+    async read(request) {
+        var data = await label.find(request)
         return data;
     }
 
-    update(noteId,dataToUpdate)
-    {
-        logger.info("id "+JSON.stringify(noteId));
-        logger.info("update "+JSON.stringify(dataToUpdate))
-        return new Promise((resolve,reject)=>{
-            Note.findOneAndUpdate(noteId,dataToUpdate,{"new":true})
-            .then(data=>{
-                logger.info("data in model "+data);
-                return resolve(data)
-            })
-            .catch(error=>{
-                logger.info("error in model "+error)
-                return reject(error);
-            })
+    async delete(request) {
+        logger.info("request in model " + request)
+        var data = await label.findByIdAndRemove(request);
+        logger.info("response data " + JSON.stringify(data))
+        return data;
+    }
+
+    update(labelId, dataToUpdate) {
+        logger.info("id " + JSON.stringify(labelId));
+        logger.info("update " + JSON.stringify(dataToUpdate))
+        return new Promise((resolve, reject) => {
+            label.findOneAndUpdate(labelId, dataToUpdate, { "new": true })
+                .then(data => {
+                    logger.info("data in model " + data);
+                    return resolve(data)
+                })
+                .catch(error => {
+                    logger.info("error in model " + error)
+                    return reject(error);
+                })
         })
     }
 }

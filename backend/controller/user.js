@@ -8,7 +8,7 @@
  * @since       16 December 2019     
  */
 var userServices = require('../services/user');
-var jsonWebToken = require('../utility/jwtToken');
+var jsonWebToken = require('../auth/jwtToken');
 var mailSender   = require('../utility/nodeMailer');
 var urlShortner  = require('../utility/urlShortner');
 var logger       = require('../config/winston');

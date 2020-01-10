@@ -1,0 +1,20 @@
+{
+    "createNote": [
+        {
+            "title": "sandy@",
+            "description" : "this is to  be ......"
+        }
+    ],
+
+    "loginToken":[
+        {
+            "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTE1ODY2NjU3YjRmZDVmY2ZjYzdiNTMiLCJpYXQiOjE1Nzg2NjQxNjJ9.w1mCrRI5oaKMlzcRodMH9BOrg2kywjfA5xDQdJoqoi0"
+        }
+    ],
+
+    "noteId":[
+        {
+            "noteId" : ""
+        }
+    ]
+}
