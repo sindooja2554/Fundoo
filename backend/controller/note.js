@@ -97,51 +97,62 @@ class Controller {
     }
 
     deleteNote(request, response) {
-        request.check('noteId', 'Must be in the mongoose unique Id format')
-            .matches(/^[0-9a-fA-F]{24}$/)
+        try {
+            if (request.params.noteId === undefined || request.params.noteId === null)
+                throw "NoteId cannot be undefined or null"
+            request.check('noteId', 'Must be in the mongoose unique Id format')
+                .matches(/^[0-9a-fA-F]{24}$/)
 
-        var errors = request.validationErrors();
-        var result = {};
-        logger.info("errors " + errors)
-        if (errors) {
-
-            result.error = errors;
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else {
+            var errors = request.validationErrors();
             var result = {};
-            logger.info("noteId " + request.params.noteId);
-            logger.info("request.body.data._id " + JSON.stringify(request.body.data._id));
-            let deleteNoteObject = {
-                'userId': request.body.data._id,
-                'noteId': request.params.noteId
+            logger.info("errors " + JSON.stringify(errors))
+            if (errors) {
+                logger.info("errors " + JSON.stringify(errors[0].msg))
+                result.error = errors[0].msg;
+                result.success = false;
+                return response.status(400).send(result);
             }
-            logger.info("delete object " + JSON.stringify(deleteNoteObject));
-            noteService.deleteNote(deleteNoteObject)
-                .then((data) => {
-                    if (data === null) {
-                        result.success = true;
-                        result.message = "No note present to be deleted";
-                        result.data = data;
-                        return response.status(404).send(result);
-                    }
-                    else if (data !== null) {
-                        logger.info("response " + JSON.stringify(data));
-                        result.success = true;
-                        result.message = "Deleted Successfully";
-                        result.data = data;
-                        return response.status(200).send(result)
-                    }
-                })
-                .catch(error => {
-                    logger.info("error " + error)
-                    result.success = false;
-                    result.message = "Error Occured";
-                    result.error = error;
-                    return response.status(500).send(result)
-                })
+            else {
+                var result = {};
+                logger.info("noteId " + request.params.noteId);
+                logger.info("request.body.data._id " + JSON.stringify(request.body.data._id));
+                let deleteNoteObject = {
+                    'userId': request.body.data._id,
+                    'noteId': request.params.noteId
+                }
+                logger.info("delete object " + JSON.stringify(deleteNoteObject));
+                noteService.deleteNote(deleteNoteObject)
+                    .then((data) => {
+                        if (data === null) {
+                            result.success = true;
+                            result.message = "No note present to be deleted";
+                            result.data = data;
+                            return response.status(404).send(result);
+                        }
+                        else if (data !== null) {
+                            logger.info("response " + JSON.stringify(data));
+                            result.success = true;
+                            result.message = "Deleted Successfully";
+                            result.data = data;
+                            return response.status(200).send(result)
+                        }
+                    })
+                    .catch(error => {
+                        logger.info("error " + error)
+                        result.success = false;
+                        result.message = "Error Occured";
+                        result.error = error;
+                        return response.status(500).send(result)
+                    })
+            }
         }
+        catch(error)
+        {
+            result.error = error;
+            result.success = false;
+            return response.status(400).send(result)
+        }
+        
 
     }
 

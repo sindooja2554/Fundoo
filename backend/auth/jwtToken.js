@@ -36,10 +36,11 @@ module.exports = {
     verifyToken(req, res, next) {
         try {
             let token = req.headers.token || req.params;
-            logger.info(" token after vread " + req.headers.token);
-            if (token === null || token === undefined || token === "") throw ('Token not received')
-            // logger.info("length "+token.length);
-            if (token !== null || token !== undefined || token !== "") {
+            logger.info(" token after vread " +Object.keys(token).length);
+            logger.info("token "+token);
+            if (token === undefined || token === "" || Object.keys(token).length === 0 || token === null) throw 'Token not received'
+            logger.info("length "+token);
+            if (token !== null && token !== undefined && token !== "") {
                 logger.info("token inside if "+JSON.stringify(token))
                 jwt.verify(token, 'private_key', function (err, decoded) {
                     if (err) {
@@ -104,7 +105,7 @@ module.exports = {
                 res.status(400).send('Token not received')
             }
         }
-        catch (error) {
+        catch(error) {
             logger.info("error " + error)
             return res.status(400).send(error)
         }
