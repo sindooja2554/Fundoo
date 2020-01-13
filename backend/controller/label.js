@@ -3,8 +3,7 @@ var logger = require('../config/winston');
 
 class Controller {
     createLabel(request, response) {
-        // logger.info("noteId " +request.params.noteId);
-        // logger.info("request in ctrl "+request.body);
+        logger.info("request.. " + JSON.stringify(request.body))
         try {
             var result = {};
             if (request.body.label === null) throw 'Request body cannot be null';
@@ -58,12 +57,14 @@ class Controller {
 
     // async 
     getAllLabels(request, response) {
+        var result = {};
         request.check('noteId', 'Must be in the mongoose unique Id format')
             .matches(/^[0-9a-fA-F]{24}$/)
         var errors = request.validationErrors();
+        logger.info("errors " + JSON.stringify(errors))
         if (errors) {
 
-            result.error = errors;
+            result.error = errors[0].msg;
             result.success = false;
             return response.status(400).send(result);
         }
@@ -102,46 +103,55 @@ class Controller {
     }
 
     deleteLabel(request, response) {
-        request.check('labelId', 'Must be in the mongoose unique Id format')
-            .matches(/^[0-9a-fA-F]{24}$/)
-        var errors = request.validationErrors();
-        if (errors) {
-
-            result.error = errors;
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else {
+        try {
+            logger.info("labelId "+request.params.labelId);
+            console.log(request.params.labelId == null)
+            if (request.params.labelId === "null") throw 'Request body cannot be null';
+            if (request.params.labelId === undefined) throw 'Request body cannot be undefined';
+            request.check('labelId', 'Must be in the mongoose unique Id format')
+                .matches(/^[0-9a-fA-F]{24}$/)
             var result = {};
-            logger.info("labelId " + request.params.labelId);
-            let deleteLabelObject = {
-                'labelId': request.params.labelId
+            var errors = request.validationErrors();
+            if (errors) {
+                result.error = errors[0].msg;
+                result.success = false;
+                return response.status(400).send(result);
             }
-            logger.info("delete object " + JSON.stringify(deleteLabelObject));
-            labelService.deleteLabel(deleteLabelObject)
-                .then((data) => {
-                    if (data !== null) {
-                        logger.info("response " + JSON.stringify(data));
-                        result.success = true;
-                        result.message = "Deleted Successfully";
-                        result.data = data;
-                        return response.status(200).send(result)
-                    }
-                    else {
-                        logger.info("data==> " + data)
+            else {
+                logger.info("labelId " + request.params.labelId);
+                let deleteLabelObject = {
+                    'labelId': request.params.labelId
+                }
+                logger.info("delete object " + JSON.stringify(deleteLabelObject));
+                labelService.deleteLabel(deleteLabelObject)
+                    .then((data) => {
+                        if (data !== null) {
+                            logger.info("response " + JSON.stringify(data));
+                            result.success = true;
+                            result.message = "Deleted Successfully";
+                            result.data = data;
+                            return response.status(200).send(result)
+                        }
+                        else {
+                            logger.info("data==> " + data)
+                            result.success = false;
+                            result.message = "No label found"                             // "Delete Operation failed";
+                            result.data = data;
+                            return response.status(404).send(result)
+                        }
+                    })
+                    .catch(error => {
+                        logger.info("response " + error);
                         result.success = false;
-                        result.message = "Delete Operation failed";
-                        result.data = data;
-                        return response.status(400).send(result)
-                    }
-                })
-                .catch(error => {
-                    logger.info("response " + error);
-                    result.success = false;
-                    result.message = "Error Occured";
-                    result.error = error;
-                    return response.status(500).send(result)
-                })
+                        result.message = "Error Occured";
+                        result.error = error;
+                        return response.status(500).send(result)
+                    })
+            }
+        }
+        catch (error) {
+            logger.info("error "+error)
+            return response.status(400).send(error)
         }
     }
 
@@ -149,13 +159,16 @@ class Controller {
         request.check('labelId', 'Must be in the mongoose unique Id format')
             .matches(/^[0-9a-fA-F]{24}$/)
         var errors = request.validationErrors();
+        var result = {};
         if (errors) {
 
-            result.error = errors;
+            result.error = errors[0].msg;
             result.success = false;
             return response.status(400).send(result);
         }
         else {
+            logger.info("request==> "+JSON.stringify(request.body))
+            logger.info("edit in cntrl==> "+request.body.label)
             var editObject = {
                 "labelId": request.params.labelId,
                 "label": request.body.label
@@ -170,13 +183,20 @@ class Controller {
                         result.data = data;
                         return response.status(200).send(result)
                     }
+                    else
+                    {
+                        result.success = false;
+                        result.message = "Label Id not found";
+                        result.data = data;
+                        return response.status(404).send(result)   
+                    }
                 })
                 .catch(error => {
                     logger.info("error in ctrl " + error)
                     result.success = false;
                     result.message = "Error Occured";
                     result.error = error;
-                    return response.status(400).send(result)
+                    return response.status(500).send(result)
                 })
         }
     }

@@ -35,16 +35,17 @@ module.exports = {
      */
     verifyToken(req, res, next) {
         try {
-            let token = req.headers.token || req.params;
-            logger.info(" token after vread " +Object.keys(token).length);
-            logger.info("token "+token);
+            let token = req.headers.token;  
+            //  || req.params;
+            // logger.info(" token after vread " +Object.keys(token).length);
+            logger.info("token "+JSON.stringify(token));
             if (token === undefined || token === "" || Object.keys(token).length === 0 || token === null) throw 'Token not received'
             logger.info("length "+token);
             if (token !== null && token !== undefined && token !== "") {
                 logger.info("token inside if "+JSON.stringify(token))
                 jwt.verify(token, 'private_key', function (err, decoded) {
                     if (err) {
-                        return res.status(400).send(err + "Token has expired")
+                        return res.status(400).send(err)
                     }
                     else {
                         var route = req.url.split('/');
@@ -90,8 +91,8 @@ module.exports = {
                         client.get(redisData + req.body.data._id, (error, reply) => {
                             if (error) {
                                 return res.status(500).send(err + "Some Error");
-                            } else if (reply == token) {
-                                logger.info("data from redis==>", reply);
+                            } else if (reply === token) {
+                                logger.info("data from redis==> "+ reply);
                                 next();
                             }
                             else {

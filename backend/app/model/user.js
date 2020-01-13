@@ -105,10 +105,10 @@ class Api
         return new Promise(function(resolve,reject){
             User.findOneAndUpdate(request,dataToUpdate,{"new":true}).then(data=>{
                 // console.log("in updateone",data);
-                resolve(data)
+                return resolve(data)
             })
             .catch(error=>{
-                reject(error)
+                return reject(error)
             })
         })
       

@@ -52,9 +52,10 @@ describe('/GET getAllNotes', () => {
     //         .get('/note')
     //         .set('token', createNoteObject.loginToken[3].token)
     //         .end((err, res) => {
-    //             console.log("response==>",res.error)
+    //             console.log("response==>",res.body)
     //             res.should.have.status(400);
     //             res.body.should.be.a('Object');
+    //             res.body.should.have.property('message').eql('jwt malformed')
     //             // let result = res.error.text;
     //             //     assert.equal(result,'Token not received');
     //             done();
@@ -76,7 +77,7 @@ describe('/GET getAllNotes', () => {
 
     // it('Token not sent', (done) => {
     //             chai.request(server)
-    //                 .post('/note')
+    //                 .get('/note')
     //                 .send(createNoteObject.createNote[0])
     //                 .end((err, res) => {
     //                     res.should.have.status(400);
@@ -89,30 +90,4 @@ describe('/GET getAllNotes', () => {
     //                 });
     //         })
         
-    //         it('Token cannot be undefined', (done) => {
-    //                 chai.request(server)
-    //                     .post('/note')
-    //                     .end((err, res) => {
-    //                         console.log("response==>",res.error.text)
-    //                         res.should.have.status(400);
-    //                         res.body.should.be.a('Object');
-    //                         let result = res.error.text;
-    //                             assert.equal(result,'Token not received');
-    //                         done();
-    //                     });
-    //             })
-        
-    //         it('Token cannot be empty', (done) => {
-    //                 chai.request(server)
-    //                     .get('/note')
-    //                     .set('token', createNoteObject.loginToken[2].token)
-    //                     .end((err, res) => {
-    //                         console.log("response==>",res.error.text)
-    //                         res.should.have.status(400);
-    //                         res.body.should.be.a('Object');
-    //                         let result = res.error.text;
-    //                             assert.equal(result,'Token not received');
-    //                         done();
-    //                     });
-    //             })
 })

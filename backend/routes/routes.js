@@ -47,27 +47,23 @@ routes.get('/verify/:url', (request, response) => {
 routes.post('/verifyuser/:token', jwt.verifyToken, userController.isVerifiedController);
 
 routes.post('/imageupload', jwt.verifyToken, function (request, response) {
-    console.log("req", request.body);
+    logger.info("req"+ request.body);
     var imageSaveObject = {};
     imageSaveObject.id = request.body.data._id;
 
     singleUpload(request, response, function (error) {
         var res = {};
         if (error) {
-            console.log("err", error);
-            // logger.info("err",error);
+            logger.info("err",error);
             res.message = error;
             res.success = false;
             return response.status(500).send(res);
         } else {
-            console.log("data", request.body);
-            // logger.info("data",request.body);
-            console.log("file", request.file.location)
-            // logger.info("file",request.file.location);
+            logger.info("data",request.body);
+            logger.info("file",request.file.location);
 
             imageSaveObject.imageUrl = request.file.location;
-            console.log(imageSaveObject);
-            // logger.info(imageSaveObject);
+            logger.info(imageSaveObject);
             userController.uploadImageController(imageSaveObject, response)
             {
                 if (error) {

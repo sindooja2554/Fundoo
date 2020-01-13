@@ -252,20 +252,20 @@ class Services
             userModel.findOne({"_id":request.id},(error,data)=>{
                 if(error)
                 {
-                    reject(error)
+                    return reject(error)
                 }
                 else if(data === null){
-                    reject(error);
+                    return reject(error);
                 }
                 else
                 {
                     userModel.updateOne({"_id":data.id},{"imageUrl":request.imageUrl}).then(data=>{
                         console.log("insert",data)
-                        resolve(data);
+                        return resolve(data);
                     })
                     .catch(error=>{
                         console.log("insert",error)
-                        reject(error)
+                        return reject(error)
                     })
                 }
            })

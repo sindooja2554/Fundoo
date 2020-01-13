@@ -310,18 +310,24 @@ class Controller
             })
         }
     }
-
+    
+     /**
+     * @description This function is called when the user wants to add profile photo.
+     * @function    uploadImageController
+     * @param {*}   request 
+     * @param {*}   response 
+     */
     uploadImageController(request,response)
     {
-        // console.log("abcdef",request);
+        
         userServices.imageUploadService(request,response)
         {
             return new Promise(function(resolve,reject){
                 userServices.imageUploadService(request).then((data=>{
-                    resolve(data);
+                    return resolve(data);
                 }))
                 .catch(error=>{
-                    reject(error);
+                    return reject(error);
                 })
             })
         }

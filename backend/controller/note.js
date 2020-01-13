@@ -215,11 +215,12 @@ class Controller {
             .matches(/^[0-9a-fA-F]{24}$/)
 
         var errors = request.validationErrors();
+        console.log("er==>",errors)
         var result = {};
-        logger.info("errors " + errors)
+        logger.info("errors " + JSON.stringify(errors))
         if (errors) {
 
-            result.error = errors;
+            result.error = errors[0].msg;
             result.success = false;
             return response.status(400).send(result);
         }

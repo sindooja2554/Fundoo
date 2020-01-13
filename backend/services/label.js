@@ -85,6 +85,7 @@ class Service {
         // logger.info("requestin services "+JSON.stringify(editObject));
         // logger.info("description "+editObject.description);
         return new Promise((resolve, reject) => {
+            logger.info("update==> "+editObject.label)
             labelModel.update({ "_id": editObject.labelId }, { "label": editObject.label })
                 .then((data) => {
                     if (data !== null) {
@@ -93,7 +94,7 @@ class Service {
                     }
                     else {
                         logger.info("error in service " + data);
-                        return reject(data);
+                        return resolve(data);
                     }
                 })
                 .catch(error => {
