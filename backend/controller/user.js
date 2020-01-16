@@ -156,10 +156,12 @@ class Controller
                         client.set('loginToken'+data.data._id,jwtToken)
                         // console.log("loginId from **REDIS===>",
                         // client.get('loginToken'+data.data._id) );
+                        console.log("token in ctrl",jwtToken);
                         result.token = jwtToken;
                         result.message = 'Login successful';
                         result.success = data.success;
                         result.data = data;
+                        console.log("result  ",result);
                         return response.status(200).send(result);
                     }
                     else {

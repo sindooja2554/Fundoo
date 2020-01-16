@@ -38,16 +38,20 @@ module.exports = {
             let token = req.headers.token;  
             //  || req.params;
             // logger.info(" token after vread " +Object.keys(token).length);
-            logger.info("token "+JSON.stringify(token));
+            console.log("token "+token);
             if (token === undefined || token === "" || Object.keys(token).length === 0 || token === null) throw 'Token not received'
             logger.info("length "+token);
             if (token !== null && token !== undefined && token !== "") {
-                logger.info("token inside if "+JSON.stringify(token))
+                logger.info("token inside if "+token)
+                console.log("token inside if ",token)
+
                 jwt.verify(token, 'private_key', function (err, decoded) {
                     if (err) {
+                        console.log("error",err);
                         return res.status(400).send(err)
                     }
                     else {
+                        logger.info("url ======", req.url);
                         var route = req.url.split('/');
                         logger.info("req.url", route[1]);
                         var redisData;
@@ -96,13 +100,15 @@ module.exports = {
                                 next();
                             }
                             else {
-                                return res.status(400).send("Token did not matched");
+                                logger.error("data from redis "+reply)
+                                return res.status(400).send("Invalid Authentication"); 
                             }
                         })
                     }
                 })
             }
             else {
+                logger.info("error");
                 res.status(400).send('Token not received')
             }
         }
