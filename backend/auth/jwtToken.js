@@ -35,12 +35,13 @@ module.exports = {
      */
     verifyToken(req, res, next) {
         try {
+            // console.log("token1",req.headers)
             let token = req.headers.token;  
             //  || req.params;
             // logger.info(" token after vread " +Object.keys(token).length);
-            console.log("token "+token);
+            // console.log("token "+token);
             if (token === undefined || token === "" || Object.keys(token).length === 0 || token === null) throw 'Token not received'
-            logger.info("length "+token);
+            // logger.info("length "+token);
             if (token !== null && token !== undefined && token !== "") {
                 logger.info("token inside if "+token)
                 console.log("token inside if ",token)

@@ -181,6 +181,9 @@ class Controller {
             if (request.body.title !== undefined) {
                 editObject.title = request.body.title;
             }
+            // if (request.body.isTrash !== undefined) {
+            //     editObject.isTrash = true;
+            // }
             var result = {};
             logger.info("edit note object " + JSON.stringify(editObject));
             noteService.editNote(idObject, editObject)
