@@ -43,12 +43,12 @@ module.exports = {
             if (token === undefined || token === "" || Object.keys(token).length === 0 || token === null) throw 'Token not received'
             // logger.info("length "+token);
             if (token !== null && token !== undefined && token !== "") {
-                logger.info("token inside if "+token)
-                console.log("token inside if ",token)
+                // logger.info("token inside if "+token)
+                // console.log("token inside if ",token)
 
                 jwt.verify(token, 'private_key', function (err, decoded) {
                     if (err) {
-                        console.log("error",err);
+                        // console.log("error",err);
                         return res.status(400).send(err)
                     }
                     else {
@@ -90,8 +90,7 @@ module.exports = {
                         }
                         req.body['data'] = decoded;
                         req.token = decoded;
-                        logger.info("before sending data "
-                            + req.body.data._id);
+                        // logger.info("before sending data " + req.body.data._id);
                         logger.info("redisdata " + redisData + req.body.data._id);
                         client.get(redisData + req.body.data._id, (error, reply) => {
                             if (error) {
