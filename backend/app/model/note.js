@@ -46,6 +46,10 @@ const NoteSchema = mongoose.Schema({
     isTrash: {
         type: Boolean,
         default: false
+    },
+    color: {
+        type: String,
+        default: null
     }
 },
     {

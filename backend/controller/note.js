@@ -19,6 +19,7 @@ class Controller {
                 .isLength({ min: 3 })
             request.check('description', 'description cannot be empty')
                 .notEmpty()
+            request.check('color', 'Color cannot be empty').notEmpty()
             // request.check('userId','user id cannot be empty').notEmpty();
             // request.check('noteId', 'Note id should be in mongoose id format')
             //     .matches(/^[0-9a-fA-F]{24}$/)
@@ -175,15 +176,30 @@ class Controller {
                 "noteId": request.params.noteId,
                 "userId": request.body.data._id
             }
-            if (request.body.description !== undefined) {
-                editObject.description = request.body.description;
-            }
-            if (request.body.title !== undefined) {
-                editObject.title = request.body.title;
-            }
+            // if (request.body.description !== undefined) {
+            //     editObject.description = request.body.description;
+            // }
+            // if (request.body.title !== undefined) {
+            //     editObject.title = request.body.title;
+            // }
             // if (request.body.isTrash !== undefined) {
             //     editObject.isTrash = true;
             // }
+
+            if("title" in request.body && "description" in request.body && "color" in request.body &&
+            "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body)
+            {
+                // let editObject = 
+                // { 
+                    editObject.title = request.body.title,
+                    editObject.description = request.body.description,
+                    editObject.color = request.body.color,
+                    editObject.isArchive = request.body.isArchive,
+                    editObject.isPinned = request.body.isPinned,
+                    editObject.isTrash = request.body.isTrash
+                // }
+            }
+
             var result = {};
             logger.info("edit note object " + JSON.stringify(editObject));
             noteService.editNote(idObject, editObject)
@@ -212,8 +228,9 @@ class Controller {
     }
 
     addRemainder(request, response) {
-        request.check('remainder', 'Must be in valid format [eg.(22-05-2013 11:23:22)]')
-            .matches(/^(\d{2})\-(\d{2})\-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/);
+        console.log("request to save remainder",request.body);
+        // request.check('remainder', 'Must be in valid format [eg.(22-05-2013 11:23:22)]')
+        //     .matches(/^(\d{2})\-(\d{2})\-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/);
         request.check('noteId', 'Must be in the mongoose unique Id format')
             .matches(/^[0-9a-fA-F]{24}$/)
 

@@ -14,7 +14,7 @@ var urlShortner  = require('../utility/urlShortner');
 var logger       = require('../config/winston');
 var redis = require("redis"),
     client = redis.createClient();
-require('dotenv').config();
+
 
 class Controller
 {
