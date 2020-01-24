@@ -81,7 +81,7 @@ class Service {
                         "title": editObject.title ? editObject.title : data.title,
                         "description": editObject.description ? editObject.description : data.description,
                         "color": editObject.color ? editObject.color : data.color,
-                        "isArchived": editObject.isArchived === true ? true : false,
+                        "isArchive": editObject.isArchive === true ? true : false,
                         "isPinned": editObject.isPinned === true ? true : false,
                         "isTrash": editObject.isTrash === true ? true : false
                     }
@@ -114,6 +114,28 @@ class Service {
     }
 
     addRemainder(request) {
+        logger.info("request in service file " + request);
+        return new Promise((resolve, reject) => {
+            noteModel.update({ "_id": request.noteId }, { "remainder": request.remainder })
+                .then((data) => {
+                    if (data !== null) {
+                        logger.info("data in service " + data);
+                        return resolve(data);
+                    }
+                    else if (data == null) {
+                        logger.info("error in service " + data);
+                        return resolve(data);
+                    }
+                })
+                .catch(error => {
+                    logger.info("error in service " + error);
+                    return reject(error)
+                })
+        })
+    }
+
+    removeReminder(request)
+    {
         logger.info("request in service file " + request);
         return new Promise((resolve, reject) => {
             noteModel.update({ "_id": request.noteId }, { "remainder": request.remainder })

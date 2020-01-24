@@ -264,7 +264,7 @@ class Services
                         return resolve(data);
                     })
                     .catch(error=>{
-                        console.log("insert",error)
+                        console.log("insert in error",error)
                         return reject(error)
                     })
                 }

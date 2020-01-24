@@ -326,6 +326,7 @@ class Controller
         {
             return new Promise(function(resolve,reject){
                 userServices.imageUploadService(request).then((data=>{
+                    console.log("in ctrl")
                     return resolve(data);
                 }))
                 .catch(error=>{

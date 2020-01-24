@@ -19,7 +19,7 @@ class Controller {
                 .isLength({ min: 3 })
             request.check('description', 'description cannot be empty')
                 .notEmpty()
-            request.check('color', 'Color cannot be empty').notEmpty()
+            // request.check('color', 'Color cannot be empty').notEmpty()
             // request.check('userId','user id cannot be empty').notEmpty();
             // request.check('noteId', 'Note id should be in mongoose id format')
             //     .matches(/^[0-9a-fA-F]{24}$/)
@@ -158,6 +158,7 @@ class Controller {
     }
 
     editNote(request, response) {
+        logger.info("request in edit note",JSON.stringify(request.body));
         request.check('noteId', 'Must be in the mongoose unique Id format')
             .matches(/^[0-9a-fA-F]{24}$/)
 
@@ -228,7 +229,7 @@ class Controller {
     }
 
     addRemainder(request, response) {
-        console.log("request to save remainder",request.body);
+        // console.log("request to save remainder",request.body);
         // request.check('remainder', 'Must be in valid format [eg.(22-05-2013 11:23:22)]')
         //     .matches(/^(\d{2})\-(\d{2})\-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/);
         request.check('noteId', 'Must be in the mongoose unique Id format')
@@ -268,7 +269,7 @@ class Controller {
                     else if (data.length === 0) {
                         logger.info("data in ctrl " + data);
                         result.success = false;
-                        result.message = "Remainder is not be added";
+                        result.message = "Remainder is not added";
                         result.error = "error"
                         return response.status(400).send(result);
                     }
@@ -277,7 +278,61 @@ class Controller {
                     logger.info("error in ctrl " + error);
                     result.success = false;
                     result.message = "Some error ocurred while adding remainder";
-                    result.data = data;
+                    result.error = error;
+                    return response.status(500).send(result);
+                })
+        }
+    }
+
+    deleteReminder(request,response)
+    {
+        request.check('noteId', 'Must be in the mongoose unique Id format')
+        .matches(/^[0-9a-fA-F]{24}$/)
+
+        var errors = request.validationErrors();
+        // console.log("er==>",errors)
+        var result = {};
+        logger.info("errors " + JSON.stringify(errors))
+        if (errors) {
+
+            result.error = errors[0].msg;
+            result.success = false;
+            return response.status(400).send(result);
+        }
+        else {
+            var removeReminderObject = {
+                "noteId": request.params.noteId,
+                "remainder": request.body.remainder
+            }
+
+            noteService.removeReminder(removeReminderObject)
+                .then((data) => {
+                    if (data !== null) {
+                        logger.info("data in control " + data);
+                        result.success = true;
+                        result.message = "Successfully deleted reminder";
+                        result.data = data;
+                        return response.status(200).send(result);
+                    }
+                    else if (data === null) {
+                        result.success = true;
+                        result.message = "No note found with given note id";
+                        result.data = data;
+                        return response.status(404).send(result);
+                    }
+                    else if (data.length === 0) {
+                        logger.info("data in ctrl " + data);
+                        result.success = false;
+                        result.message = "Reminder is not be deleted";
+                        result.error = "error"
+                        return response.status(400).send(result);
+                    }
+                })
+                .catch(error => {
+                    logger.info("error in ctrl " + error);
+                    result.success = false;
+                    result.message = "Some error ocurred while deleting remainder";
+                    result.error = error;
                     return response.status(500).send(result);
                 })
         }

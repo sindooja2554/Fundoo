@@ -66,19 +66,29 @@ routes.post('/imageupload', jwt.verifyToken, function (request, response) {
 
             imageSaveObject.imageUrl = request.file.location;
             logger.info(imageSaveObject);
-            userController.uploadImageController(imageSaveObject, response)
-            {
-                if (error) {
+            userController.uploadImageController(imageSaveObject).then(data=>{
+                console.log("response",data.imageUrl)
+                res.message = "Successfully saved";
+                res.success = true;
+                res.data = data.imageUrl
+                return response.status(200).send(res);
+            })
+            .catch(error=>{
+                    console.log("response",error)
                     res.error = error;
                     res.success = false;
                     return response.status(500).send(res);
-                }
-                else {
-                    res.message = "Successfully saved";
-                    res.success = true;
-                    return response.status(200).send(res);
-                }
-            }
+            })
+            // {
+            //     // logger.info("response",JSON.stringify(response));
+
+            //     if (error) {
+
+            //     }
+            //     else {
+                   
+            //     }
+            // }
         }
     })
 });
@@ -92,7 +102,9 @@ routes.put('/note/:noteId', jwt.verifyToken, noteController.editNote);
 
 routes.delete('/note/:noteId', jwt.verifyToken, noteController.deleteNote);
 
-routes.put('/remainder/:noteId', jwt.verifyToken, noteController.addRemainder);
+routes.post('/remainder/:noteId', jwt.verifyToken, noteController.addRemainder);
+
+routes.put('/remainder/:noteId', jwt.verifyToken, noteController.deleteReminder);
 
 //Routes for label
 routes.post('/label/:noteId', jwt.verifyToken, labelController.createLabel);
