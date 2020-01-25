@@ -79,19 +79,12 @@ routes.post('/imageupload', jwt.verifyToken, function (request, response) {
                     res.success = false;
                     return response.status(500).send(res);
             })
-            // {
-            //     // logger.info("response",JSON.stringify(response));
-
-            //     if (error) {
-
-            //     }
-            //     else {
-                   
-            //     }
-            // }
         }
     })
 });
+
+//Route for search
+routes.post('/search',jwt.verifyToken, noteController.search);
 
 //Routes for note
 routes.post('/note', jwt.verifyToken, noteController.createNote);

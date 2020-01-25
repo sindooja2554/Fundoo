@@ -337,6 +337,91 @@ class Controller {
                 })
         }
     }
+
+    search(request,response) {
+        var result = {};
+        logger.info("request "+JSON.stringify(request.body));
+        console.log("request",request.body);
+        // { code: "#FFFFFF", name: "white" },
+        // { code: "#F28B82", name: "red" },
+        // { code: "#F7BC04", name: "orange" },
+        // { code: "#FCF474", name: "yellow" },
+        // { code: "#CCFF90", name: "green" },
+        // { code: "#A7FFEB", name: "teal" },
+        // { code: "#CBF0F8", name: "blue" },
+        // { code: "#AECBFA", name: "Drak blue" },
+        // { code: "#D7AEFB", name: "purple" },
+        // { code: "#FACFE8", name: "pink" },
+        // { code: "#E6C9A8", name: "Brown" },
+        // { code: "#E8EAED", name: "grey" },
+        // { code: "#96A5A5", name: "Drak gray" },
+        // { code: "#00FFFF", name: "cyan" }
+        // switch(request.body.value) 
+        // {
+        //     case "white" : {
+        //         request.body.value = "#FFFFFF";
+        //         break;
+        //     }
+        //     case "red" : {
+        //         request.body.value = "#F28B82";
+        //         break;
+        //     }
+        //     case "orange" : {
+        //         request.body.value = "#F7BC04";
+        //         break;
+        //     }
+        //     case "yellow" : {
+        //         request.body.value = "#FCF474";
+        //         break;
+        //     }
+        //     case "green" : {
+        //         request.body.value = "#CCFF90";
+        //         break;
+        //     }
+        //     case "teal" : {
+        //         request.body.value = "#A7FFEB";
+        //         break;
+        //     }
+        //     case "blue" : {
+        //         request.body.value = "#CBF0F8";
+        //         break;
+        //     }
+        //     case "drak blue" : {
+        //         request.body.value = "#AECBFA";
+        //         break;
+        //     }
+            
+        // }
+        var searchObject = {
+            "userId": request.body.data._id,
+            "value": request.body.value
+        }
+
+        noteService.search(searchObject)
+            .then((data) => {
+                if (data.length === 0 || data ===null) {
+                    logger.info("data in ctrl " + data);
+                    result.success = false;
+                    result.message = "Data not found";
+                    result.error = "error"
+                    return response.status(404).send(result);
+                }
+                else if (data !== null) {
+                    logger.info("data in control " + data);
+                    result.success = true;
+                    result.message = "Data found";
+                    result.data = data;
+                    return response.status(200).send(result);
+                }
+            })
+            .catch(error => {
+                logger.info("error in ctrl " + error);
+                result.success = false;
+                result.message = "Some error ocurred while searching";
+                result.error = error;
+                return response.status(500).send(result);
+            })
+    }
 }
 
 module.exports = new Controller();

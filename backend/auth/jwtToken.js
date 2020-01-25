@@ -87,6 +87,11 @@ module.exports = {
                                     redisData = "loginToken";
                                     break;
                                 }
+                            case "search":
+                                {
+                                    redisData = "loginToken";
+                                    break;
+                                }
                         }
                         req.body['data'] = decoded;
                         req.token = decoded;

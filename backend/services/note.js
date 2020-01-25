@@ -81,12 +81,13 @@ class Service {
                         "title": editObject.title ? editObject.title : data.title,
                         "description": editObject.description ? editObject.description : data.description,
                         "color": editObject.color ? editObject.color : data.color,
+                        "remainder": editObject.remainder ? editObject.remainder : data.remainder,
                         "isArchive": editObject.isArchive === true ? true : false,
                         "isPinned": editObject.isPinned === true ? true : false,
-                        "isTrash": editObject.isTrash === true ? true : false
+                        "isTrash": editObject.isTrash === true ? true : false,
                     }
 
-                    logger.info("data in service ",+JSON.stringify(note));
+                    logger.info("data in service ", +JSON.stringify(note));
 
                     noteModel.update({ "_id": idObject.noteId }, note)
                         .then((data) => {
@@ -105,10 +106,10 @@ class Service {
                         })
                 }
             })
-            .catch(error=>{
-                logger.info("error in service " + error);
-                return reject(error)
-            })
+                .catch(error => {
+                    logger.info("error in service " + error);
+                    return reject(error)
+                })
 
         })
     }
@@ -134,8 +135,7 @@ class Service {
         })
     }
 
-    removeReminder(request)
-    {
+    removeReminder(request) {
         logger.info("request in service file " + request);
         return new Promise((resolve, reject) => {
             noteModel.update({ "_id": request.noteId }, { "remainder": request.remainder })
@@ -154,6 +154,42 @@ class Service {
                     return reject(error)
                 })
         })
+    }
+
+    search(request) {
+        logger.info("request in service========> " + JSON.stringify(request))
+        return new Promise((resolve, reject) => {
+            // {$or:[{"firstName":{$regex:".*ray.*"}},{"lastName":{$regex:".*ray.*"}}]}
+            noteModel.read(
+                {
+                    $and: [
+                        { $or: [{ "userId": request.userId }] },
+                        {
+                            $or: [
+                                { "title": { $regex: request.value } },
+                                { "description": { $regex: request.value } },
+                                { "color.name": { $regex: request.value } },
+                                { "remainder": { $regex: request.value} }
+                            ]
+                        }
+                    ]
+                })
+                .then(data => {
+                    if (data !== null) {
+                        logger.info("data in service " + data);
+                        return resolve(data);
+                    }
+                    else if (data == null) {
+                        logger.info("error in service " + data);
+                        return resolve(data);
+                    }
+                })
+                .catch(error => {
+                    logger.info("error in service " + error);
+                    return reject(error)
+                })
+        })
+
     }
 }
 

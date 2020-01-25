@@ -48,8 +48,13 @@ const NoteSchema = mongoose.Schema({
         default: false
     },
     color: {
-        type: String,
-        default: null
+        // code : "#FFFFFF",
+        // name : "white"
+        type: Object,
+        default: {
+            name : "white",
+            code : "#FFFFFF"
+        }
     }
 },
     {
@@ -82,6 +87,7 @@ class NoteApi
     async read(request)
     {
        var data = await Note.find(request)
+       console.log(data);
        return data;
     }
 
