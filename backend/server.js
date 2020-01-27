@@ -19,6 +19,10 @@ const app = express();
 var cors = require('cors')
 const validator = require('express-validator');
 var route = require('./routes/routes');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./utility/swagger');
+
+app.use('/fundoo', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
 require('dotenv/').config();
 app.use(bodyParser.json());

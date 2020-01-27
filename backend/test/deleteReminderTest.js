@@ -9,10 +9,10 @@ console.log("noteId...." + JSON.stringify(createNoteObject.noteId[6].addRemainde
 
 chai.use(chaiHttp);
 
-describe('/remainder Remainder API', () => {
-    // it('Successfully adding remainder', (done) => {
+describe('/remainder Remove Remainder API', () => {
+    // it('Successfully deleted remainder', (done) => {
     //     chai.request(server)
-    //         .post('/remainder/' + createNoteObject.noteId[6].addRemainderNoteId)
+    //         .put('/remainder/' + createNoteObject.noteId[6].addRemainderNoteId)
     //         .set('token', createNoteObject.loginToken[0].token)
     //         .send(createNoteObject.remainder[0])
     //         .end((err, res) => {
@@ -20,7 +20,7 @@ describe('/remainder Remainder API', () => {
     //             res.should.have.status(200);
     //             res.body.should.be.a('Object');
     //             res.body.should.have.property('success').eql(true);
-    //             res.body.should.have.property('message').eql('Successfully added remainder')
+    //             res.body.should.have.property('message').eql('Successfully deleted reminder')
     //             done();
     //         });
     // })
@@ -98,20 +98,18 @@ describe('/remainder Remainder API', () => {
     //         });
     // })
 
-    // it('Remainder should be in valid date format', (done) => {
+    // it('No note found', (done) => {
     //     chai.request(server)
     //         .put('/remainder/' + createNoteObject.noteId[9].noNoteId)
     //         .set('token', createNoteObject.loginToken[0].token)
-    //         .send(createNoteObject.remainder[1])
+    //         .send(createNoteObject.remainder[0])
     //         .end((err, res) => {
     //             console.log("response==>", res.body)
     //             res.should.have.status(404);
     //             res.body.should.be.a('Object');
     //             res.body.should.have.property('success').eql(true);
-    //             res.body.should.have.property('message')
-    //                 .eql('No note found with given note id')
+    //             res.body.should.have.property('message').eql('No note found with given note id')
     //             done();
     //         });
     // })
-
 })

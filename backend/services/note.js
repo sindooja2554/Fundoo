@@ -80,8 +80,11 @@ class Service {
                     let note = {
                         "title": editObject.title ? editObject.title : data.title,
                         "description": editObject.description ? editObject.description : data.description,
-                        "color": editObject.color ? editObject.color : data.color,
-                        "remainder": editObject.remainder ? editObject.remainder : data.remainder,
+                        "color":{
+                            "name": editObject.color.name ? editObject.color.name : data.color.name,
+                            "code": editObject.color.code ? editObject.color.code : data.color.code
+                        },
+                        // "remainder": editObject.remainder ? editObject.remainder : data.remainder,
                         "isArchive": editObject.isArchive === true ? true : false,
                         "isPinned": editObject.isPinned === true ? true : false,
                         "isTrash": editObject.isTrash === true ? true : false,

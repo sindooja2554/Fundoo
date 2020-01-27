@@ -35,7 +35,7 @@ module.exports = {
      */
     verifyToken(req, res, next) {
         try {
-            // console.log("token1",req.headers)
+            console.log("token1",req.headers)
             let token = req.headers.token;  
             //  || req.params;
             // logger.info(" token after vread " +Object.keys(token).length);
@@ -52,7 +52,7 @@ module.exports = {
                         return res.status(400).send(err)
                     }
                     else {
-                        logger.info("url ======", req.url);
+                        logger.info("url ======"+ req.url);
                         var route = req.url.split('/');
                         logger.info("req.url", route[1]);
                         var redisData;

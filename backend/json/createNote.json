@@ -2,115 +2,142 @@
     "createNote": [
         {
             "title": "sandy@",
-            "description" : "this is to  be ......"
+            "description": "this is to  be ......",
+            "color": {
+                "name": "white",
+                "code": "#FFFFFF"
+            },
+            "isArchive": false,
+            "isPinned": false,
+            "isTrash": false
         },
         {
             "title": "",
-            "description" : "this is to  be ......"
+            "description": "this is to  be ......"
         },
         {
-            "title":"abcd..",
-            "description":""
+            "title": "abcd..",
+            "description": ""
+        },
+        {
+            "title" :"abc" 
+        },
+        {
+            "title" : null,
+            "description" : "abc"
+        },
+        {
+            "title" :"abc" ,
+            "description": "this is to  be ......"  
         }
     ],
-
-    "loginToken":[
+    "loginToken": [
         {
-            "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTE1ODY2NjU3YjRmZDVmY2ZjYzdiNTMiLCJpYXQiOjE1Nzg2NjQxNjJ9.w1mCrRI5oaKMlzcRodMH9BOrg2kywjfA5xDQdJoqoi0"
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTE1ODY2NjU3YjRmZDVmY2ZjYzdiNTMiLCJpYXQiOjE1ODAxMDEzNzh9.1aISckaynwlEnkKLoIsOmQsYYfA9PZOtu77Pq80nO0s"
         },
         {
-            "token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTE1ZGYyM2M3OGNkMTIxOTIwZmNiMjIiLCJpYXQiOjE1Nzg3MjQ4MjF9.uTccxwiDhhd_PsI6f-cyaTOJmpju3n0Xl-NBoZpqwa4"
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZTE1ZGYyM2M3OGNkMTIxOTIwZmNiMjIiLCJpYXQiOjE1Nzg3MjQ4MjF9.uTccxwiDhhd_PsI6f-cyaTOJmpju3n0Xl-NBoZpqwa4"
         },
         {
-            "token" : ""
+            "token": ""
         },
         {
-            "token" : null
+            "token": null
         }
     ],
-
-    "noteId":[
+    "noteId": [
         {
-            "noteId" : ""
+            "noteId": ""
         },
         {
-            "noteId" : "5e1965d92824ae1feb163e6e"
+            "noteId": "5e1965d92824ae1feb163e6e"
         },
         {
-            "noteId" : "abcdgvdwuihbedukdnfksdfn"
+            "noteId": "abcdgvdwuihbedukdnfksdfn"
         },
         {
-            "noteId" : "sdfdsfe5454tgrdt34vdt"
+            "noteId": "sdfdsfe5454tgrdt34vdt"
         },
         {
-            "noteId" : null
+            "noteId": null
         },
         {
-            "editId" : "5e188776232cdb198429ebe9"
+            "editId": "5e2e9320a2f0be31d32dc02d"
         },
         {
-            "addRemainderNoteId" : "5e188cbb1c1b49213ded5681"
+            "addRemainderNoteId": "5e228d2a51a2760e55bcbdbc"
         },
         {
-            "labelNoteId" : "5e16c1a3d45e4418ee72d599"
+            "labelNoteId": "5e16c1a3d45e4418ee72d599"
         },
         {
-            "labelNoteId" : "5e195bab790c7813af1b9133"
+            "labelNoteId": "5e195bab790c7813af1b9133"
+        },
+        {
+            "noNoteId": "5e228d2a51a2760e55bbcdbc"
         }
     ],
-
-    "editNote":[
+    "editNote": [
         {
-            "title" : ""
+            "title": ""
         }
     ],
-
-    "remainder":[
+    "remainder": [
         {
-            "remainder" : "22-05-2013 11:23:22"
+            "remainder": "22-05-2013 11:23:22"
         },
         {
-            "remainder" : "220-12-13232 11:23:23" 
+            "remainder": "220-12-13232 11:23:23"
         },
         {
-            "remainder" : "22-05-2015 11-45-454"
+            "remainder": "22-05-2015 11-45-454"
         }
     ],
-
-    "createLabel" : [
+    "createLabel": [
         {
-            "label" : "dsf43@edf"
+            "label": "dsf43@edf"
         },
         {
-            "label" : null
+            "label": null
         }
     ],
-
-    "deleteLabel" : [
+    "deleteLabel": [
         {
-            "labelId" : "5e1c030acb64a020b0e4c603"
+            "labelId": "5e1c030acb64a020b0e4c603"
         },
         {
-            "labelId" : null
+            "labelId": null
         },
         {
-            "labelId" : "dhvsahdguyagduywuer72347"
+            "labelId": "dhvsahdguyagduywuer72347"
         },
         {
-            "labelId" : "5e195bab790c7813af1b9133"
+            "labelId": "5e195bab790c7813af1b9133"
         }
     ],
-
-    "editLabel" : [
+    "editLabel": [
         {
-            "labelId" : "5e182983b0eedc540a7d8786"
+            "labelId": "5e182983b0eedc540a7d8786"
         },
         {
-            "label" : "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"
+            "label": "hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"
         },
         {
-            "labelId" : "5e195bab790c7813af1b9133"
+            "labelId": "5e195bab790c7813af1b9133"
+        }
+    ],
+    "search" : [
+        {
+            "value" : "aa"
+        },
+        {
+            "value" : "zxzxz"
+        },
+        {
+            "value" : null
+        },
+        {
+            "value" : ""
         }
     ]
-
 }

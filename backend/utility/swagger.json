@@ -1,0 +1,308 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This app is used to save notes",
+        "version": "1.0.3",
+        "title": "Fundoo",
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "host": "localhost:3001",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "user",
+            "description": "User can login, register, change password"
+        },
+        {
+            "name": "note",
+            "description": "Authorized user can create and get all notes"
+        },
+        {
+            "name": "editNote",
+            "description": "Authorized user can edit the notes"
+        }
+    ],
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/login": {
+            "post": {
+                "tags": [
+                    "user"
+                ],
+                "summary": "Login user to the application",
+                "description": "Add email id and password",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/user"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Unsuccessful operation"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        },
+        "/note": {
+            "post": {
+                "tags": [
+                    "note"
+                ],
+                "summary": "Add notes",
+                "description": "Add title and description",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/note"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Unsuccessful operation"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "get": {
+                "tags": [
+                    "note"
+                ],
+                "summary": "getting notes",
+                "description": "Will return all the notes of that particular user",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Unsuccessful operation"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }   
+        },
+        "/note/{noteId}": {
+            "put": {
+                "tags": [
+                    "editNote"
+                ],
+                "summary": "edit note",
+                "description": "Editing the title, description, color, reminder, pinned, archive & trash of notes",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "noteId",
+                        "in": "path",
+                        "description": "ID of note to return",
+                        "required": true,
+                        "type": "string"
+
+                    },
+                    {
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "type": "string",
+                        "schema": {
+                            "$ref": "#/definitions/editNote"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Unsuccessful operation"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "editNote"
+                ],
+                "summary": "edit note",
+                "description": "Deleting note",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "name": "noteId",
+                        "in": "path",
+                        "description": "ID of note to return",
+                        "required": true,
+                        "type": "string"
+
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    },
+                    "400": {
+                        "description": "Unsuccessful operation"
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ]
+            }
+        }
+    },
+    "securityDefinitions": {
+        "api_key": {
+            "type": "apiKey",
+            "name": "token",
+            "in": "header"
+        }
+    },
+    "definitions": {
+        "user": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            },
+            "example": {
+                "email": "xxxx@gmail.com",
+                "password": "xxxxxx@1234"
+            }
+        },
+        "note": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                }
+            },
+            "example": {
+                "title": "Title can contain anything but should be atleast 3 characters long",
+                "description": "Description can contain anything but should be atleast 3 characters long"
+            }
+        },
+        "editNote": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "color": {
+                    "type": "object",
+                    "default": {
+                        "name" : "white",
+                        "code" : "#FFFFFF"
+                    }
+                },
+                "isArchive": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "isPinned": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "isTrash": {
+                    "type": "boolean",
+                    "default": false
+                }
+            },
+            "example": {
+                "title": "3 characters long",
+                "description": "3 characters long",
+                "color": {
+                    "name":"white",
+                    "code":"#FFFFFF"
+                },
+                "isArchive": false,
+                "ispinned":  false,
+                "isTrash":  false
+            }
+        }
+    }
+}

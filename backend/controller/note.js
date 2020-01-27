@@ -147,147 +147,183 @@ class Controller {
                     })
             }
         }
-        catch(error)
-        {
+        catch (error) {
             result.error = error;
             result.success = false;
             return response.status(400).send(result)
         }
-        
+
 
     }
 
     editNote(request, response) {
-        logger.info("request in edit note",JSON.stringify(request.body));
-        request.check('noteId', 'Must be in the mongoose unique Id format')
-            .matches(/^[0-9a-fA-F]{24}$/)
+        try {
+            if (request.body.title === undefined || request.body.description === undefined)
+                throw 'Cannot be undefined'
+            if (request.body.title === null || request.body.description === null)
+                throw 'Cannot be null'
 
-        var errors = request.validationErrors();
-        var result = {};
-        logger.info("errors " + errors)
-        if (errors) {
+            logger.info("request in edit note +" + JSON.stringify(request.params.noteId));
+            request.check('noteId', 'Must be in the mongoose unique Id format')
+                .matches(/^[0-9a-fA-F]{24}$/)
 
-            result.error = errors;
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else {
-            var editObject = {}
-            var idObject = {
-                "noteId": request.params.noteId,
-                "userId": request.body.data._id
-            }
-            // if (request.body.description !== undefined) {
-            //     editObject.description = request.body.description;
-            // }
-            // if (request.body.title !== undefined) {
-            //     editObject.title = request.body.title;
-            // }
-            // if (request.body.isTrash !== undefined) {
-            //     editObject.isTrash = true;
-            // }
-
-            if("title" in request.body && "description" in request.body && "color" in request.body &&
-            "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body)
-            {
-                // let editObject = 
-                // { 
-                    editObject.title = request.body.title,
-                    editObject.description = request.body.description,
-                    editObject.color = request.body.color,
-                    editObject.isArchive = request.body.isArchive,
-                    editObject.isPinned = request.body.isPinned,
-                    editObject.isTrash = request.body.isTrash
-                // }
-            }
-
+            var errors = request.validationErrors();
             var result = {};
-            logger.info("edit note object " + JSON.stringify(editObject));
-            noteService.editNote(idObject, editObject)
-                .then(data => {
-                    if (data !== null) {
-                        result.success = true;
-                        result.message = "Update Successfully";
-                        result.data = data;
-                        return response.status(200).send(result)
-                    }
-                    else {
-                        result.success = true;
-                        result.message = "No note found with the specified id";
-                        result.data = data;
-                        return response.status(404).send(result);
-                    }
-                })
-                .catch(error => {
-                    logger.info("error in ctrl " + error)
+            logger.info("errors " + JSON.stringify(errors))
+            if (errors) {
+
+                result.error = errors;
+                result.success = false;
+                return response.status(400).send(result);
+            }
+            else {
+                logger.info("noteId" + request.params.noteId)
+                var editObject = {}
+                var idObject = {
+                    "noteId": request.params.noteId,
+                    "userId": request.body.data._id
+                }
+                // if (request.body.description !== undefined) {
+                //     editObject.description = request.body.description;
+                // }
+                // if (request.body.title !== undefined) {
+                //     editObject.title = request.body.title;
+                // }
+                // if (request.body.isTrash !== undefined) {
+                //     editObject.isTrash = true;
+                // }
+
+                logger.info("before if " + JSON.stringify(request.body));
+                if ("title" in request.body && "description" in request.body && "color" in request.body &&
+                    "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
+                    "name" in request.body.color && "code" in request.body.color) {
+                    logger.info("edit note object 1" + JSON.stringify(editObject));
+                    var color = {};
+                    editObject.title = request.body.title,
+                        editObject.description = request.body.description,
+                        editObject.color = {
+                            name: request.body.color.name,
+                            code: request.body.color.code
+                        }
+                    editObject.isArchive = request.body.isArchive,
+                        editObject.isPinned = request.body.isPinned,
+                        editObject.isTrash = request.body.isTrash
+
+                    var result = {};
+                    logger.info("edit note object 2" + JSON.stringify(editObject));
+                    noteService.editNote(idObject, editObject)
+                        .then(data => {
+                            if (data !== null) {
+                                result.success = true;
+                                result.message = "Update Successfully";
+                                result.data = data;
+                                return response.status(200).send(result)
+                            }
+                            else {
+                                result.success = true;
+                                result.message = "No note found with the specified id";
+                                result.data = data;
+                                return response.status(404).send(result);
+                            }
+                        })
+                        .catch(error => {
+                            logger.info("error in ctrl " + error)
+                            result.success = false;
+                            result.message = "Error Occured";
+                            result.error = error;
+                            return response.status(500).send(result)
+                        })
+                }
+                else {
                     result.success = false;
-                    result.message = "Error Occured";
-                    result.error = error;
-                    return response.status(500).send(result)
-                })
+                    result.message = "Please add all the fields";
+                    result.error = "Please add all the fields";
+                    return response.status(400).send(result);
+                }
+
+            }
         }
+        catch (error) {
+            var result = {};
+            result.success = false;
+            result.message = "Some error";
+            result.error = error;
+            return response.status(400).send(result)
+        }
+
     }
 
     addRemainder(request, response) {
-        // console.log("request to save remainder",request.body);
-        // request.check('remainder', 'Must be in valid format [eg.(22-05-2013 11:23:22)]')
-        //     .matches(/^(\d{2})\-(\d{2})\-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/);
-        request.check('noteId', 'Must be in the mongoose unique Id format')
-            .matches(/^[0-9a-fA-F]{24}$/)
+        try {
 
-        var errors = request.validationErrors();
-        console.log("er==>",errors)
-        var result = {};
-        logger.info("errors " + JSON.stringify(errors))
-        if (errors) {
+            if (request.body.remainder === undefined || request.body.remainder === null)
+                throw 'Cannot be undefined or null'
+            // console.log("request to save remainder",request.body);
+            // request.check('remainder', 'Must be in valid format [eg.(22-05-2013 11:23:22)]')
+            //     .matches(/^(\d{2})\-(\d{2})\-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/);
+            request.check('noteId', 'Must be in the mongoose unique Id format')
+                .matches(/^[0-9a-fA-F]{24}$/)
 
-            result.error = errors[0].msg;
-            result.success = false;
-            return response.status(400).send(result);
-        }
-        else {
-            var addRemainderObject = {
-                "noteId": request.params.noteId,
-                "remainder": request.body.remainder
+            var errors = request.validationErrors();
+            console.log("er==>", errors)
+            var result = {};
+            logger.info("errors " + JSON.stringify(errors))
+            if (errors) {
+
+                result.error = errors[0].msg;
+                result.success = false;
+                return response.status(400).send(result);
             }
+            else {
+                var addRemainderObject = {
+                    "noteId": request.params.noteId,
+                    "remainder": request.body.remainder
+                }
 
-            noteService.addRemainder(addRemainderObject)
-                .then((data) => {
-                    if (data !== null) {
-                        logger.info("data in control " + data);
-                        result.success = true;
-                        result.message = "Successfully added remainder";
-                        result.data = data;
-                        return response.status(200).send(result);
-                    }
-                    else if (data === null) {
-                        result.success = true;
-                        result.message = "No note found with given note id";
-                        result.data = data;
-                        return response.status(404).send(result);
-                    }
-                    else if (data.length === 0) {
-                        logger.info("data in ctrl " + data);
+                noteService.addRemainder(addRemainderObject)
+                    .then((data) => {
+                        if (data !== null) {
+                            logger.info("data in control " + data);
+                            result.success = true;
+                            result.message = "Successfully added remainder";
+                            result.data = data;
+                            return response.status(200).send(result);
+                        }
+                        else if (data === null) {
+                            result.success = true;
+                            result.message = "No note found with given note id";
+                            result.data = data;
+                            return response.status(404).send(result);
+                        }
+                        else if (data.length === 0) {
+                            logger.info("data in ctrl " + data);
+                            result.success = false;
+                            result.message = "Remainder is not added";
+                            result.error = "error"
+                            return response.status(400).send(result);
+                        }
+                    })
+                    .catch(error => {
+                        logger.info("error in ctrl " + error);
                         result.success = false;
-                        result.message = "Remainder is not added";
-                        result.error = "error"
-                        return response.status(400).send(result);
-                    }
-                })
-                .catch(error => {
-                    logger.info("error in ctrl " + error);
-                    result.success = false;
-                    result.message = "Some error ocurred while adding remainder";
-                    result.error = error;
-                    return response.status(500).send(result);
-                })
+                        result.message = "Some error ocurred while adding remainder";
+                        result.error = error;
+                        return response.status(500).send(result);
+                    })
+            }
+        }
+        catch (error) {
+            var result = {};
+            result.success = false;
+            result.message = "Some error";
+            result.error = error;
+            return response.status(400).send(result)
         }
     }
 
-    deleteReminder(request,response)
-    {
+    deleteReminder(request, response) {
         request.check('noteId', 'Must be in the mongoose unique Id format')
-        .matches(/^[0-9a-fA-F]{24}$/)
+            .matches(/^[0-9a-fA-F]{24}$/)
 
         var errors = request.validationErrors();
         // console.log("er==>",errors)
@@ -338,90 +374,69 @@ class Controller {
         }
     }
 
-    search(request,response) {
-        var result = {};
-        logger.info("request "+JSON.stringify(request.body));
-        console.log("request",request.body);
-        // { code: "#FFFFFF", name: "white" },
-        // { code: "#F28B82", name: "red" },
-        // { code: "#F7BC04", name: "orange" },
-        // { code: "#FCF474", name: "yellow" },
-        // { code: "#CCFF90", name: "green" },
-        // { code: "#A7FFEB", name: "teal" },
-        // { code: "#CBF0F8", name: "blue" },
-        // { code: "#AECBFA", name: "Drak blue" },
-        // { code: "#D7AEFB", name: "purple" },
-        // { code: "#FACFE8", name: "pink" },
-        // { code: "#E6C9A8", name: "Brown" },
-        // { code: "#E8EAED", name: "grey" },
-        // { code: "#96A5A5", name: "Drak gray" },
-        // { code: "#00FFFF", name: "cyan" }
-        // switch(request.body.value) 
-        // {
-        //     case "white" : {
-        //         request.body.value = "#FFFFFF";
-        //         break;
-        //     }
-        //     case "red" : {
-        //         request.body.value = "#F28B82";
-        //         break;
-        //     }
-        //     case "orange" : {
-        //         request.body.value = "#F7BC04";
-        //         break;
-        //     }
-        //     case "yellow" : {
-        //         request.body.value = "#FCF474";
-        //         break;
-        //     }
-        //     case "green" : {
-        //         request.body.value = "#CCFF90";
-        //         break;
-        //     }
-        //     case "teal" : {
-        //         request.body.value = "#A7FFEB";
-        //         break;
-        //     }
-        //     case "blue" : {
-        //         request.body.value = "#CBF0F8";
-        //         break;
-        //     }
-        //     case "drak blue" : {
-        //         request.body.value = "#AECBFA";
-        //         break;
-        //     }
-            
-        // }
-        var searchObject = {
-            "userId": request.body.data._id,
-            "value": request.body.value
-        }
+    search(request, response) {
+        try {
+            if (request.body.value === undefined || request.body.value === null)
+            throw 'Search data cannot be null or undefined'
 
-        noteService.search(searchObject)
-            .then((data) => {
-                if (data.length === 0 || data ===null) {
-                    logger.info("data in ctrl " + data);
-                    result.success = false;
-                    result.message = "Data not found";
-                    result.error = "error"
-                    return response.status(404).send(result);
-                }
-                else if (data !== null) {
-                    logger.info("data in control " + data);
-                    result.success = true;
-                    result.message = "Data found";
-                    result.data = data;
-                    return response.status(200).send(result);
-                }
-            })
-            .catch(error => {
-                logger.info("error in ctrl " + error);
+            request.check('value', 'Cannot be empty').notEmpty()
+
+            var errors = request.validationErrors();
+            // console.log("er==>",errors)
+            var result = {};
+            logger.info("errors " + JSON.stringify(errors))
+            if (errors) {
+
+                result.error = errors[0].msg;
                 result.success = false;
-                result.message = "Some error ocurred while searching";
+                return response.status(400).send(result);
+            }
+            else {
+
+                var result = {};
+                logger.info("request " + JSON.stringify(request.body));
+
+                var searchObject = {
+                    "userId": request.body.data._id,
+                    "value": request.body.value
+                }
+
+                noteService.search(searchObject)
+                    .then((data) => {
+                        if (data.length === 0 || data === null) {
+                            logger.info("data in ctrl " + data);
+                            result.success = false;
+                            result.message = "Data not found";
+                            result.error = "error"
+                            return response.status(404).send(result);
+                        }
+                        else if (data !== null) {
+                            logger.info("data in control " + data);
+                            result.success = true;
+                            result.message = "Data found";
+                            result.data = data;
+                            return response.status(200).send(result);
+                        }
+                    })
+                    .catch(error => {
+                        logger.info("error in ctrl " + error);
+                        result.success = false;
+                        result.message = "Some error ocurred while searching";
+                        result.error = error;
+                        return response.status(500).send(result);
+                    })
+            }
+        }
+        catch (error) {
+                var result = {};
+                result.success = false;
+                result.message = "Some error";
                 result.error = error;
-                return response.status(500).send(result);
-            })
-    }
+                return response.status(400).send(result)
+
+            }
+
+        }
 }
 
 module.exports = new Controller();
