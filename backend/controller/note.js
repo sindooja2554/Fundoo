@@ -19,10 +19,6 @@ class Controller {
                 .isLength({ min: 3 })
             request.check('description', 'description cannot be empty')
                 .notEmpty()
-            // request.check('color', 'Color cannot be empty').notEmpty()
-            // request.check('userId','user id cannot be empty').notEmpty();
-            // request.check('noteId', 'Note id should be in mongoose id format')
-            //     .matches(/^[0-9a-fA-F]{24}$/)
             var result = {};
             var errors = request.validationErrors();
             if (errors) {
@@ -32,37 +28,64 @@ class Controller {
                 return response.status(400).send(result);
             }
             else {
-                let createNoteObject = {
-                    'title': request.body.title,
-                    'description': request.body.description,
-                    'userId': request.body.data._id
-                }
-                logger.info("userId " + createNoteObject.userId)
-                noteService.createNote(createNoteObject).then((data) => {
-                    if (data !== null) {
-                        result.data = data;
-                        result.success = true;
-                        result.message = 'Note Successfully Created'
-                        return response.status(200).send(result);
+                if ("title" in request.body && "description" in request.body )
+                // && "color" in request.body &&
+                //     "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
+                //     "name" in request.body.color && "code" in request.body.color && "remainder" in request.body
+                //     && "labels" in request.body) 
+                {
+                        logger.info("req")
+                    let createNoteObject = {
+                        'title': request.body.title,
+                        'description': request.body.description,
+                        'userId': request.body.data._id,
+                        // 'color': {
+                        //     'name': request.body.color.name,
+                        //     'code': request.body.color.code
+                        // },
+                        // 'remainder': request.body.remainder,
+                        // 'isArchive': request.body.isArchive,
+                        // 'isPinned': request.body.isPinned,
+                        // 'isTrash': request.body.isTrash,
+                        // 'labels': request.body.labels
                     }
-                    else {
-                        result.error = error;
-                        result.success = false;
-                        result.message = 'Note Was not Created'
-                        return response.status(400).send(result);
-                    }
+                    logger.info("userId " + createNoteObject)
+                    noteService.createNote(createNoteObject).then((data) => {
+                        if (data !== null) {
+                            result.data = data;
+                            result.success = true;
+                            result.message = 'Note Successfully Created'
+                            return response.status(200).send(result);
+                        }
+                        else {
+                            result.error = error;
+                            result.success = false;
+                            result.message = 'Note Was not Created'
+                            return response.status(400).send(result);
+                        }
 
-                })
-                    .catch((error) => {
-                        result.error = error;
-                        result.success = false;
-                        result.message = 'Error'
-                        return response.status(500).send(result);
                     })
+                        .catch((error) => {
+                            result.error = error;
+                            result.success = false;
+                            result.message = 'Error'
+                            return response.status(500).send(result);
+                        })
+                }
+                else {
+                    result.success = false;
+                    result.message = "Please add all fields in request body";
+                    result.error   = "Please add all fields in request body";
+                    return response.status(400).send(result)
+                }
             }
         }
         catch (error) {
-            return response.status(400).send(error)
+            var result = {};
+            result.error = error;
+            result.success = false;
+            result.message = "Bad happened"
+            return response.status(400).send(result)
         }
     }
 
@@ -198,7 +221,7 @@ class Controller {
                     "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
                     "name" in request.body.color && "code" in request.body.color) {
                     logger.info("edit note object 1" + JSON.stringify(editObject));
-                    var color = {};
+
                     editObject.title = request.body.title,
                         editObject.description = request.body.description,
                         editObject.color = {
@@ -377,7 +400,7 @@ class Controller {
     search(request, response) {
         try {
             if (request.body.value === undefined || request.body.value === null)
-            throw 'Search data cannot be null or undefined'
+                throw 'Search data cannot be null or undefined'
 
             request.check('value', 'Cannot be empty').notEmpty()
 
@@ -428,15 +451,15 @@ class Controller {
             }
         }
         catch (error) {
-                var result = {};
-                result.success = false;
-                result.message = "Some error";
-                result.error = error;
-                return response.status(400).send(result)
-
-            }
+            var result = {};
+            result.success = false;
+            result.message = "Some error";
+            result.error = error;
+            return response.status(400).send(result)
 
         }
+
+    }
 }
 
 module.exports = new Controller();

@@ -58,53 +58,41 @@ class Controller {
     // async 
     getAllLabels(request, response) {
         var result = {};
-        request.check('noteId', 'Must be in the mongoose unique Id format')
-            .matches(/^[0-9a-fA-F]{24}$/)
-        var errors = request.validationErrors();
-        logger.info("errors " + JSON.stringify(errors))
-        if (errors) {
-
-            result.error = errors[0].msg;
-            result.success = false;
-            return response.status(400).send(result);
+        var result = {};
+        logger.info("request " + request.body.data._id);
+        let getLabelsObject = {
+            'userId': request.body.data._id,
+            // 'noteId': request.params.noteId
         }
-        else {
-            var result = {};
-            logger.info("request " + request.body.data._id);
-            let getLabelsObject = {
-                'userId': request.body.data._id,
-                'noteId': request.params.noteId
-            }
-            logger.info("getLabelsObject " + JSON.stringify(getLabelsObject));
-            labelService.getAllLabels(getLabelsObject)
-                .then((data) => {
-                    if (data === null || data.length === 0) {
-                        result.success = true;
-                        result.message = "No Labels found";
-                        result.data = data;
-                        return response.status(404).send(result)
-                    }
-                    else if (data !== null) {
-                        logger.info("response " + JSON.stringify(data));
-                        result.success = true;
-                        result.message = "Labels found";
-                        result.data = data;
-                        return response.status(200).send(result)
-                    }
-                })
-                .catch(error => {
-                    logger.info("error " + error)
-                    result.success = false;
-                    result.message = "Error Occured";
-                    result.error = error;
-                    return response.status(500).send(result)
-                })
-        }
+        logger.info("getLabelsObject " + JSON.stringify(getLabelsObject));
+        labelService.getAllLabels(getLabelsObject)
+            .then((data) => {
+                if (data === null || data.length === 0) {
+                    result.success = true;
+                    result.message = "No Labels found";
+                    result.data = data;
+                    return response.status(404).send(result)
+                }
+                else if (data !== null) {
+                    logger.info("response " + JSON.stringify(data));
+                    result.success = true;
+                    result.message = "Labels found";
+                    result.data = data;
+                    return response.status(200).send(result)
+                }
+            })
+            .catch(error => {
+                logger.info("error " + error)
+                result.success = false;
+                result.message = "Error Occured";
+                result.error = error;
+                return response.status(500).send(result)
+            })
     }
 
     deleteLabel(request, response) {
         try {
-            logger.info("labelId "+request.params.labelId);
+            logger.info("labelId " + request.params.labelId);
             console.log(request.params.labelId == null)
             if (request.params.labelId === "null") throw 'Request body cannot be null';
             if (request.params.labelId === undefined) throw 'Request body cannot be undefined';
@@ -150,7 +138,7 @@ class Controller {
             }
         }
         catch (error) {
-            logger.info("error "+error)
+            logger.info("error " + error)
             return response.status(400).send(error)
         }
     }
@@ -161,17 +149,15 @@ class Controller {
         var errors = request.validationErrors();
         var result = {};
         if (errors) {
-
             result.error = errors[0].msg;
             result.success = false;
             return response.status(400).send(result);
         }
         else {
-            logger.info("request==> "+JSON.stringify(request.body))
-            logger.info("edit in cntrl==> "+request.body.label)
             var editObject = {
                 "labelId": request.params.labelId,
-                "label": request.body.label
+                "label": request.body.label,
+                "noteId": request.body.noteId
             }
             var result = {};
             logger.info("edit note object " + JSON.stringify(editObject));
@@ -183,12 +169,11 @@ class Controller {
                         result.data = data;
                         return response.status(200).send(result)
                     }
-                    else
-                    {
+                    else {
                         result.success = false;
                         result.message = "Label Id not found";
                         result.data = data;
-                        return response.status(404).send(result)   
+                        return response.status(404).send(result)
                     }
                 })
                 .catch(error => {
@@ -202,4 +187,4 @@ class Controller {
     }
 }
 
-module.exports = new Controller();
+module.exports = new Controller(); 

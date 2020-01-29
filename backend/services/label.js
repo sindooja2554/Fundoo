@@ -1,5 +1,5 @@
 var labelModel = require('../app/model/label');
-// var userModel = require('../app/model/user');
+var noteService = require('../services/note');
 var logger = require('../config/winston');
 class Service {
     createLabel(request) {
@@ -7,8 +7,16 @@ class Service {
         console.log("request in service ", request);
         return new Promise(function (resolve, reject) {
             labelModel.create(request).then((data) => {
+                // return new Promise((resolve, reject) => {
                 if (data !== null) {
-                    return resolve(data);
+                    noteService.addLabelToNote(data).then((response) => {
+                        logger.info("in label service " + JSON.stringify(response));
+                        return resolve(response);
+                    })
+                        .catch(error => {
+                            logger.info("in label error " + JSON.stringify(error));
+                            return reject(error);
+                        })
                 }
                 else {
                     return reject(data);
@@ -28,12 +36,9 @@ class Service {
     }
 
     async getAllLabels(request) {
-        //    var data = await noteModel.read({"userId":request.userId});
-        //    logger.info("data "+JSON.stringify(data))
-        //    return data;
         logger.info("request in service " + JSON.stringify(request))
         return new Promise(function (resolve, reject) {
-            labelModel.read({ "userId": request.userId, "noteId": request.noteId })
+            labelModel.read({ "userId": request.userId })
                 .then((data) => {
                     logger.info("response data in service " + JSON.stringify(data))
                     logger.info("length " + data.length);
@@ -54,56 +59,93 @@ class Service {
     deleteLabel(request) {
         logger.info("request in service " + JSON.stringify(request))
         return new Promise(function (resolve, reject) {
-            labelModel.delete({ "_id": request.labelId })
-                .then((data) => {
-                    if (data !== null) {
-                        logger.info("response data in service " + data)
-                        return resolve(data);
+            var noteIdObject = {};
+            labelModel.read({ "_id": request.labelId }).then((data) => {
+                if (data !== null) {
+                    console.log(data[0].noteId);
+                    noteIdObject = {
+                        noteId: data[0].noteId
                     }
-                    else {
-                        logger.info("In service " + data)
-                        return resolve(data);
+                    logger.info(" "+noteIdObject.noteId)
+                    labelModel.delete({ "_id": request.labelId })
+                        .then((data) => {
+                            if (data !== null) {
+                                logger.info("data in label service " + noteIdObject.noteId);
+                                logger.info(""+data)
+                                    noteService.deleteLabelInNote({"_id":noteIdObject.noteId},data).then((response)=>{
+                                        if(response !== null) { 
+                                            logger.info("-----------------")
+                                            return resolve(response);
+                                        }
+                                        else {
+                                            return reject(response);
+                                        }
+                                    })                              
+                            }
+                            else {
+                                logger.info("error in service " + data);
+                                return resolve(data);
+                            }
+                        })
+                        .catch(error => {
+                            return reject(error);
+                        })
                     }
                 })
-                .catch(error => {
+                .catch(error=>{
+                    logger.info("err=====>",error);
                     return reject(error);
                 })
-        })
-    }
+            })
+        }
 
     editLabel(editObject) {
-        logger.info("edit obj " + JSON.stringify(editObject));
-        // logger.info("request length "+Object.keys(request).length);
-        // if(request.description === undefined)
-        // {
-        //     var editObject = {
-        //         "noteId" : request.noteId,
-        //         "userId" : request.userId,
-        //         "title" : request.title,
-        //     }
-        // }
-        // logger.info("requestin services "+JSON.stringify(editObject));
-        // logger.info("description "+editObject.description);
-        return new Promise((resolve, reject) => {
-            logger.info("update==> "+editObject.label)
-            labelModel.update({ "_id": editObject.labelId }, { "label": editObject.label })
-                .then((data) => {
+            logger.info("edit obj " + JSON.stringify(editObject.labelId));
+            var noteIdObject = {} ;
+            return new Promise((resolve, reject) => {
+                labelModel.read({ "_id": editObject.labelId }).then((data) => {
                     if (data !== null) {
-                        logger.info("data in service " + data);
-                        return resolve(data);
-                    }
-                    else {
-                        logger.info("error in service " + data);
-                        return resolve(data);
+                        logger.info("data---------------------------------------> "+data);
+                        noteIdObject = {
+                            noteId: data[0].noteId
+                        }
+                        console.log(noteIdObject);
+                        console.log("edit",editObject.noteId);
+                        let label = {
+                            "noteId": editObject.noteId ? editObject.noteId : data[0].noteId,
+                            "label": editObject.label ? editObject.label : data[0].label
+                        }
+                        logger.info("data sendfing in note "+JSON.stringify(label));
+                        labelModel.update({ "_id": editObject.labelId }, label)
+                            .then((data) => {
+                                if (data !== null) {
+                                    logger.info("data in label service " + JSON.stringify(noteIdObject));
+                                    noteService.updateNote({ "_id": noteIdObject.noteId }, data).then((response) => {
+                                        if (response !== null) {
+                                            logger.info("-----------------")
+                                            return resolve(response);
+                                        }
+                                        else {
+                                            return reject(response);
+                                        }
+                                    })
+                                }
+                                else {
+                                    logger.info("error in service " + data);
+                                    return resolve(data);
+                                }
+                            })
+                            .catch(error => {
+                                return reject(error)
+                            })
                     }
                 })
-                .catch(error => {
-                    logger.info("error in service " + error);
-                    return reject(error)
-                })
-        })
+                    .catch(error => {
+                        return reject(error)
+                    })
+            })
+        }
 
-    }
 }
 
 module.exports = new Service();

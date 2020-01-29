@@ -102,10 +102,11 @@ routes.put('/remainder/:noteId', jwt.verifyToken, noteController.deleteReminder)
 //Routes for label
 routes.post('/label/:noteId', jwt.verifyToken, labelController.createLabel);
 
-routes.get('/label/:noteId', jwt.verifyToken, labelController.getAllLabels);
+routes.get('/label', jwt.verifyToken, labelController.getAllLabels);
 
 routes.put('/label/:labelId', jwt.verifyToken, labelController.editLabel);
 
 routes.delete('/label/:labelId', jwt.verifyToken, labelController.deleteLabel);
 
 module.exports = routes;
+// /:noteId

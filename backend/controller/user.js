@@ -14,8 +14,8 @@ var urlShortner  = require('../utility/urlShortner');
 var logger       = require('../config/winston');
 var redis = require("redis"),
     client = redis.createClient();
-
-
+// var redis = require('../server');
+// var client= redis.client
 class Controller
 {
 
@@ -151,11 +151,8 @@ class Controller
                         let payload = {
                             '_id': data.data._id
                         }
-
                         let jwtToken = jsonWebToken.generateToken(payload)
                         client.set('loginToken'+data.data._id,jwtToken)
-                        // console.log("loginId from **REDIS===>",
-                        // client.get('loginToken'+data.data._id) );
                         console.log("token in ctrl",jwtToken);
                         result.token = jwtToken;
                         result.message = 'Login successful';

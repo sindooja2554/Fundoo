@@ -13,8 +13,9 @@
  */
 
 const mongoose = require('mongoose');
+const schema = mongoose.Schema;
 var logger       = require('../../config/winston');
-const NoteSchema = mongoose.Schema({
+const NoteSchema = schema({
     title: {
         type: String,
         required: [true, 'firstName is required']
@@ -55,7 +56,13 @@ const NoteSchema = mongoose.Schema({
             name : "white",
             code : "#FFFFFF"
         }
-    }
+    },
+    labels: [{
+        type: schema.Types.ObjectId,
+        ref : "label",
+        default: null
+        // type:Array
+    }]
 },
     {
         timestamps: true
@@ -70,7 +77,15 @@ class NoteApi
         let createNote = new Note({
             "title": request.title,
             "description": request.description,
-            "userId" : request.userId
+            "userId" : request.userId,
+            // "color": {
+            //     "name": request.color.name,
+            //     "code": request.color.code
+            // },
+            // "isArchive":request.isArchive,
+            // "isPinned":request.isPinned,
+            // "isTrash":request.isTrash,
+            // "labels":request.labels
         })
         return new Promise(function(resolve, reject) {
             createNote.save().then((data) => {
@@ -86,8 +101,8 @@ class NoteApi
 
     async read(request)
     {
-       var data = await Note.find(request)
-       console.log(data);
+       var data = await Note.find(request).populate("labels")
+    //    console.log(data);
        return data;
     }
 

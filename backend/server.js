@@ -21,6 +21,7 @@ const validator = require('express-validator');
 var route = require('./routes/routes');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./utility/swagger');
+const redis = require('./services/redis');
 
 app.use('/fundoo', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
@@ -39,6 +40,7 @@ var port = process.env.PORT;
 
 app.listen(port || 3000, () => {
     mongoose.connect();
+    redis.connect();
     console.log(`Server is listening on port ${port}`);
 });
 
