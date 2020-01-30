@@ -78,14 +78,14 @@ class NoteApi
             "title": request.title,
             "description": request.description,
             "userId" : request.userId,
-            // "color": {
-            //     "name": request.color.name,
-            //     "code": request.color.code
-            // },
-            // "isArchive":request.isArchive,
-            // "isPinned":request.isPinned,
-            // "isTrash":request.isTrash,
-            // "labels":request.labels
+            "color": {
+                "name": request.color.name,
+                "code": request.color.code
+            },
+            "isArchive":request.isArchive,
+            "isPinned":request.isPinned,
+            "isTrash":request.isTrash,
+            "labels":request.labels
         })
         return new Promise(function(resolve, reject) {
             createNote.save().then((data) => {

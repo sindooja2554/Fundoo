@@ -8,9 +8,9 @@ class Controller {
             var result = {};
             if (request.body.label === null) throw 'Request body cannot be null';
             if (request.body.label === undefined) throw 'Request body cannot be undefined';
-            request.check('noteId', 'Must be in the mongoose unique Id format')
-                .matches(/^[0-9a-fA-F]{24}$/)
-            request.check('label', 'title cannot be empty')
+            // request.check('noteId', 'Must be in the mongoose unique Id format')
+            //     .matches(/^[0-9a-fA-F]{24}$/)
+            request.check('label', 'label cannot be empty')
                 .notEmpty()
 
             var errors = request.validationErrors();
@@ -23,7 +23,7 @@ class Controller {
             else {
                 let createLabelObject = {
                     'label': request.body.label,
-                    'noteId': request.params.noteId,
+                    // 'noteId': request.params.noteId,
                     'userId': request.body.data._id
                 }
                 logger.info("userId " + createLabelObject.userId)

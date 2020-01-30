@@ -1,6 +1,6 @@
 var noteModel = require('../app/model/note');
 var logger = require('../config/winston');
-
+var labelModel = require('../app/model/label');
 class Service {
     createNote(request) {
         logger.info("request in service " + request);
@@ -276,39 +276,55 @@ class Service {
     addLabelToNote(request) {
         logger.info("request in note service===> " + JSON.stringify(request))
         return new Promise((resolve, reject) => {
-            // let addLabelToNote = {
-            //     "labels" : request._id,
-            //     ""
-            // }
-            noteModel.update({ "_id": request.noteId }, { $push: { "labels": request } }).then((data) => {
-                return resolve(data);
-            })
+            if(request.labelId === null) {
+                logger.info("in if")
+                labelModel.create(request).then(data => {
+                    logger.info("data after successfully creating label " + data);
+                    noteModel.update({ "_id": request.noteId }, { $push: { "labels": data._id } }).then((data) => {
+                        return resolve(data);
+                    })
+                    .catch(error => {
+                        return reject(error);
+                    })
+                })
+                .catch(error=>{
+                    return reject(error);
+                })
+            }
+            else {
+                logger.info("in else")
+                noteModel.update({"_id" : request.noteId}, { $push : { "labels" : request.labelId} }).then((data)=>{
+                    return resolve(data);
+                })
                 .catch(error => {
                     return reject(error);
                 })
+            } 
         })
     }
 
-    deleteLabelInNote(idObject, editObject) {
-        logger.info("id obj " + JSON.stringify(idObject))
+    deleteLabelFromNote(request,editObject) {
+        // logger.info("id obj " + JSON.stringify(idObject))
         logger.info("edit obj " + JSON.stringify(editObject));
         return new Promise((resolve, reject) => {
-            noteModel.read({ "_id": idObject._id })
+            noteModel.read(request)
                 .then((data) => {
+                    logger.info(" "+JSON.stringify(data))
                     if (data[0].labels.length !== 0) {
                         logger.info(" service " + data[0]);
                         for (let i = 0; i < data[0].labels.length; i++) {
 
-                            logger.info("in for loop " + editObject._id);
+                            logger.info("in for loop " + editObject.labelId);
 
                             logger.info("   " + data[0].labels[i]._id);
-                            
-                            if (JSON.stringify(data[0].labels[i]._id) === JSON.stringify(editObject._id)) {
+
+                            if (JSON.stringify(data[0].labels[i]._id) === JSON.stringify(editObject.labelId)) {
+                            // if (data[0].labels[i]._id === editObject.labelId)
                                 data[0].labels.splice(i, 1);
 
                                 logger.info("data after splice=======>" + data[0].labels);
 
-                                noteModel.update({ "_id": idObject._id }, { "labels": data[0].labels })
+                                noteModel.update({ "_id":  editObject.noteId }, { "labels": data[0].labels })
                                     .then((data) => {
                                         if (data !== null) {
                                             logger.info("data in service " + data);
@@ -326,24 +342,24 @@ class Service {
                             }
                         }
                     }
-                    else {
-                        logger.info("" + data);
-                        noteModel.update({ "_id": idObject._id }, { "labels": data[0].labels })
-                            .then((data) => {
-                                if (data !== null) {
-                                    logger.info("data in service " + data);
-                                    return resolve(data);
-                                }
-                                else {
-                                    logger.info("error in service " + data);
-                                    return reject(data);
-                                }
-                            })
-                            .catch(error => {
-                                logger.info("error in service " + error);
-                                return reject(error)
-                            })
-                    }
+                    // else {
+                    //     logger.info("" + data);
+                    //     noteModel.update({ "_id": idObject._id }, { "labels": data[0].labels })
+                    //         .then((data) => {
+                    //             if (data !== null) {
+                    //                 logger.info("data in service " + data);
+                    //                 return resolve(data);
+                    //             }
+                    //             else {
+                    //                 logger.info("error in service " + data);
+                    //                 return reject(data);
+                    //             }
+                    //         })
+                    //         .catch(error => {
+                    //             logger.info("error in service " + error);
+                    //             return reject(error)
+                    //         })
+                    // }
                 })
                 .catch(error => {
                     logger.info("error in service " + error);
@@ -351,6 +367,8 @@ class Service {
                 })
         })
     }
+
+    
 }
 
 module.exports = new Service();

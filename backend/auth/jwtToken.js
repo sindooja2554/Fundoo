@@ -92,6 +92,16 @@ module.exports = {
                                     redisData = "loginToken";
                                     break;
                                 }
+                            case "addlabel":
+                                {
+                                    redisData = "loginToken";
+                                    break;
+                                }
+                            case "removelabel":
+                                {
+                                    redisData = "loginToken";
+                                    break;
+                                }
                         }
                         req.body['data'] = decoded;
                         req.token = decoded;

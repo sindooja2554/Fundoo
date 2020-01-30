@@ -99,8 +99,12 @@ routes.post('/remainder/:noteId', jwt.verifyToken, noteController.addRemainder);
 
 routes.put('/remainder/:noteId', jwt.verifyToken, noteController.deleteReminder);
 
+routes.put('/addlabel/:noteId', jwt.verifyToken, noteController.addLabelToNote);
+
+routes.put('/removelabel/:noteId', jwt.verifyToken, noteController.deleteLabelFromNote);
+
 //Routes for label
-routes.post('/label/:noteId', jwt.verifyToken, labelController.createLabel);
+routes.post('/label', jwt.verifyToken, labelController.createLabel);
 
 routes.get('/label', jwt.verifyToken, labelController.getAllLabels);
 

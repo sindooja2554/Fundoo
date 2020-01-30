@@ -20,10 +20,10 @@ const LabelSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    noteId: {
-        type: String,
-        required: true
-    },
+    // noteId: {
+    //     type: String,
+    //     required: true
+    // },
     label: {
         type: String,
         required: true
@@ -38,7 +38,7 @@ var label = mongoose.model('label', LabelSchema);
 class Api {
     create(request) {
         let createLabel = new label({
-            "noteId": request.noteId,
+            // "noteId": request.noteId,
             "label": request.label,
             "userId": request.userId
         })
@@ -60,7 +60,7 @@ class Api {
     }
 
     async delete(request) {
-        logger.info("request in model " + request)
+        logger.info("request in model " + JSON.stringify(request))
         var data = await label.findByIdAndRemove(request);
         logger.info("response data " + JSON.stringify(data))
         return data;

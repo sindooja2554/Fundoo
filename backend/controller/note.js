@@ -28,26 +28,26 @@ class Controller {
                 return response.status(400).send(result);
             }
             else {
-                if ("title" in request.body && "description" in request.body )
-                // && "color" in request.body &&
-                //     "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
-                //     "name" in request.body.color && "code" in request.body.color && "remainder" in request.body
-                //     && "labels" in request.body) 
+                if ("title" in request.body && "description" in request.body 
+                && "color" in request.body &&
+                    "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
+                    "name" in request.body.color && "code" in request.body.color && "remainder" in request.body
+                    && "labels" in request.body) 
                 {
                         logger.info("req")
                     let createNoteObject = {
                         'title': request.body.title,
                         'description': request.body.description,
                         'userId': request.body.data._id,
-                        // 'color': {
-                        //     'name': request.body.color.name,
-                        //     'code': request.body.color.code
-                        // },
-                        // 'remainder': request.body.remainder,
-                        // 'isArchive': request.body.isArchive,
-                        // 'isPinned': request.body.isPinned,
-                        // 'isTrash': request.body.isTrash,
-                        // 'labels': request.body.labels
+                        'color': {
+                            'name': request.body.color.name,
+                            'code': request.body.color.code
+                        },
+                        'remainder': request.body.remainder,
+                        'isArchive': request.body.isArchive,
+                        'isPinned': request.body.isPinned,
+                        'isTrash': request.body.isTrash,
+                        'labels': request.body.labels || null
                     }
                     logger.info("userId " + createNoteObject)
                     noteService.createNote(createNoteObject).then((data) => {
@@ -459,6 +459,94 @@ class Controller {
 
         }
 
+    }
+
+    addLabelToNote(request,response) {
+        try {
+            if(request.body.label === undefined || request.body.label === null) throw "Request body cannot be undefined"
+            request.check('label','Label cannot be m empty').notEmpty();
+            var errors = request.validationErrors();
+            var result = {};
+            logger.info("errors " + JSON.stringify(errors))
+            if (errors) {
+                result.error = errors[0].msg;
+                result.success = false;
+                return response.status(400).send(result);
+            }
+            else {
+                let addLabelObject = {
+                    'label' : request.body.label,
+                    'userId': request.body.data._id,
+                    'noteId': request.params.noteId,
+                    'labelId' : request.body.labelId || null
+                }
+                noteService.addLabelToNote(addLabelObject).then(data=>{
+                    if(data !== null) {
+                        result.success = true;
+                        result.message = "Added label Successfully";
+                        result.data = data;
+                        return response.status(200).send(result);
+                    }
+                    else {
+                        result.success = false;
+                        result.message = "Not added label";
+                        return response.status(400).send(result);
+                    }
+                })
+                .catch(error =>{
+                    result.success = false;
+                    result.message = "Error Occurred";
+                    result.error = error;
+                    return response.status(500).send(result);
+                })
+            }
+        }
+        catch(error) {
+            var result = {};
+            result.success = false;
+            result.message = "Some error";
+            result.error = error;
+            return response.status(400).send(result)
+        }
+    }
+
+    deleteLabelFromNote(request,response) {
+        try {   
+            logger.info("in ctrl "+JSON.stringify(request.body)+ " " +JSON.stringify(request.params));
+            var result = {};
+            if("noteId" in request.params && "labelId" in request.body) {
+                let removeLabelObject = {
+                    'noteId': request.params.noteId,
+                    'labelId':request.body.labelId
+                }
+                noteService.deleteLabelFromNote({"_id":removeLabelObject.noteId},removeLabelObject).then(data=>{
+                    if(data !== null) {
+                        result.success = true;
+                        result.message = "Delete label Successfully";
+                        result.data = data;
+                        return response.status(200).send(result);
+                    }
+                    else {
+                        result.success = false;
+                        result.message = "Label note deleted";
+                        return response.status(400).send(result);
+                    }
+                })
+                .catch(error =>{
+                    result.success = false;
+                    result.message = "Error Occurred";
+                    result.error = error;
+                    return response.status(500).send(result);
+                })
+            }
+        }
+        catch(error) {
+            var result = {};
+            result.success = false;
+            result.message = "Some error";
+            result.error = error;
+            return response.status(400).send(result)
+        }
     }
 }
 
