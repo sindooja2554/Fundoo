@@ -368,7 +368,38 @@ class Service {
         })
     }
 
-    
+    deleteLabel(request, editObject) {
+        logger.info("edit obj " + JSON.stringify(editObject));
+        return new Promise((resolve, reject) => {
+            noteModel.read(request)
+                .then((data) => {
+                    logger.info("data after reading" + JSON.stringify(data[0].labels))
+                    var labelsId = [];
+                    for (let i = 0; i < data[0].labels.length; i++) {
+                        labelsId[i] = data[0].labels[i]._id
+                    }
+                    noteModel.update({ "_id": data[0]._id }, { "labels": labelsId })
+                        .then((data) => {
+                            if (data !== null) {
+                                logger.info("data in service " + data);
+                                return resolve(data);
+                            }
+                            else {
+                                logger.info("error in service " + data);
+                                return reject(data);
+                            }
+                        })
+                        .catch(error => {
+                            logger.info("error in service " + error);
+                            return reject(error)
+                        })
+                })
+                .catch(error => {
+                    logger.info("error in service " + error);
+                    return reject(error)
+                })
+        })
+    }    
 }
 
 module.exports = new Service();

@@ -108,7 +108,8 @@ class Controller {
             else {
                 logger.info("labelId " + request.params.labelId);
                 let deleteLabelObject = {
-                    'labelId': request.params.labelId
+                    'labelId': request.params.labelId,
+                    'userId' : request.body.data._id
                 }
                 logger.info("delete object " + JSON.stringify(deleteLabelObject));
                 labelService.deleteLabel(deleteLabelObject)

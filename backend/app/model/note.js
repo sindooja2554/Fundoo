@@ -118,6 +118,7 @@ class NoteApi
     {
         logger.info("id "+JSON.stringify(noteId));
         logger.info("update "+JSON.stringify(dataToUpdate))
+        console.log("update ", dataToUpdate);
         return new Promise((resolve,reject)=>{
             Note.findOneAndUpdate(noteId,dataToUpdate,{"new":true})
             .then(data=>{

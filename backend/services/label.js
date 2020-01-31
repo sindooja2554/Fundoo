@@ -7,7 +7,7 @@ class Service {
         console.log("request in service ", request);
         var result = {};
         return new Promise(function (resolve, reject) {
-            labelModel.read({ "label": request.label }).then(data => {
+            labelModel.read({ "label": request.label} , {"userId" : request.userId }).then(data => {
                 logger.info("data after reading " + data.length)
                 if (data.length === 0) {
                     labelModel.create(request).then((data) => {
@@ -72,10 +72,10 @@ class Service {
                         .then((data) => {
                             if (data !== null) {
                                 logger.info("response in label service" + data)
-                                noteService.deleteLabelFromNote({ "labels": request.labelId }, data).then(response => {
+                                noteService.deleteLabel({ "labels": request.labelId }, data).then(response => {
                                     if (response !== null) {
                                         logger.info("-----------------")
-                                        return resolve(data);
+                                        return resolve(response);
                                     }
                                     else {
                                         return reject(response);
