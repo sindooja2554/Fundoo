@@ -35,7 +35,7 @@ module.exports = {
      */
     verifyToken(req, res, next) {
         try {
-            console.log("token1",req.headers)
+            // console.log("token1",req.headers)
             let token = req.headers.token;  
             //  || req.params;
             // logger.info(" token after vread " +Object.keys(token).length);

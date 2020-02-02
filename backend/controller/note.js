@@ -186,13 +186,13 @@ class Controller {
             if (request.body.title === null || request.body.description === null)
                 throw 'Cannot be null'
 
-            logger.info("request in edit note +" + JSON.stringify(request.params.noteId));
+            logger.info("request in edit note +" + JSON.stringify(request.body));
             request.check('noteId', 'Must be in the mongoose unique Id format')
                 .matches(/^[0-9a-fA-F]{24}$/)
 
             var errors = request.validationErrors();
             var result = {};
-            logger.info("errors " + JSON.stringify(errors))
+            // logger.info("errors " + JSON.stringify(errors))
             if (errors) {
 
                 result.error = errors;
