@@ -60,7 +60,7 @@ const NoteSchema = schema({
     labels: [{
         type: schema.Types.ObjectId,
         ref : "label",
-        default: null
+        default: []
         // type:Array
     }]
 },
