@@ -103,6 +103,8 @@ routes.put('/addlabel/:noteId', jwt.verifyToken, noteController.addLabelToNote);
 
 routes.put('/removelabel/:noteId', jwt.verifyToken, noteController.deleteLabelFromNote);
 
+routes.put('/notesequencing', jwt.verifyToken, noteController.noteSequencing);
+
 //Routes for label
 routes.post('/label', jwt.verifyToken, labelController.createLabel);
 

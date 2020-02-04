@@ -1,5 +1,8 @@
 var noteService = require('../services/note');
 var logger = require('../config/winston');
+// var redis = require("redis"),
+//     client = redis.createClient();
+var redisCache = require('../services/redis');
 
 class Controller {
     createNote(request, response) {
@@ -47,7 +50,8 @@ class Controller {
                         'isArchive': request.body.isArchive,
                         'isPinned': request.body.isPinned,
                         'isTrash': request.body.isTrash,
-                        'labels': request.body.labels || null
+                        'labels': request.body.labels || null,
+                        'userId' : request.body.data._id
                     }
                     logger.info("userId " + createNoteObject)
                     noteService.createNote(createNoteObject).then((data) => {
@@ -91,33 +95,43 @@ class Controller {
 
     getAllNotes(request, response) {
         var result = {};
-        logger.info("request " + request.body);
-        let getNotesObject = {
-            'userId': request.body.data._id
-        }
-        logger.info("getNotesObject " + JSON.stringify(getNotesObject));
-        noteService.getAllNotes(getNotesObject)
-            .then((data) => {
-                if (data.length === 0) {
-                    result.success = true;
-                    result.message = "No notes found";
-                    result.data = data;
-                    return response.status(404).send(result)
-                }
-                else if (data !== null) {
-                    logger.info("response " + JSON.stringify(data));
-                    result.success = true;
-                    result.message = "Notes found";
-                    result.data = data;
-                    return response.status(200).send(result)
-                }
-            })
-            .catch(error => {
-                result.success = false;
-                result.message = "Error Occured";
-                result.error = error;
-                return response.status(500).send(result)
-            })
+        // logger.info("request " + request.body);
+        // let getNotesObject = {
+        //     'userId': request.body.data._id
+        // }
+        // logger.info("getNotesObject " + JSON.stringify(getNotesObject));
+        // noteService.getAllNotes(getNotesObject)
+        //     .then((data) => {
+        //         if (data.length === 0) {
+        //             result.success = true;
+        //             result.message = "No notes found";
+        //             result.data = data;
+        //             return response.status(404).send(result)
+        //         }
+        //         else if (data !== null) {
+        //             logger.info("response " + JSON.stringify(data));
+        //             result.success = true;
+        //             result.message = "Notes found";
+        //             result.data = data;
+        //             return response.status(200).send(result)
+        //         }
+        //     })
+        //     .catch(error => {
+        //         result.success = false;
+        //         result.message = "Error Occured";
+        //         result.error = error;
+        //         return response.status(500).send(result)
+        //     })
+        redisCache.get('getAllNotes'+request.body.data._id , (reply) => {
+            console.log("in")
+            if (reply) {
+                logger.info("data from redis==> "+ reply);
+                result.success = true;
+                result.message = "Notes found";
+                result.data = JSON.parse(reply);
+                return response.status(200).send(result);
+            }
+        })
     }
 
     deleteNote(request, response) {
@@ -300,7 +314,8 @@ class Controller {
             else {
                 var addRemainderObject = {
                     "noteId": request.params.noteId,
-                    "remainder": request.body.remainder
+                    "remainder": request.body.remainder,
+                    "userId" : request.body.data._id
                 }
 
                 noteService.addRemainder(addRemainderObject)
@@ -361,7 +376,8 @@ class Controller {
         else {
             var removeReminderObject = {
                 "noteId": request.params.noteId,
-                "remainder": request.body.remainder
+                "remainder": request.body.remainder,
+                "userId": request.body.data._id
             }
 
             noteService.removeReminder(removeReminderObject)
@@ -517,7 +533,8 @@ class Controller {
             if("noteId" in request.params && "labelId" in request.body) {
                 let removeLabelObject = {
                     'noteId': request.params.noteId,
-                    'labelId':request.body.labelId
+                    'labelId':request.body.labelId,
+                    'userId':request.body.data._id
                 }
                 noteService.deleteLabelFromNote({"_id":removeLabelObject.noteId},removeLabelObject).then(data=>{
                     if(data !== null) {
@@ -547,6 +564,19 @@ class Controller {
             result.error = error;
             return response.status(400).send(result)
         }
+    }
+
+    noteSequencing(request,response) {
+        logger.info("request in noteSequencing "+JSON.stringify(request.body));
+        client.set('getAllNotes'+request.body.data._id,JSON.stringify(request.body))
+        client.get('getAllNotes'+request.body.data._id , (error, reply) => {
+            if (error) {
+                logger.error("err---------------->"+error)
+            } else  {
+                logger.info("data from redis==> "+ reply);
+            }
+        })
+        response.status(200).send('successful');
     }
 }
 

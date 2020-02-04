@@ -17,6 +17,29 @@ class RedisServerClass {
         this.monitor();
     }
 
+    set(redisKey,value,callback) {
+        this.client.set(redisKey,value,(error,data)=>{
+            if(error) {
+                console.log(error);
+                return callback(error);
+            }else{
+                return callback(data);
+            }
+        })
+    }
+
+    get(redisKey,callback) {
+        this.client.get(redisKey,(error,response)=>{
+            if(error){
+                console.log(error);
+                return callback(error)
+            } else{
+                console.log(response);
+                return callback(response)
+            }
+        })
+    }
+
     monitor() {
         this.client.on("connect", function () {
             // console.log('Redis client connected');

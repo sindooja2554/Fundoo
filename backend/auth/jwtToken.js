@@ -12,7 +12,7 @@ const jwt = require('jsonwebtoken');
 var redis = require("redis"),
     client = redis.createClient();
 var logger = require('../config/winston');
-
+var redisCache = require("../services/redis");
 module.exports = {
     /**
      * @description This function generates token using payload.
@@ -37,24 +37,17 @@ module.exports = {
         try {
             // console.log("token1",req.headers)
             let token = req.headers.token;  
-            //  || req.params;
-            // logger.info(" token after vread " +Object.keys(token).length);
-            // console.log("token "+token);
             if (token === undefined || token === "" || Object.keys(token).length === 0 || token === null) throw 'Token not received'
-            // logger.info("length "+token);
-            if (token !== null && token !== undefined && token !== "") {
-                // logger.info("token inside if "+token)
-                // console.log("token inside if ",token)
 
+            if (token !== null && token !== undefined && token !== "") {
                 jwt.verify(token, 'private_key', function (err, decoded) {
                     if (err) {
-                        // console.log("error",err);
                         return res.status(400).send(err)
                     }
                     else {
                         logger.info("url ======"+ req.url);
                         var route = req.url.split('/');
-                        logger.info("req.url", route[1]);
+                        logger.info("req.url "+ route[1]);
                         var redisData;
                         switch (route[1]) {
                             case "resetpassword":
@@ -102,15 +95,17 @@ module.exports = {
                                     redisData = "loginToken";
                                     break;
                                 }
+                            case "notesequencing":
+                                {
+                                    redisData = "loginToken";
+                                    break;
+                                }
                         }
                         req.body['data'] = decoded;
                         req.token = decoded;
-                        // logger.info("before sending data " + req.body.data._id);
                         logger.info("redisdata " + redisData + req.body.data._id);
-                        client.get(redisData + req.body.data._id, (error, reply) => {
-                            if (error) {
-                                return res.status(500).send(err + "Some Error");
-                            } else if (reply === token) {
+                        redisCache.get(redisData + req.body.data._id, (reply) => {
+                            if (reply === token) {
                                 logger.info("data from redis==> "+ reply);
                                 next();
                             }
