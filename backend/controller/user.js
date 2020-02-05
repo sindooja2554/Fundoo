@@ -9,10 +9,11 @@
  */
 var userServices = require("../services/user");
 var jsonWebToken = require("../auth/jwtToken");
-var mailSender = require("../utility/nodeMailer");
+// var mailSender = require("../utility/nodeMailer");
 var urlShortner = require("../utility/urlShortner");
 var logger = require("../config/winston");
 var redisCache = require("../services/redis");
+var mail = require('../utility/mailer');
 
 class Controller {
     /**
@@ -199,12 +200,12 @@ class Controller {
                             _id: data.data._id
                         };
                         let jwtToken = jsonWebToken.generateToken(payload);
-                        console.log("token              ----------->",jwtToken)
+                        console.log("token              ----------->", jwtToken)
                         redisCache.set(
                             "loginToken" + payload._id,
                             jwtToken,
                             (reply) => {
-                                if (reply) {                               
+                                if (reply) {
                                     console.log("token in ctrl", jwtToken);
                                     result.token = jwtToken;
                                     result.message = "Login successful";
@@ -300,11 +301,12 @@ class Controller {
                         redisCache.set(
                             "forgetToken" + data._id,
                             jwtToken,
-                            (reply) =>
-                            {
-                                if(reply) {
+                            (reply) => {
+                                if (reply) {
                                     let url = process.env.EMAIL_FRONTEND_URL + jwtToken;
-                                    mailSender.sendMail(data.email, url);
+                                    mail.sendMail(data.email, data.firstName, data.lastName, url)
+
+                                    // mailSender.sendMail(data.email, url);
                                     result.message = "Mailsent";
                                     result.success = true;
                                     return response.status(200).send(result);

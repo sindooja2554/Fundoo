@@ -42,40 +42,29 @@ class RedisServerClass {
 
     monitor() {
         this.client.on("connect", function () {
-            // console.log('Redis client connected');
             logger.info("Redis client connected successfully");
         });
 
         this.client.on("reconnecting", function () {
-            // console.log('Redis client connected');
             logger.info("Redis client is reconnecting..");
         });
 
         this.client.on("warning", function () {
-            // console.log('Redis client connected');
             logger.info("Redis client is emmiting some deprecating warnings..");
         });
 
         this.client.on("error", function (err) {
-            // console.log('Something went wrong ' + err);
             logger.error("Something went wrong " + err);
         });
 
         this.client.on("end", function () {
-            // console.log('Redis client connected');
             logger.log("Redis client disconnected");
         });
         this.client.on('ready', function () {
-            // console.log('Redis client connected');
             logger.info('Redis client is ready now..');
 
         });
 
-        // this.client.on('idle', function() {
-        // // console.log('Redis client connected');
-        // logger.info('Redis client is idle now..');
-
-        // });
     }
 }
 module.exports = new RedisServerClass();

@@ -568,11 +568,17 @@ class Controller {
 
     noteSequencing(request,response) {
         logger.info("request in noteSequencing "+JSON.stringify(request.body));
-        client.set('getAllNotes'+request.body.data._id,JSON.stringify(request.body))
-        client.get('getAllNotes'+request.body.data._id , (error, reply) => {
-            if (error) {
-                logger.error("err---------------->"+error)
-            } else  {
+        redisCache.set('getAllNotes'+request.body.data._id,JSON.stringify(request.body),(reply)=>{
+            if (reply) {
+                logger.info("data from redis==> "+ reply);
+                result.success = true;
+                result.message = "Notes found";
+                result.data = JSON.parse(reply);
+                return response.status(200).send(result);
+            }
+        })
+        redisCache.get('getAllNotes'+request.body.data._id , (error, reply) => {
+            if (reply) {
                 logger.info("data from redis==> "+ reply);
             }
         })

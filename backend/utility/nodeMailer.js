@@ -9,7 +9,6 @@
  * @const       nodemailer Nodemailer constant having the `nodemailer` module
  */
 const nodemailer = require('nodemailer');
-require('dotenv').config();
 var logger =  require('../config/winston')
 module.exports={
     /**
@@ -20,8 +19,6 @@ module.exports={
      */
     sendMail(email,url)
     {
-        console.log(process.env.EMAIL);
-        console.log(process.env.PASSWORD);
         logger.info("email "+email);
         logger.info("url " +url);
         var transporter = nodemailer.createTransport({
