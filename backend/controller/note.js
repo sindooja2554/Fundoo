@@ -7,7 +7,6 @@ var redisCache = require('../services/redis');
 class Controller {
     createNote(request, response) {
         logger.info("request in ctrl " + request.body);
-        console.log("request in ctrl ", request.body)
         try {
             if (request.body.title === null || request.body.description === null
             ) throw 'Request body cannot be null';
@@ -34,8 +33,7 @@ class Controller {
                 if ("title" in request.body && "description" in request.body 
                 && "color" in request.body &&
                     "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
-                    "name" in request.body.color && "code" in request.body.color && "remainder" in request.body
-                    && "labels" in request.body) 
+                    "name" in request.body.color && "code" in request.body.color && "remainder" in request.body) 
                 {
                         logger.info("req")
                     let createNoteObject = {
@@ -50,7 +48,7 @@ class Controller {
                         'isArchive': request.body.isArchive,
                         'isPinned': request.body.isPinned,
                         'isTrash': request.body.isTrash,
-                        'labels': request.body.labels || null,
+                        // 'labels': request.body.labels || null,
                         'userId' : request.body.data._id
                     }
                     logger.info("userId " + createNoteObject)
