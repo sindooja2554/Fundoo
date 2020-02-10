@@ -8,6 +8,7 @@
 /**
  * @const       urlShortner UrlShortner constant having the `shortid` module
  */
+
 const urlShortner = require('shortid');
 var mailSender = require('./nodeMailer');
 var service = require('../services/user');
@@ -33,7 +34,8 @@ module.exports = {
                 'shortUrl': shortUrl,
                 'urlCode' : urlCode
             }
-            mailSender.sendMail(data.email,shortUrl);
+            // mailSender.sendMail(data.email,shortUrl);
+            mailSender.sendMail(data.email, shortUrl, {template : "verify"})
             return new Promise(function(resolve,reject){
                 service.urlShorteningServices(data,urlShortenerObject).then(data=>{
                     console.log("utility",data)
@@ -56,7 +58,6 @@ module.exports = {
             //         return callback(data)
             //     }
             // })
-    
         }
         catch(error)
         {

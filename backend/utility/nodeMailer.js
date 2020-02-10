@@ -8,16 +8,20 @@
 /**
  * @const       nodemailer Nodemailer constant having the `nodemailer` module
  */
+const path = require('path');
 const nodemailer = require('nodemailer');
-var logger =  require('../config/winston')
+var logger =  require('../config/winston');
+const hbs = require('nodemailer-handlebars');
+// var PASSWORD_RESET_URL = require('../../constants').PASSWORD_RESET_URL,
+// var templates =require('../templates')
 module.exports={
     /**
      * @description This function sends the mail to the user's email id.
      * @function    sendMail
-     * @param {*}   email 
-     * @param {*}   url 
+     * @param {*}   email
+     * @param {*}   url
      */
-    sendMail(email,url)
+    sendMail(email,url,templateName)
     {
         logger.info("email "+email);
         logger.info("url " +url);
@@ -28,22 +32,38 @@ module.exports={
                    pass: process.env.PASSWORD
                }
         });
-        
+
+        logger.info("use is called ");
+
+        transporter.use('compile', hbs({            
+            viewEngine: {
+                partialsDir: "/home/admin1/Fundoo/backend/templates",
+                defaultLayout: ""
+            },
+            viewPath: "/home/admin1/Fundoo/backend/templates",
+            extName: ".handlebars"})
+            );
+
+        logger.info("options is called ");
+
         const mailOptions = {
             from: process.env.EMAIL,  // sender address
             to: email,  // list of receivers
             subject: 'link sent from nodemailer',  // Subject line
-            text: 'click on the link '+url   
+            template: templateName.template,
+            context: {
+                name: url
+            }
         };
-        
+
         transporter.sendMail(mailOptions, function (err, info) {
             if(err)
             {
-                console.log(err);
+                logger.error(err);
                 return err
             }
             else{
-                console.log(info);
+                logger.info(info);
                 return info
             }
          });

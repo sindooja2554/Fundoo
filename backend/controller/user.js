@@ -9,11 +9,11 @@
  */
 var userServices = require("../services/user");
 var jsonWebToken = require("../auth/jwtToken");
-// var mailSender = require("../utility/nodeMailer");
+var mailSender = require("../utility/nodeMailer");
 var urlShortner = require("../utility/urlShortner");
 var logger = require("../config/winston");
 var redisCache = require("../services/redis");
-var mail = require('../utility/mailer');
+// var mail = require('../utility/mailer');
 
 class Controller {
     /**
@@ -304,7 +304,7 @@ class Controller {
                             (reply) => {
                                 if (reply) {
                                     let url = process.env.EMAIL_FRONTEND_URL + jwtToken;
-                                    mail.sendMail(data.email, data.firstName, data.lastName, url)
+                                    mailSender.sendMail(data.email, url, {template : "index"})
 
                                     // mailSender.sendMail(data.email, url);
                                     result.message = "Mailsent";
@@ -319,11 +319,8 @@ class Controller {
             }
         } catch (error) {
             var result = {};
-            // console.log("error in try", error);
             result.error = error;
-            // console.log(result.error);
             result.status = false;
-            // console.log("obj", result)
             return response.status(400).send(result);
         }
     }

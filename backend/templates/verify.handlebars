@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        .mainTemplate {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        h1 {
+            display: block;
+            font-size: 2em;
+            margin-block-start: 0;
+            margin-block-end: 0;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            font-weight: bold;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        .template {
+            width: 60%;
+            height: 100%;
+            padding: 10px;
+            border: 1px solid darkgray;
+            box-shadow: 10px 5px 5px darkgray;
+            border-radius: 10px;
+        }
+
+        .button {
+            background-color: #3376DA;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            color: white;
+        }
+
+        .buttonName {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainTemplate">
+        <div class="template">
+            <h1>Verify your Email</h1>
+            <p>
+                Tap the button below to verify your email.
+            </p>
+            <a href="{{name}}" class="button">
+                <span class="buttonName">
+                    verify
+                </span>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>
