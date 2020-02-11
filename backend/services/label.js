@@ -1,7 +1,22 @@
-var labelModel = require("../app/model/label");
+/**
+ * @description This file contains service class.
+ * @file        services.label.js
+ * @overview    The service class gives call to API class according to the request.
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0 
+ * @since       20 January 2020            
+ */
+
+var labelModel  = require("../app/model/label");
 var noteService = require("../services/note");
-var logger = require("../config/winston");
+var logger      = require("../config/winston");
+
 class Service {
+
+    /**
+     * @description This function is called to create label by calling the create API
+     * @param {*} request
+     */
     createLabel(request) {
         logger.info("request in service " + request);
         console.log("request in service ", request);
@@ -42,6 +57,10 @@ class Service {
         });
     }
 
+    /**
+     * @description This function is called to get all labels according to userId by calling read API
+     * @param {*} request
+     */
     async getAllLabels(request) {
         logger.info("request in service " + JSON.stringify(request));
         return new Promise(function (resolve, reject) {
@@ -65,6 +84,10 @@ class Service {
         });
     }
 
+    /**
+     * @description This function is called to delete label by calling the delete API
+     * @param {*} request
+     */
     deleteLabel(request) {
         logger.info("request in service " + JSON.stringify(request));
         return new Promise(function (resolve, reject) {
@@ -104,6 +127,10 @@ class Service {
         });
     }
 
+    /**
+     * @description This function is called to edit label by calling the update API
+     * @param {*} request
+     */
     editLabel(editObject) {
         logger.info("edit obj " + JSON.stringify(editObject.labelId));
         var noteIdObject = {};

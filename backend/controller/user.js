@@ -1,7 +1,7 @@
 /**
  * @description API controller Class
  * @file        controller.user.js
- * @overview    API controller class controls all the API's gives call to
+ * @overview    API controller class controls all the API's, gives call to
  *              service functions of the API's
  * @author      Sindooja Gajam
  * @version     node v12.10.0

@@ -1,13 +1,22 @@
-var noteModel = require('../app/model/note');
-var logger = require('../config/winston');
+/**
+ * @description This file contains service class.
+ * @file        services.note.js
+ * @overview    The service class gives call to API class according to the request.
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0 
+ * @since       16 January 2020            
+ */
+var noteModel  = require('../app/model/note');
+var logger     = require('../config/winston');
 var labelModel = require('../app/model/label');
-// var redis = require("redis"),
-//     client = redis.createClient();
 var redisCache = require("./redis");
 class Service {
- 
-     
-    // async
+
+    /**
+     * @description This function is called to find the user and set the notes of the users in  the redis 
+     *              cache
+     * @param {*} request
+     */
     getAllNotes(request) {
         logger.info("request in service " + JSON.stringify(request))
         return new Promise(function (resolve, reject) {
@@ -31,6 +40,10 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to delete note by calling the delete API
+     * @param {*} request
+     */
     deleteNote(request) {
         logger.info("request in service " + JSON.stringify(request))
         let get = this;
@@ -38,11 +51,6 @@ class Service {
             noteModel.delete({ "_id": request.noteId, "userId": request.userId })
                 .then((data) => {
                     if (data === null) {
-                        // logger.info("response data in service " + data)
-                        // let getNotesObject = {
-                        //     'userId' : request.userId
-                        // }
-                        // this.getAllNotes(getNotesObject)
                         return resolve(data);
                     }
                     else if (data !== null) {
@@ -59,6 +67,10 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to create note by calling the create API
+     * @param {*} request
+     */
     createNote(request) {
         let get = this;
         logger.info("request in service " + request);
@@ -83,6 +95,11 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to edit note by calling the update API
+     * @param {*} request This request object contains id's
+     * @param {*} request This request object conatains the data to be updated
+     */
     editNote(idObject, editObject) {
     
         logger.info("id obj " + JSON.stringify(idObject))
@@ -140,6 +157,10 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to add reminder to note by calling the update API
+     * @param {*} request
+     */
     addRemainder(request) {
         logger.info("request in service file " + request);
         return new Promise((resolve, reject) => {
@@ -165,6 +186,10 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to delete reminder from note by calling the update API
+     * @param {*} request
+     */
     removeReminder(request) {
         logger.info("request in service file " + request);
         return new Promise((resolve, reject) => {
@@ -190,6 +215,10 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to search note by calling the read API
+     * @param {*} request
+     */
     search(request) {
         logger.info("request in service========> " + JSON.stringify(request))
         return new Promise((resolve, reject) => {
@@ -226,6 +255,10 @@ class Service {
 
     }
 
+    /**
+     * @description This function is called to add label to note by calling the update API
+     * @param {*} request 
+     */
     addLabelToNote(request) {
         logger.info("request in note service===> " + JSON.stringify(request))
         return new Promise((resolve, reject) => {
@@ -264,6 +297,11 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to delete label from note by calling the update API
+     * @param {*} request This request object contains the id
+     * @param {*} request This request object contains the data to updated
+     */
     deleteLabelFromNote(request,editObject) {
         // logger.info("id obj " + JSON.stringify(idObject))
         logger.info("edit obj " + JSON.stringify(editObject));
@@ -316,6 +354,12 @@ class Service {
         })
     }
 
+    /**
+     * @description This function is called to delete label from note and label from label database
+     *               by calling the update API
+     * @param {*} request This request object contains the id
+     * @param {*} request This request object contains the data to updated
+     */
     deleteLabel(request, editObject) {
         logger.info("edit obj " + JSON.stringify(editObject));
         return new Promise((resolve, reject) => {

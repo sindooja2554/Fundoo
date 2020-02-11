@@ -1,11 +1,11 @@
 /**
  * @description This file contains API class.
- * @file        app.model.user.js
+ * @file        app.model.note.js
  * @overview    The API function take in request and perform the operation and sends back
  *              response to the service file
  * @author      Sindooja Gajam
  * @version     node v12.10.0 
- * @since       7 January 2019            
+ * @since       16 January 2020            
  */
 
 /**
@@ -72,6 +72,10 @@ var Note = mongoose.model('Note', NoteSchema);
 
 class NoteApi
 {
+    /**
+     * @description This function is called to create note
+     * @param {*} request
+     */
     create(request)
     {
         let createNote = new Note({
@@ -99,13 +103,22 @@ class NoteApi
         })
     }
 
+    /**
+     * @description This function is called to read notes
+     * @param {*} request
+     * @returns {*} data
+     */
     async read(request)
     {
        var data = await Note.find(request).populate("labels")
-    //    console.log(data);
        return data;
     }
 
+    /**
+     * @description This function is called to delete note
+     * @param {*} request
+     * @returns {*} data
+     */
     async delete(request)
     {
         logger.info("request in model "+request)
@@ -114,6 +127,11 @@ class NoteApi
         return data;
     }
 
+    /**
+     * @description This function is called to delete note
+     * @param {*} request This contains the id's 
+     * @param {*} request This object contains data to be updated
+     */
     update(noteId,dataToUpdate)
     {
         logger.info("id "+JSON.stringify(noteId));

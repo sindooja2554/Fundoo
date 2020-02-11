@@ -1,10 +1,25 @@
+/**
+ * @description API controller Class
+ * @file        controller.note.js
+ * @overview    API controller class controls all the API's, gives call to
+ *              service functions of the API's
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0
+ * @since       16 January 2020
+ */
 var noteService = require('../services/note');
-var logger = require('../config/winston');
-// var redis = require("redis"),
-//     client = redis.createClient();
-var redisCache = require('../services/redis');
+var logger      = require('../config/winston');
+var redisCache  = require('../services/redis');
 
 class Controller {
+
+    /**
+     * @description This function is called to create note by calling the service function
+     * @function    createNote
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     createNote(request, response) {
         logger.info("request in ctrl " + request.body);
         try {
@@ -91,35 +106,15 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to get all notes by getting notes from redis cache
+     * @function    getAllNotes
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     getAllNotes(request, response) {
         var result = {};
-        // logger.info("request " + request.body);
-        // let getNotesObject = {
-        //     'userId': request.body.data._id
-        // }
-        // logger.info("getNotesObject " + JSON.stringify(getNotesObject));
-        // noteService.getAllNotes(getNotesObject)
-        //     .then((data) => {
-        //         if (data.length === 0) {
-        //             result.success = true;
-        //             result.message = "No notes found";
-        //             result.data = data;
-        //             return response.status(404).send(result)
-        //         }
-        //         else if (data !== null) {
-        //             logger.info("response " + JSON.stringify(data));
-        //             result.success = true;
-        //             result.message = "Notes found";
-        //             result.data = data;
-        //             return response.status(200).send(result)
-        //         }
-        //     })
-        //     .catch(error => {
-        //         result.success = false;
-        //         result.message = "Error Occured";
-        //         result.error = error;
-        //         return response.status(500).send(result)
-        //     })
         redisCache.get('getAllNotes'+request.body.data._id , (reply) => {
             console.log("in")
             if (reply) {
@@ -132,6 +127,13 @@ class Controller {
         })
     }
 
+    /**
+     * @description This function is called to delete note by calling service function
+     * @function    deleteNote
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     deleteNote(request, response) {
         try {
             if (request.params.noteId === undefined || request.params.noteId === null)
@@ -187,10 +189,15 @@ class Controller {
             result.success = false;
             return response.status(400).send(result)
         }
-
-
     }
 
+    /**
+     * @description This function is called to edit note by calling service function
+     * @function    deleteNote
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     editNote(request, response) {
         try {
             if (request.body.title === undefined || request.body.description === undefined)
@@ -218,16 +225,6 @@ class Controller {
                     "noteId": request.params.noteId,
                     "userId": request.body.data._id
                 }
-                // if (request.body.description !== undefined) {
-                //     editObject.description = request.body.description;
-                // }
-                // if (request.body.title !== undefined) {
-                //     editObject.title = request.body.title;
-                // }
-                // if (request.body.isTrash !== undefined) {
-                //     editObject.isTrash = true;
-                // }
-
                 logger.info("before if " + JSON.stringify(request.body));
                 if ("title" in request.body && "description" in request.body && "color" in request.body &&
                     "isArchive" in request.body && "isPinned" in request.body && "isTrash" in request.body &&
@@ -285,22 +282,24 @@ class Controller {
             result.error = error;
             return response.status(400).send(result)
         }
-
     }
 
+    /**
+     * @description This function is called to add reminder to note by calling service function
+     * @function    addRemainder
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     addRemainder(request, response) {
         try {
 
             if (request.body.remainder === undefined || request.body.remainder === null)
                 throw 'Cannot be undefined or null'
-            // console.log("request to save remainder",request.body);
-            // request.check('remainder', 'Must be in valid format [eg.(22-05-2013 11:23:22)]')
-            //     .matches(/^(\d{2})\-(\d{2})\-(\d{4}) (\d{2}):(\d{2}):(\d{2})$/);
             request.check('noteId', 'Must be in the mongoose unique Id format')
                 .matches(/^[0-9a-fA-F]{24}$/)
 
             var errors = request.validationErrors();
-            console.log("er==>", errors)
             var result = {};
             logger.info("errors " + JSON.stringify(errors))
             if (errors) {
@@ -357,12 +356,18 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to delete reminder from note by calling service function
+     * @function    deleteReminder
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     deleteReminder(request, response) {
         request.check('noteId', 'Must be in the mongoose unique Id format')
             .matches(/^[0-9a-fA-F]{24}$/)
 
         var errors = request.validationErrors();
-        // console.log("er==>",errors)
         var result = {};
         logger.info("errors " + JSON.stringify(errors))
         if (errors) {
@@ -411,6 +416,13 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to search notes by calling service function
+     * @function    search
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     search(request, response) {
         try {
             if (request.body.value === undefined || request.body.value === null)
@@ -419,7 +431,6 @@ class Controller {
             request.check('value', 'Cannot be empty').notEmpty()
 
             var errors = request.validationErrors();
-            // console.log("er==>",errors)
             var result = {};
             logger.info("errors " + JSON.stringify(errors))
             if (errors) {
@@ -472,9 +483,15 @@ class Controller {
             return response.status(400).send(result)
 
         }
-
     }
 
+    /**
+     * @description This function is called to add label to note by calling service function
+     * @function    addLabelToNote
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     addLabelToNote(request,response) {
         try {
             if(request.body.label === undefined || request.body.label === null) throw "Request body cannot be undefined"
@@ -524,6 +541,13 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to delete label from note by calling service function
+     * @function    deleteLabelFromNote
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     deleteLabelFromNote(request,response) {
         try {   
             logger.info("in ctrl "+JSON.stringify(request.body)+ " " +JSON.stringify(request.params));
@@ -564,6 +588,13 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to set notes in redis cache
+     * @function    noteSequencing
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     noteSequencing(request,response) {
         logger.info("request in noteSequencing "+JSON.stringify(request.body));
         redisCache.set('getAllNotes'+request.body.data._id,JSON.stringify(request.body),(reply)=>{
@@ -582,6 +613,8 @@ class Controller {
         })
         response.status(200).send('successful');
     }
+
+    // getAllReminder()
 }
 
 module.exports = new Controller();

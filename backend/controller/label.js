@@ -1,15 +1,31 @@
+/**
+ * @description API controller Class
+ * @file        controller.label.js
+ * @overview    API controller class controls all the API's, gives call to
+ *              service functions of the API's
+ * @author      Sindooja Gajam
+ * @version     node v12.10.0
+ * @since       20 January 2020
+ */
 var labelService = require('../services/label');
-var logger = require('../config/winston');
+var logger       = require('../config/winston');
 
 class Controller {
+
+    /**
+     * @description This function is called to create label by calling the service function
+     * @function    createLabel
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     createLabel(request, response) {
         logger.info("request.. " + JSON.stringify(request.body))
         try {
             var result = {};
             if (request.body.label === null) throw 'Request body cannot be null';
             if (request.body.label === undefined) throw 'Request body cannot be undefined';
-            // request.check('noteId', 'Must be in the mongoose unique Id format')
-            //     .matches(/^[0-9a-fA-F]{24}$/)
+
             request.check('label', 'label cannot be empty')
                 .notEmpty()
 
@@ -55,6 +71,13 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to get all labels by calling the service function
+     * @function    getAllLabels
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     // async 
     getAllLabels(request, response) {
         var result = {};
@@ -90,6 +113,13 @@ class Controller {
             })
     }
 
+    /**
+     * @description This function is called to delete labels by calling the service function
+     * @function    deleteLabel
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     deleteLabel(request, response) {
         try {
             logger.info("labelId " + request.params.labelId);
@@ -144,6 +174,13 @@ class Controller {
         }
     }
 
+    /**
+     * @description This function is called to edit labels by calling the service function
+     * @function    editLabel
+     * @param {*}   request
+     * @param {*}   response
+     * @returns {*} response
+     */
     editLabel(request, response) {
         request.check('labelId', 'Must be in the mongoose unique Id format')
             .matches(/^[0-9a-fA-F]{24}$/)
