@@ -19,11 +19,11 @@ class Database{
         this.mongoose = mongoose;
         this.host     = process.env.HOST;
         this.port     = process.env.DB_PORT;
-        this.url      = process.env.URL || 'mongodb://127.0.0.1:27017/fundoo';
+        this.url      = process.env.URL || 'mongodb://13.233.30.31:27017/fundoo';
     }
 
     connect(){
-        console.log(this.url)
+        // console.log(this.url)
         this.mongoose.connect(this.url, {
             // useMongoClient: true,
             useNewUrlParser: true,
