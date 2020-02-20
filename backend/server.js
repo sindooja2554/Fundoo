@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
 // console.log(connection);
 var port = process.env.PORT;
 
-app.listen(port || 3000, () => {
+app.listen(port || 3001, () => {
     mongoose.connect();
     redis.connect();
     console.log(`Server is listening on port ${port}`);

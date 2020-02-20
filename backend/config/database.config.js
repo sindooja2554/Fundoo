@@ -19,7 +19,7 @@ class Database{
         this.mongoose = mongoose;
         this.host     = process.env.HOST;
         this.port     = process.env.DB_PORT;
-        this.url      = process.env.URL;
+        this.url      = process.env.URL || 'mongodb://127.0.0.1:27017/fundoo';
     }
 
     connect(){
