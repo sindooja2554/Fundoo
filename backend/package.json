@@ -4,7 +4,7 @@
   "description": "Fundoo",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon backend/server.js",
+    "start": "nodemon server.js",
     "test": "mocha ",
     "coverage": "nyc -r cobertura -r text-summary -r lcov npm test",
     "build": "gulp build",
@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.598.0",
-    "bcrypt": "^3.0.7",
+    "bcrypt": "^3.0.8",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -29,6 +29,7 @@
     "multer-s3": "^2.9.0",
     "node-cron": "^2.0.3",
     "nodemailer": "^6.4.2",
+    "nodemon": "^2.0.3",
     "nyc": "^15.0.0",
     "redis": "^2.8.0",
     "shortid": "^2.2.15",
