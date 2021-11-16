@@ -13,7 +13,7 @@
   "author": "Sindooja Gajam",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.598.0",
+    "aws-sdk": "^2.814.0",
     "bcrypt": "^3.0.8",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
