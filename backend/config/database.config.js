@@ -17,18 +17,15 @@ class Database{
 
     constructor(){
         this.mongoose = mongoose;
-        this.host     = process.env.HOST;
-        this.port     = process.env.DB_PORT;
-        this.url      = process.env.URL || 'mongodb://127.0.0.1:27017/fundoo';
+        this.url      = process.env.URL;
     }
 
     connect(){
-        // console.log(this.url)
         this.mongoose.connect(this.url, {
-            // useMongoClient: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
-            connectTimeoutMS: 1000
+            serverSelectionTimeoutMS: 5000,  // Timeout after 5 seconds
+            socketTimeoutMS: 45000,         // Close sockets after 45 seconds
         });
         this.monitor();
         return this.mongoose;
@@ -36,21 +33,24 @@ class Database{
     }
 
     monitor(){
-
-        this.mongoose.connection.on('disconnected', function() {
+        mongoose.connection.on('disconnected', function() {
+            console.log("connection closed");
             logger.info('mongo db connection closed');
             process.exit(0);
         });
         
         mongoose.connection.on('connecting', function(){
+            console.log("connecting");
             logger.info("trying to establish a connection to mongo");
         });
         
         mongoose.connection.on('connected', function() {
+            console.log("connected");
             logger.info("connection established successfully");
         });
         
         mongoose.connection.on('error', function(err) {
+            console.log("connection error");
             logger.error('connection to mongo failed ' + err);
             process.exit(0);
         });

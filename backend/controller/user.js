@@ -13,7 +13,6 @@ var mailSender = require("../utility/nodeMailer");
 var urlShortner = require("../utility/urlShortner");
 var logger = require("../config/winston");
 var redisCache = require("../services/redis");
-// var mail = require('../utility/mailer');
 
 class Controller {
     /**
@@ -25,7 +24,6 @@ class Controller {
      */
     createController(request, response) {
         try {
-            // console.log("error handling",request.body);
             if (
                 request.body.firstName === null ||
                 request.body.lastName === null ||
@@ -56,7 +54,6 @@ class Controller {
             request
                 .check("firstName", "First Name must be character string only")
                 .isAlpha();
-            // request.check('lastName','Last name cannot be empty').isEmpty()
             request
                 .check("lastName", "Last name must be 3 character long")
                 .isLength({
@@ -77,34 +74,28 @@ class Controller {
                 );
             var errors = request.validationErrors();
             var result = {};
-            // console.log(errors);
             if (errors) {
                 result.error = errors;
                 result.success = false;
                 return response.status(400).send(result);
             } else {
-                logger.info("this from logger", request.body);
                 let userData = {
                     firstName: request.body.firstName,
                     lastName: request.body.lastName,
                     email: request.body.email,
                     password: request.body.password
                 };
-                // console.log("in controller");
                 return new Promise(function (resolve, reject) {
                     userServices
                         .createService(userData)
                         .then(data => {
                             if (data.success !== false) {
-                                // console.log("data in res from ser", data);
-                                // console.log("data in response---", data);
                                 let payload = {
                                     _id: data._id
                                 };
 
                                 let jwtToken = jsonWebToken.generateToken(payload);
                                 let longURL = process.env.LONG_URL + jwtToken;
-                                // console.log("long url",longURL)
                                 redisCache.set(
                                     "registrationToken" + data._id,
                                     jwtToken,
@@ -113,7 +104,6 @@ class Controller {
                                             urlShortner
                                                 .shortURL(data, longURL)
                                                 .then(data => {
-                                                    // console.log("sh--->", data);
                                                     result.message = "Successfully registered";
                                                     result.success = true;
                                                     result.data = data;
@@ -128,7 +118,6 @@ class Controller {
                                     }
                                 );
                             } else {
-                                // console.log("data---------->", data)
                                 result.message = data.message;
                                 result.success = data.success;
                                 result.data = data.data;
@@ -145,11 +134,8 @@ class Controller {
             }
         } catch (error) {
             var result = {};
-            // console.log("error in try",error);
             result.error = error;
-            // console.log(result.error);
             result.status = false;
-            // console.log("obj",result)
             return response.status(400).send(result);
         }
     }
@@ -163,7 +149,6 @@ class Controller {
      */
     loginController(request, response) {
         try {
-            // if (request.body.email === null || request.body.password === null) throw ("Request body cannot be null");
             request.check("email", "Email must be in email format").isEmail();
             request
                 .check(
@@ -189,29 +174,24 @@ class Controller {
                 };
 
                 userServices.loginService(readData, (error, data) => {
-                    // console.log("ctrl==>", data);
                     if (error) {
                         result.error = error;
                         result.success = false;
                         return response.status(500).send(result);
                     } else if (data.success !== false) {
-                        // console.log(data)
                         let payload = {
                             _id: data.data._id
                         };
                         let jwtToken = jsonWebToken.generateToken(payload);
-                        console.log("token              ----------->", jwtToken)
                         redisCache.set(
                             "loginToken" + payload._id,
                             jwtToken,
                             (reply) => {
                                 if (reply) {
-                                    console.log("token in ctrl", jwtToken);
                                     result.token = jwtToken;
                                     result.message = "Login successful";
                                     result.success = true;
                                     result.data = data;
-                                    console.log("result  ", result);
                                     return response.status(200).send(result);
                                 }
                             }
@@ -226,11 +206,8 @@ class Controller {
             }
         } catch (error) {
             var result = {};
-            console.log("error in try", error);
             result.error = error;
-            console.log(result.error);
             result.status = false;
-            console.log("obj", result);
             return response.status(400).send(result);
         }
     }
@@ -245,7 +222,6 @@ class Controller {
      */
     isVerifiedController(request, response) {
         var result = {};
-        // console.log("verifyC");
         userServices
             .isVerifiedService(request)
             .then(data => {
@@ -269,7 +245,6 @@ class Controller {
      */
     forgetPasswordController(request, response) {
         try {
-            // if (request.body.email === null)  throw "Request body cannot be null";
 
             request.check("email", "Email must be in email format").isEmail();
             var errors = request.validationErrors();
@@ -280,7 +255,6 @@ class Controller {
                 result.success = false;
                 return response.status(400).send(result);
             } else {
-                // console.log("forgot")
                 var result = {};
                 let forgotPassword = {
                     email: request.body.email
@@ -291,13 +265,10 @@ class Controller {
                         result.succes = false;
                         return response.status(500).send(result);
                     } else {
-                        logger.info("response data in controller", data);
                         let payload = {
                             _id: data._id
                         };
-                        // console.log("dtttt===", data);
                         let jwtToken = jsonWebToken.generateToken(payload);
-                        logger.info("token" + jwtToken);
                         redisCache.set(
                             "forgetToken" + data._id,
                             jwtToken,
@@ -305,8 +276,6 @@ class Controller {
                                 if (reply) {
                                     let url = process.env.EMAIL_FRONTEND_URL + jwtToken;
                                     mailSender.sendMail(data.email, url, {template : "index"})
-
-                                    // mailSender.sendMail(data.email, url);
                                     result.message = "Mailsent";
                                     result.success = true;
                                     return response.status(200).send(result);
@@ -354,14 +323,12 @@ class Controller {
             userServices
                 .resetPassswordService(resetPassword)
                 .then(data => {
-                    // console.log("aaa", data)
                     result.data = data;
                     result.success = true;
 
                     return response.status(200).send(result);
                 })
                 .catch(error => {
-                    // console.log("errrrrr", error)
                     result.error = error;
                     result.message = error;
                     result.success = false;
@@ -383,7 +350,6 @@ class Controller {
                 userServices
                     .imageUploadService(request)
                     .then(data => {
-                        console.log("in ctrl");
                         return resolve(data);
                     })
                     .catch(error => {

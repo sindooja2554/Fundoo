@@ -39,10 +39,8 @@ class Controller {
             else {
                 let createLabelObject = {
                     'label': request.body.label,
-                    // 'noteId': request.params.noteId,
                     'userId': request.body.data._id
                 }
-                logger.info("userId " + createLabelObject.userId)
                 labelService.createLabel(createLabelObject).then((data) => {
                     if (data !== null) {
                         result.data = data;
@@ -78,16 +76,14 @@ class Controller {
      * @param {*}   response
      * @returns {*} response
      */
-    // async 
+
     getAllLabels(request, response) {
         var result = {};
         var result = {};
         logger.info("request " + request.body.data._id);
         let getLabelsObject = {
             'userId': request.body.data._id,
-            // 'noteId': request.params.noteId
         }
-        logger.info("getLabelsObject " + JSON.stringify(getLabelsObject));
         labelService.getAllLabels(getLabelsObject)
             .then((data) => {
                 if (data === null || data.length === 0) {
@@ -97,7 +93,6 @@ class Controller {
                     return response.status(404).send(result)
                 }
                 else if (data !== null) {
-                    logger.info("response " + JSON.stringify(data));
                     result.success = true;
                     result.message = "Labels found";
                     result.data = data;
@@ -105,7 +100,6 @@ class Controller {
                 }
             })
             .catch(error => {
-                logger.info("error " + error)
                 result.success = false;
                 result.message = "Error Occured";
                 result.error = error;
@@ -122,8 +116,6 @@ class Controller {
      */
     deleteLabel(request, response) {
         try {
-            logger.info("labelId " + request.params.labelId);
-            console.log(request.params.labelId == null)
             if (request.params.labelId === "null") throw 'Request body cannot be null';
             if (request.params.labelId === undefined) throw 'Request body cannot be undefined';
             request.check('labelId', 'Must be in the mongoose unique Id format')
@@ -136,23 +128,19 @@ class Controller {
                 return response.status(400).send(result);
             }
             else {
-                logger.info("labelId " + request.params.labelId);
                 let deleteLabelObject = {
                     'labelId': request.params.labelId,
                     'userId' : request.body.data._id
                 }
-                logger.info("delete object " + JSON.stringify(deleteLabelObject));
                 labelService.deleteLabel(deleteLabelObject)
                     .then((data) => {
                         if (data !== null) {
-                            logger.info("response " + JSON.stringify(data));
                             result.success = true;
                             result.message = "Deleted Successfully";
                             result.data = data;
                             return response.status(200).send(result)
                         }
                         else {
-                            logger.info("data==> " + data)
                             result.success = false;
                             result.message = "No label found"                             // "Delete Operation failed";
                             result.data = data;
@@ -160,7 +148,7 @@ class Controller {
                         }
                     })
                     .catch(error => {
-                        logger.info("response " + error);
+                        logger.info("Error " + error);
                         result.success = false;
                         result.message = "Error Occured";
                         result.error = error;

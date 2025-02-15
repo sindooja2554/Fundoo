@@ -9,7 +9,7 @@
 var userModel = require("../app/model/user");
 var bcrypt = require("../utility/bcrypt");
 var logger = require("../config/winston");
-require("dotenv/").config();
+require("dotenv").config();
 
 class Services {
   /**
@@ -18,7 +18,6 @@ class Services {
    * @param {}    request
    */
   createService(request) {
-    console.log("inservices");
     var res = {};
     return new Promise(function (resolve, reject) {
       userModel.findOne({ email: request.email }, (error, data) => {
@@ -32,11 +31,9 @@ class Services {
                 reject(error);
               } else {
                 request.password = encryptedPassword;
-                console.log("--------->", request);
                 userModel
                   .create(request)
                   .then((data) => {
-                    console.log("-----============---->", data);
                     resolve(data);
                   })
                   .catch((err) => {
@@ -63,7 +60,6 @@ class Services {
    */
 
   loginService(request, callback) {
-    console.log("req in login", request);
     var res = {};
     userModel.findOne({ email: request.email }, (error, data) => {
       if (error) {
@@ -74,13 +70,10 @@ class Services {
         res.data = data;
         return callback(null, res);
       } else if (data.isVerified === true) {
-        console.log("calling utility###>", data);
-        console.log("req", request.password);
         bcrypt.comparePassword(
           request.password,
           data.password,
           (error, success) => {
-            console.log("success in password comparsion=", success);
             if (error) {
               return callback(error);
             } else if (success === false) {
@@ -88,7 +81,6 @@ class Services {
               res.success = false;
               return callback(null, res);
             } else {
-              console.log("abc SUCCESS=>", success);
               res.success = true;
               res.data = data;
               return callback(null, res);
@@ -111,7 +103,6 @@ class Services {
    * @param {*}   callback
    */
   isVerifiedService(request, callback) {
-    console.log("verifyS");
     return new Promise(function (resolve, reject) {
       userModel
         .updateOne({ _id: request.body.data._id }, { isVerified: true })
@@ -133,9 +124,6 @@ class Services {
    * @param {*}   callback
    */
   urlShorteningServices(request, shortnerObject) {
-    console.log("request", request);
-    console.log("short", shortnerObject);
-    console.log("in url shortener");
     return new Promise(function (resolve, reject) {
       userModel.findOne({ email: request.email }, (error, data) => {
         if (error) {
@@ -153,7 +141,6 @@ class Services {
               }
             )
             .then((data) => {
-              console.log("in ser", data);
               resolve(data);
             })
             .catch((error) => {
@@ -171,14 +158,12 @@ class Services {
    * @param {*}   callback
    */
   forgetPassword(request, callback) {
-    console.log("pass");
     userModel.findOne({ email: request.email }, (error, data) => {
       if (error) {
         return callback(error);
       } else if (data == null) {
         return callback(error);
       } else {
-        logger.info("response in service", data);
         return callback(null, data);
       }
     });
@@ -198,21 +183,17 @@ class Services {
         } else if (data === null) {
           reject(error);
         } else {
-          console.log("::::::>", data);
           bcrypt.encryptPassword(request.password, (error, encryptedData) => {
             if (error) {
               reject(error);
             } else {
-              console.log("(((((>", encryptedData);
               let encryptPassword = encryptedData;
               userModel
                 .updateOne({ _id: data.id }, { password: encryptPassword })
                 .then((data) => {
-                  console.log("inserr", data);
                   resolve(data);
                 })
                 .catch((error) => {
-                  console.log("inserr", error);
                   reject(error);
                 });
             }
@@ -233,11 +214,9 @@ class Services {
           userModel
             .updateOne({ _id: data.id }, { imageUrl: request.imageUrl })
             .then((data) => {
-              console.log("insert", data);
               return resolve(data);
             })
             .catch((error) => {
-              console.log("insert in error", error);
               return reject(error);
             });
         }

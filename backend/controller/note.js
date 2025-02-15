@@ -20,7 +20,6 @@ class Controller {
    * @returns {*} response
    */
   createNote(request, response) {
-    logger.info("request in ctrl " + JSON.stringify(request.body));
     try {
       if (request.body.title === null || request.body.description === null)
         throw "Request body cannot be null";
@@ -56,7 +55,6 @@ class Controller {
           "code" in request.body.color &&
           "remainder" in request.body
         ) {
-          logger.info("req");
           let createNoteObject = {
             title: request.body.title,
             description: request.body.description,
@@ -69,10 +67,8 @@ class Controller {
             isArchive: request.body.isArchive,
             isPinned: request.body.isPinned,
             isTrash: request.body.isTrash,
-            // 'labels': request.body.labels || null,
             userId: request.body.data._id,
           };
-          logger.info("userId " + createNoteObject);
           noteService
             .createNote(createNoteObject)
             .then((data) => {
@@ -120,9 +116,7 @@ class Controller {
   getAllNotes(request, response) {
     var result = {};
     redisCache.get("getAllNotes" + request.body.data._id, (reply) => {
-      console.log("in");
       if (reply) {
-        logger.info("data from redis==> " + reply);
         result.success = true;
         result.message = "Notes found";
         result.data = JSON.parse(reply);
@@ -148,23 +142,16 @@ class Controller {
 
       var errors = request.validationErrors();
       var result = {};
-      logger.info("errors " + JSON.stringify(errors));
       if (errors) {
-        logger.info("errors " + JSON.stringify(errors[0].msg));
         result.error = errors[0].msg;
         result.success = false;
         return response.status(400).send(result);
       } else {
         var result = {};
-        logger.info("noteId " + request.params.noteId);
-        logger.info(
-          "request.body.data._id " + JSON.stringify(request.body.data._id)
-        );
         let deleteNoteObject = {
           userId: request.body.data._id,
           noteId: request.params.noteId,
         };
-        logger.info("delete object " + JSON.stringify(deleteNoteObject));
         noteService
           .deleteNote(deleteNoteObject)
           .then((data) => {
@@ -174,7 +161,6 @@ class Controller {
               result.data = data;
               return response.status(404).send(result);
             } else if (data !== null) {
-              logger.info("response " + JSON.stringify(data));
               result.success = true;
               result.message = "Deleted Successfully";
               result.data = data;
@@ -213,26 +199,22 @@ class Controller {
       if (request.body.title === null || request.body.description === null)
         throw "Cannot be null";
 
-      logger.info("request in edit note +" + JSON.stringify(request.body));
       request
         .check("noteId", "Must be in the mongoose unique Id format")
         .matches(/^[0-9a-fA-F]{24}$/);
 
       var errors = request.validationErrors();
       var result = {};
-      // logger.info("errors " + JSON.stringify(errors))
       if (errors) {
         result.error = errors;
         result.success = false;
         return response.status(400).send(result);
       } else {
-        logger.info("noteId" + request.params.noteId);
         var editObject = {};
         var idObject = {
           noteId: request.params.noteId,
           userId: request.body.data._id,
         };
-        logger.info("before if " + JSON.stringify(request.body));
         if (
           "title" in request.body &&
           "description" in request.body &&
@@ -243,8 +225,6 @@ class Controller {
           "name" in request.body.color &&
           "code" in request.body.color
         ) {
-          logger.info("edit note object 1" + JSON.stringify(editObject));
-
           (editObject.title = request.body.title),
             (editObject.description = request.body.description),
             (editObject.color = {
@@ -256,7 +236,6 @@ class Controller {
             (editObject.isTrash = request.body.isTrash);
 
           var result = {};
-          logger.info("edit note object 2" + JSON.stringify(editObject));
           noteService
             .editNote(idObject, editObject)
             .then((data) => {
@@ -273,7 +252,6 @@ class Controller {
               }
             })
             .catch((error) => {
-              logger.info("error in ctrl " + error);
               result.success = false;
               result.message = "Error Occured";
               result.error = error;
@@ -315,7 +293,6 @@ class Controller {
 
       var errors = request.validationErrors();
       var result = {};
-      logger.info("errors " + JSON.stringify(errors));
       if (errors) {
         result.error = errors[0].msg;
         result.success = false;
@@ -331,7 +308,6 @@ class Controller {
           .addRemainder(addRemainderObject)
           .then((data) => {
             if (data !== null) {
-              logger.info("data in control " + data);
               result.success = true;
               result.message = "Successfully added remainder";
               result.data = data;
@@ -342,7 +318,6 @@ class Controller {
               result.data = data;
               return response.status(404).send(result);
             } else if (data.length === 0) {
-              logger.info("data in ctrl " + data);
               result.success = false;
               result.message = "Remainder is not added";
               result.error = "error";
@@ -380,7 +355,7 @@ class Controller {
 
     var errors = request.validationErrors();
     var result = {};
-    logger.info("errors " + JSON.stringify(errors));
+    logger.info("Validation Errors " + JSON.stringify(errors));
     if (errors) {
       result.error = errors[0].msg;
       result.success = false;
@@ -396,7 +371,6 @@ class Controller {
         .removeReminder(removeReminderObject)
         .then((data) => {
           if (data !== null) {
-            logger.info("data in control " + data);
             result.success = true;
             result.message = "Successfully deleted reminder";
             result.data = data;
@@ -407,7 +381,6 @@ class Controller {
             result.data = data;
             return response.status(404).send(result);
           } else if (data.length === 0) {
-            logger.info("data in ctrl " + data);
             result.success = false;
             result.message = "Reminder is not be deleted";
             result.error = "error";
@@ -415,7 +388,6 @@ class Controller {
           }
         })
         .catch((error) => {
-          logger.info("error in ctrl " + error);
           result.success = false;
           result.message = "Some error ocurred while deleting remainder";
           result.error = error;
@@ -440,7 +412,7 @@ class Controller {
 
       var errors = request.validationErrors();
       var result = {};
-      logger.info("errors " + JSON.stringify(errors));
+      logger.info("validationErrors " + JSON.stringify(errors));
       if (errors) {
         result.error = errors[0].msg;
         result.success = false;
@@ -458,13 +430,11 @@ class Controller {
           .search(searchObject)
           .then((data) => {
             if (data.length === 0 || data === null) {
-              logger.info("data in ctrl " + data);
               result.success = false;
               result.message = "Data not found";
               result.error = "error";
               return response.status(404).send(result);
             } else if (data !== null) {
-              logger.info("data in control " + data);
               result.success = true;
               result.message = "Data found";
               result.data = data;
@@ -472,7 +442,6 @@ class Controller {
             }
           })
           .catch((error) => {
-            logger.info("error in ctrl " + error);
             result.success = false;
             result.message = "Some error ocurred while searching";
             result.error = error;
@@ -502,7 +471,7 @@ class Controller {
       request.check("label", "Label cannot be m empty").notEmpty();
       var errors = request.validationErrors();
       var result = {};
-      logger.info("errors " + JSON.stringify(errors));
+      logger.info("validationErrors " + JSON.stringify(errors));
       if (errors) {
         result.error = errors[0].msg;
         result.success = false;
@@ -553,12 +522,6 @@ class Controller {
    */
   deleteLabelFromNote(request, response) {
     try {
-      logger.info(
-        "in ctrl " +
-          JSON.stringify(request.body) +
-          " " +
-          JSON.stringify(request.params)
-      );
       var result = {};
       if ("noteId" in request.params && "labelId" in request.body) {
         let removeLabelObject = {
@@ -607,13 +570,11 @@ class Controller {
    * @returns {*} response
    */
   noteSequencing(request, response) {
-    logger.info("request in noteSequencing " + JSON.stringify(request.body));
     redisCache.set(
       "getAllNotes" + request.body.data._id,
       JSON.stringify(request.body),
       (reply) => {
         if (reply) {
-          logger.info("data from redis==> " + reply);
           result.success = true;
           result.message = "Notes found";
           result.data = JSON.parse(reply);
@@ -623,14 +584,12 @@ class Controller {
     );
     redisCache.get("getAllNotes" + request.body.data._id, (error, reply) => {
       if (reply) {
-        logger.info("data from redis==> " + reply);
       }
     });
     response.status(200).send("successful");
   }
 
   addCollaborator(request, response) {
-    logger.info("request......");
     request.check("email", "Email must be in email format").isEmail();
     var errors = request.validationErrors();
     var result = {};
@@ -644,7 +603,6 @@ class Controller {
         noteId: request.params.noteId,
         userId: request.body.data._id,
       };
-      logger.info("request---------->" + request);
       noteService
         .addCollaborator(addCollaboratorObject)
         .then((data) => {
@@ -664,7 +622,6 @@ class Controller {
 
   removeCollaborator(request, response) {
     try {
-      logger.info("request000000000000000000000" + request.body.collaboratorId);
       if (
         request.body.collaboratorId === undefined ||
         request.body.collaboratorId === null

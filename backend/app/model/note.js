@@ -50,8 +50,7 @@ const NoteSchema = schema(
       default: false,
     },
     color: {
-      // code : "#FFFFFF",
-      // name : "white"
+
       type: Object,
       default: {
         name: "white",
@@ -63,7 +62,6 @@ const NoteSchema = schema(
         type: schema.Types.ObjectId,
         ref: "label",
         default: [],
-        // type:Array
       },
     ],
     collaborator: [
@@ -104,11 +102,9 @@ class NoteApi {
       createNote
         .save()
         .then((data) => {
-          logger.info("data from model " + data);
           resolve(data);
         })
         .catch((error) => {
-          console.log("data from model ", error);
           reject(error);
         });
     });
@@ -132,9 +128,7 @@ class NoteApi {
    * @returns {*} data
    */
   async delete(request) {
-    logger.info("request in model " + request);
     var data = await Note.findByIdAndRemove(request);
-    logger.info("response data " + JSON.stringify(data));
     return data;
   }
 
@@ -144,17 +138,12 @@ class NoteApi {
    * @param {*} request This object contains data to be updated
    */
   update(noteId, dataToUpdate) {
-    logger.info("id " + JSON.stringify(noteId));
-    logger.info("update " + JSON.stringify(dataToUpdate));
-    console.log("update ", dataToUpdate);
     return new Promise((resolve, reject) => {
       Note.findOneAndUpdate(noteId, dataToUpdate, { new: true })
         .then((data) => {
-          logger.info("data in model " + data);
           return resolve(data);
         })
         .catch((error) => {
-          logger.info("error in model " + error);
           return reject(error);
         });
     });

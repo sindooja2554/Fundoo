@@ -5,7 +5,6 @@ let should      = chai.should();
 var assert      = require('chai').assert;
 var createNoteObject = require('../json/createNote');
 chai.use(chaiHttp);
-// console.log("noteID=>",createNoteObject.noteId[5].editId);
 
 
 describe('/POST createLabel', () => {

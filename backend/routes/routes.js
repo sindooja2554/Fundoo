@@ -36,12 +36,10 @@ routes.post(
 );
 
 routes.get("/verify/:url", (request, response) => {
-  console.log("routes", request.params.url);
   user.findOne({ urlCode: request.params.url }, (error, data) => {
     if (error) {
       return response.status(404).send("Url not found");
     } else {
-      console.log("data from routes", data);
       response.redirect(data.longUrl);
     }
   });
@@ -54,36 +52,27 @@ routes.post(
 );
 
 routes.post("/imageupload", jwt.verifyToken, function (request, response) {
-  logger.info("req ", JSON.stringify(request.body));
-  console.log("req ", request.body);
   var imageSaveObject = {};
   imageSaveObject.id = request.body.data._id;
 
   singleUpload(request, response, function (error) {
     var res = {};
     if (error) {
-      // logger.info("err",error);
-      console.log("err", error);
       res.message = error;
       res.success = false;
       return response.status(500).send(res);
     } else {
-      logger.info("data", request.body);
-      logger.info("file", request.file.location);
 
       imageSaveObject.imageUrl = request.file.location;
-      logger.info(imageSaveObject);
       userController
         .uploadImageController(imageSaveObject)
         .then((data) => {
-          console.log("response", data.imageUrl);
           res.message = "Successfully saved";
           res.success = true;
           res.data = data.imageUrl;
           return response.status(200).send(res);
         })
         .catch((error) => {
-          console.log("response", error);
           res.error = error;
           res.success = false;
           return response.status(500).send(res);
@@ -144,4 +133,3 @@ routes.put("/label/:labelId", jwt.verifyToken, labelController.editLabel);
 routes.delete("/label/:labelId", jwt.verifyToken, labelController.deleteLabel);
 
 module.exports = routes;
-// /:noteId

@@ -12,8 +12,7 @@ const path = require("path");
 const nodemailer = require("nodemailer");
 var logger = require("../config/winston");
 const hbs = require("nodemailer-handlebars");
-// var PASSWORD_RESET_URL = require('../../constants').PASSWORD_RESET_URL,
-// var templates =require('../templates')
+
 module.exports = {
   /**
    * @description This function sends the mail to the user's email id.
@@ -22,8 +21,6 @@ module.exports = {
    * @param {*}   url
    */
   sendMail(email, url, templateName) {
-    logger.info("email " + email);
-    logger.info("url " + process.env.PASSWORD);
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -35,21 +32,18 @@ module.exports = {
       },
     });
 
-    logger.info("use is called ");
 
     transporter.use(
       "compile",
       hbs({
         viewEngine: {
-          partialsDir: "C:/Users/USER/Desktop/Fundoo/backend/templates",
+          partialsDir: "templates/",
           defaultLayout: "",
         },
-        viewPath: "C:/Users/USER/Desktop/Fundoo/backend/templates",
+        viewPath: "templates/",
         extName: ".handlebars",
       })
     );
-
-    logger.info("options is called ");
 
     const mailOptions = {
       from: process.env.EMAIL, // sender address
@@ -63,10 +57,8 @@ module.exports = {
 
     transporter.sendMail(mailOptions, function (err, info) {
       if (err) {
-        logger.error("====================>" + err);
         return err;
       } else {
-        logger.info(info);
         return info;
       }
     });

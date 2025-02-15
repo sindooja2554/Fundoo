@@ -20,10 +20,6 @@ const LabelSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    // noteId: {
-    //     type: String,
-    //     required: true
-    // },
     label: {
         type: String,
         required: true
@@ -43,17 +39,14 @@ class Api {
      */
     create(request) {
         let createLabel = new label({
-            // "noteId": request.noteId,
             "label": request.label,
             "userId": request.userId
         })
         return new Promise(function (resolve, reject) {
             createLabel.save().then((data) => {
-                logger.info("data from model " + data);
                 resolve(data)
             })
                 .catch((error) => {
-                    logger.info("data from model " + error)
                     reject(error)
                 })
         })
@@ -75,9 +68,7 @@ class Api {
      * @returns {*} data
      */
     async delete(request) {
-        logger.info("request in model " + JSON.stringify(request))
         var data = await label.findByIdAndRemove(request);
-        logger.info("response data " + JSON.stringify(data))
         return data;
     }
 
@@ -87,16 +78,12 @@ class Api {
      * @param {*} request This object contains data to be updated
      */
     update(labelId, dataToUpdate) {
-        logger.info("id " + JSON.stringify(labelId));
-        logger.info("update " + JSON.stringify(dataToUpdate))
         return new Promise((resolve, reject) => {
             label.findOneAndUpdate(labelId, dataToUpdate, { "new": true })
                 .then(data => {
-                    logger.info("data in model " + data);
                     return resolve(data)
                 })
                 .catch(error => {
-                    logger.info("error in model " + error)
                     return reject(error);
                 })
         })

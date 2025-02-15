@@ -17,8 +17,6 @@ class Service {
    * @param {*} request
    */
   createLabel(request) {
-    logger.info("request in service " + request);
-    console.log("request in service ", request);
     var result = {};
     return new Promise(function (resolve, reject) {
       labelModel
@@ -31,7 +29,6 @@ class Service {
           }
         )
         .then((data) => {
-          logger.info("data after reading " + data.length);
           if (data.length === 0) {
             labelModel
               .create(request)
@@ -43,8 +40,6 @@ class Service {
                 }
               })
               .catch((error) => {
-                logger.info("data from serv " + error);
-                console.log("data from serv ", error);
                 return reject(error);
               });
           } else {
@@ -52,8 +47,6 @@ class Service {
           }
         })
         .catch((error) => {
-          logger.info("data from service " + error);
-          console.log("data from service ", error);
           return reject(error);
         });
     });
@@ -64,15 +57,12 @@ class Service {
    * @param {*} request
    */
   async getAllLabels(request) {
-    logger.info("request in service " + JSON.stringify(request));
     return new Promise(function (resolve, reject) {
       labelModel
         .read({
           userId: request.userId,
         })
         .then((data) => {
-          logger.info("response data in service " + JSON.stringify(data));
-          logger.info("length " + data.length);
           if (data.length === 0) {
             return resolve(data);
           } else if (data !== null) {
@@ -80,7 +70,6 @@ class Service {
           }
         })
         .catch((error) => {
-          logger.info("error " + error);
           return reject(error);
         });
     });
@@ -91,7 +80,6 @@ class Service {
    * @param {*} request
    */
   deleteLabel(request) {
-    logger.info("request in service " + JSON.stringify(request));
     return new Promise(function (resolve, reject) {
       labelModel
         .delete({
@@ -99,7 +87,6 @@ class Service {
         })
         .then((data) => {
           if (data !== null) {
-            logger.info("response in label service" + data);
             noteService
               .deleteLabel(
                 {
@@ -109,7 +96,6 @@ class Service {
               )
               .then((response) => {
                 if (response !== null) {
-                  logger.info("-----------------");
                   return resolve(response);
                 } else if (response === null) {
                   return resolve(data);
@@ -122,7 +108,6 @@ class Service {
                 return reject(error);
               });
           } else {
-            logger.info("error in service " + data);
             return resolve(data);
           }
         })
@@ -137,7 +122,6 @@ class Service {
    * @param {*} request
    */
   editLabel(editObject) {
-    logger.info("edit obj " + JSON.stringify(editObject.labelId));
     var noteIdObject = {};
     return new Promise((resolve, reject) => {
       labelModel
@@ -151,10 +135,8 @@ class Service {
         )
         .then((data) => {
           if (data !== null) {
-            logger.info("data in label service " + JSON.stringify(data));
             return resolve(data);
           } else {
-            logger.info("error in service " + data);
             return reject(data);
           }
         })

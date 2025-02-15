@@ -9,7 +9,7 @@
  * @const       bcrypt Bcrypt constant having the `bcrypt` module
  */
 
-const bcrypt   = require('bcrypt');
+const bcrypt   = require('bcryptjs');
 
 module.exports = {
     /**
@@ -19,14 +19,11 @@ module.exports = {
      * @param {*}   callback 
      */
     encryptPassword(request, callback) {
-        console.log("--->",request);
         bcrypt.hash(request, 10, (err, data) => {
             if (err) {
-                console.log(err);
                 return callback(err);
             }
             else {
-                console.log("hash ", data);
                 return callback(null, data);
             }
         })
@@ -50,7 +47,6 @@ module.exports = {
             {
                 var result = {};
                 result.success = false;
-                console.log("from utility",data)
                 return callback(null,data);
             }
         })

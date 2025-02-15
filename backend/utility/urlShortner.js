@@ -13,7 +13,7 @@ const urlShortner = require('shortid');
 var mailSender = require('./nodeMailer');
 var service = require('../services/user');
 var logger =  require('../config/winston')
-require('dotenv/').config();
+require('dotenv').config();
 module.exports = {
     /**
      * @description This function generates the short code using the module shortId.
@@ -34,34 +34,17 @@ module.exports = {
                 'shortUrl': shortUrl,
                 'urlCode' : urlCode
             }
-            // mailSender.sendMail(data.email,shortUrl);
             mailSender.sendMail(data.email, shortUrl, {template : "verify"})
             return new Promise(function(resolve,reject){
                 service.urlShorteningServices(data,urlShortenerObject).then(data=>{
-                    console.log("utility",data)
                     resolve(data) 
                 }).catch(error=>{
-                    console.log("utility",error)
                     reject(error)
                 })
             })
-            
-            // ,(error,data)=>{
-            //     if(error)
-            //     {
-            //         return callback(error)
-            //     }
-            //     else
-            //     {
-            //         console.log("url-->",data);
-                    
-            //         return callback(data)
-            //     }
-            // })
         }
         catch(error)
         {
-            console.log(error);
             return callback(error);
         }
     }

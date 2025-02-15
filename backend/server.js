@@ -25,17 +25,14 @@ const redis = require('./services/redis');
 
 app.use('/fundoo', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cors());
-require('dotenv/').config();
+require('dotenv').config();
 app.use(bodyParser.json());
 app.use(validator());
 app.use('/', route);
 app.get('/', (req, res) => {
-    res.json({"message": "Welcome to EasyNotes application."});
+    res.json({"message": "Welcome to Fundoo application."});
 });
 
-
-
-// console.log(connection);
 var port = process.env.PORT || 3001;
 
 app.listen(port, () => {

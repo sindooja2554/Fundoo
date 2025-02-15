@@ -20,9 +20,7 @@ module.exports = {
    * @param {*}   payload
    */
   generateToken(payload) {
-    console.log("payload", payload);
     var token = jwt.sign(payload, "private_key");
-    console.log("token", token);
     return token;
   },
 
@@ -35,12 +33,7 @@ module.exports = {
    */
   verifyToken(req, res, next) {
     try {
-      console.log(
-        "request----------------------->",
-        JSON.stringify(req.headers)
-      );
       let token = req.headers.token || req.params.token;
-      console.log("token---------->", token);
       if (
         token === undefined ||
         token === "" ||
@@ -54,9 +47,7 @@ module.exports = {
           if (err) {
             return res.status(400).send(err);
           } else {
-            logger.info("url ======" + req.url);
             var route = req.url.split("/");
-            logger.info("req.url " + route[1]);
             var redisData;
             switch (route[1]) {
               case "resetpassword": {
@@ -110,25 +101,19 @@ module.exports = {
             }
             req.body["data"] = decoded;
             req.token = decoded;
-            logger.info("redisdata " + redisData + req.body.data._id);
             redisCache.get(redisData + req.body.data._id, (reply) => {
-              logger.info(reply);
               if (reply === token) {
-                logger.info("data from redis==> " + reply);
                 next();
               } else {
-                logger.error("data from redis " + reply);
                 return res.status(400).send("Invalid Authentication");
               }
             });
           }
         });
       } else {
-        logger.info("error");
         res.status(400).send("Token not received");
       }
     } catch (error) {
-      logger.info("error " + error);
       return res.status(400).send(error);
     }
   },

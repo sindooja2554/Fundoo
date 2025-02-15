@@ -70,17 +70,12 @@ class Api {
    * @param {*}   callback
    */
   findOne(request, callback) {
-    // console.log("sdbhsbin find one");
     User.findOne(request, (error, data) => {
-      // console.log(request);
       if (error) {
-        console.log(error);
         return callback("Error while finding user");
       } else if (data === null) {
-        logger.info("model find one", data);
         return callback(error, null);
       } else {
-        console.log("***>", data);
         return callback(null, data);
       }
     });
@@ -94,30 +89,15 @@ class Api {
    * @param {*}   callback
    */
   updateOne(request, dataToUpdate) {
-    // console.log("in updateone",request);
     return new Promise(function (resolve, reject) {
       User.findOneAndUpdate(request, dataToUpdate, { new: true })
         .then((data) => {
-          // console.log("in updateone",data);
           return resolve(data);
         })
         .catch((error) => {
           return reject(error);
         });
     });
-
-    //  ,(error,data)=>{
-    //     if(error)
-    //     {
-    //         console.log("model",error);
-    //         return callback(error);
-    //     }
-    //     else
-    //     {
-    //         console.log(data);
-    //         return callback(null,data);
-    //     }
-    // })
   }
 
   /**
@@ -126,7 +106,6 @@ class Api {
    * @param {*} request
    */
   create(request) {
-    // console.log("in model");
 
     let createUser = new User({
       firstName: request.firstName,

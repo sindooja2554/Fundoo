@@ -1,14 +1,12 @@
 var redis = require("redis");
 require("dotenv").config();
 const logger = require("../config/winston");
-// const client = redis.createClient(process.env.REDIS_PORT);
 
 class RedisServerClass {
     constructor() {
         this.client = redis.createClient(
             {
                 port: process.env.REDIS_PORT
-                // host: process.env.REDIS_HOST
             }
         );
     }
@@ -20,7 +18,6 @@ class RedisServerClass {
     set(redisKey,value,callback) {
         this.client.set(redisKey,value,(error,data)=>{
             if(error) {
-                console.log(error);
                 return callback(error);
             }else{
                 return callback(data);
@@ -31,10 +28,8 @@ class RedisServerClass {
     get(redisKey,callback) {
         this.client.get(redisKey,(error,response)=>{
             if(error){
-                console.log(error);
                 return callback(error)
             } else{
-                console.log(response);
                 return callback(response)
             }
         })
