@@ -19,12 +19,19 @@ var options = {
 };
 
 // // instantiate a new Winston Logger with the settings defined above
-let logger = winston.createLogger({
-    transports: [
-        new winston.transports.File(options.file),
-      new winston.transports.Console(options.console)
-    ],
-    exitOnError: false, // do not exit on handled exceptions
-  });
+// let logger = winston.createLogger({
+//     transports: [
+//         new winston.transports.File(options.file),
+//       new winston.transports.Console(options.console)
+//     ],
+//     exitOnError: false, // do not exit on handled exceptions
+//   });
+
+const logger = winston.createLogger({
+  level: 'info',
+  transports: [
+    new winston.transports.Console({ format: winston.format.simple() }),
+  ],
+});
 
 module.exports = logger;
