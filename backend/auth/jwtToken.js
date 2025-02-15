@@ -9,7 +9,7 @@
  * @constant    jwt JWT constant having the `jsonwebtoken` module
  */
 const jwt = require("jsonwebtoken");
-var redis = require("redis"),
+var redis = require("ioredis"),
   client = redis.createClient();
 var logger = require("../config/winston");
 var redisCache = require("../services/redis");
